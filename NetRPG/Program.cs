@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.InteropServices;
 using NetRPG.Language;
 
 namespace NetRPG
@@ -9,13 +10,16 @@ namespace NetRPG
         static void Main(string[] args)
         {
             string SourcePath = Path.Combine(Environment.CurrentDirectory, "RPGCode", "test1.rpgle");
+            bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
+            string NewLine = (isWindows ? Environment.NewLine : "");
+
             Console.WriteLine("Hello World: " + Environment.CurrentDirectory);
             Preprocessor prep = new Preprocessor();
 
             prep.ReadFile(SourcePath);
 
             RPGLex lexer = new RPGLex();
-            lexer.Lex(String.Join(Environment.NewLine, prep.GetLines()));
+            lexer.Lex(String.Join(NewLine, prep.GetLines()));
 
             Statement[] Statements = Statement.ParseDocument(lexer.GetTokens());
 
@@ -23,7 +27,7 @@ namespace NetRPG
             reader.ReadStatements(Statements);
             reader.GetModule().Print();
 
-            Console.ReadKey();
+            //Console.ReadKey();
         }
     }
 }

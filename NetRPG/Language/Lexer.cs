@@ -9,7 +9,7 @@ namespace NetRPG.Language
 public enum Type {
 BLOCK, UNKNOWN, OPERATOR, STRING_LITERAL, BLOCK_OPEN, BLOCK_CLOSE, DCL, OPERATION, BIF, SPECIAL, DIRECTIVE, INT_LITERAL, DOUBLE_LITERAL, WORD_LITERAL, EQUALS, OPEN_PAREN, CLOSE_PAREN, PARMS, STMT_END, DOT, ADD, SUB, DIV, MUL
 }
-private string[] OPERATORS = new[] { ".", "(", ")", ";", ":", "=", "+", "-", "/", "*", " "};
+private string[] OPERATORS = new[] { ".", "(", ")", ";", ":", "=", "+", "/", "*", " "};
 private char[] STRING_LITERAL = new[] { '\''};
 private string[] BLOCK_OPEN = new[] { "("};
 private string[] BLOCK_CLOSE = new[] { ")"};
