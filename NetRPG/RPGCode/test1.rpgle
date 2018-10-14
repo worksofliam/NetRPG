@@ -1,3 +1,7 @@
-﻿Dcl-S HelloWorld Char(10) Inz('Hello');
-/COPY RPGCode\test2.rpgle
-Dsply HelloWorld;
+﻿Dcl-S UserName Char(10) Inz(*USER);
+
+Dsply %TrimR(UserName) + ' is the user';
+Dsply 5 + 1 + 2;
+
+*InLR = *On;
+Return;

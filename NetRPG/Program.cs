@@ -19,7 +19,9 @@ namespace NetRPG
 
             Statement[] Statements = Statement.ParseDocument(lexer.GetTokens());
 
-            Console.WriteLine(Statements.Length);
+            Reader reader = new Reader();
+            reader.ReadStatements(Statements);
+            reader.GetModule().Print();
 
             Console.ReadKey();
         }

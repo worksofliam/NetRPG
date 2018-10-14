@@ -6,17 +6,16 @@ namespace NetRPG.Language
 {
     public class RPGLex
     {
-        public enum Type
-        {
-            BLOCK, UNKNOWN, OPERATOR, STRING_LITERAL, DCL, OPERATION, BIF, SPECIAL, DIRECTIVE, INT_LITERAL, DOUBLE_LITERAL, WORD_LITERAL, EQUALS, OPEN_PAREN, CLOSE_PAREN, PARMS, STMT_END, DOT
-        }
-        private string[] OPERATORS = new[] { ".", "(", ")", ";", ":", "=", " " };
-        private char[] STRING_LITERAL = new[] { '\'' };
-        private string[] BLOCK_OPEN = new[] { "(" };
-        private string[] BLOCK_CLOSE = new[] { ")" };
-        private Dictionary<Type, string[]> Pieces = new Dictionary<Type, string[]>
+public enum Type {
+BLOCK, UNKNOWN, OPERATOR, STRING_LITERAL, BLOCK_OPEN, BLOCK_CLOSE, DCL, OPERATION, BIF, SPECIAL, DIRECTIVE, INT_LITERAL, DOUBLE_LITERAL, WORD_LITERAL, EQUALS, OPEN_PAREN, CLOSE_PAREN, PARMS, STMT_END, DOT, ADD, SUB, DIV, MUL
+}
+private string[] OPERATORS = new[] { ".", "(", ")", ";", ":", "=", "+", "-", "/", "*", " "};
+private char[] STRING_LITERAL = new[] { '\''};
+private string[] BLOCK_OPEN = new[] { "("};
+private string[] BLOCK_CLOSE = new[] { ")"};
+private Dictionary<Type, string[]> Pieces = new Dictionary<Type, string[]>
 {
-{ Type.DCL, new[] { "CTL-OPT", "DCL-F", "DCL-S", "DCL-C", "DCL-DS", "DCL-PROC", "DCL-PR", "DCL-PI" } },{ Type.OPERATION, new[] {  "END-PROC", "ACQ", "ADD", "ADDDUR", "ALLOC", "ANDxx", "BEGSR", "BITOFF", "BITON", "CABxx", "CALL", "CALLB", "CALLP", "CASxx", "CAT", "CHAIN", "CHECK", "CHECKR", "CLEAR", "CLOSE", "COMMIT", "COMP", "DEALLOC", "DEFINE", "DELETE", "DIV", "DO", "DOU", "DOUxx", "DOW", "DOWxx", "DSPLY", "DUMP", "ELSE", "ELSEIF", "ENDyy", "ENDSR", "EVAL", "EVALR", "EVAL-CORR", "EXCEPT", "EXFMT", "EXSR", "EXTRCT", "FEOD", "FOR", "FORCE", "GOTO", "IF", "IFxx", "IN", "ITER", "KFLD", "KLIST", "LEAVE", "LEAVESR", "LOOKUP", "MHHZO", "MHLZO", "MLHZO", "MLLZO", "MONITOR", "MOVE", "MOVEA", "MOVEL", "MULT", "MVR", "NEXT", "OCCUR", "ON-ERROR", "ON-EXIT", "OPEN", "ORxx", "OTHER", "OUT", "PARM", "PLIST", "POST", "READ", "READC", "READE", "READP", "READPE", "REALLOC", "REL", "RESET", "RETURN", "ROLBK", "SCAN", "SELECT", "SETGT", "SETLL", "SETOFF", "SETON", "SHTDN", "SORTA", "SQRT", "SUB", "SUBDUR", "SUBST", "TAG", "TEST", "TESTB", "TESTN", "TESTZ", "TIME", "UNLOCK", "UPDATE", "WHEN", "WHENxx", "WRITE", "XFOOT", "XLATE", "XML-INTO", "XML-SAX", "Z-ADD", "Z-SUB" } },{ Type.BIF, new[] {  "/\\%\\S*/" } },{ Type.SPECIAL, new[] {  "/\\*\\S*/" } },{ Type.DIRECTIVE, new[] { "/\\/\\S*/" } },{ Type.INT_LITERAL, new[] {  "/^\\d+$/" } },{ Type.DOUBLE_LITERAL, new[] {  @"/(?<=^| )\\d+(\\.\\d+)?(?=$| )/" } },{ Type.WORD_LITERAL, new[] {  "/.*?/" } },{ Type.EQUALS, new[] {  "=" } },{ Type.OPEN_PAREN, new[] {  "(" } },{ Type.CLOSE_PAREN, new[] {  ")" } },{ Type.PARMS, new[] {  ":" } },{ Type.STMT_END, new[] {  ";" } },{ Type.DOT, new[] {  "." } }
+{ Type.BLOCK_OPEN, new[] {  "(" } },{ Type.BLOCK_CLOSE, new[] {  ")" } },{ Type.DCL, new[] {  "DCL-F", "DCL-S", "DCL-C", "DCL-DS", "DCL-PROC", "DCL-PR", "DCL-PI" } },{ Type.OPERATION, new[] {  "END-PROC", "ACQ", "ADD", "ADDDUR", "ALLOC", "ANDxx", "BEGSR", "BITOFF", "BITON", "CABxx", "CALL", "CALLB", "CALLP", "CASxx", "CAT", "CHAIN", "CHECK", "CHECKR", "CLEAR", "CLOSE", "COMMIT", "COMP", "DEALLOC", "DEFINE", "DELETE", "DIV", "DO", "DOU", "DOUxx", "DOW", "DOWxx", "DSPLY", "DUMP", "ELSE", "ELSEIF", "ENDyy", "ENDSR", "EVAL", "EVALR", "EVAL-CORR", "EXCEPT", "EXFMT", "EXSR", "EXTRCT", "FEOD", "FOR", "FORCE", "GOTO", "IF", "IFxx", "IN", "ITER", "KFLD", "KLIST", "LEAVE", "LEAVESR", "LOOKUP", "MHHZO", "MHLZO", "MLHZO", "MLLZO", "MONITOR", "MOVE", "MOVEA", "MOVEL", "MULT", "MVR", "NEXT", "OCCUR", "ON-ERROR", "ON-EXIT", "OPEN", "ORxx", "OTHER", "OUT", "PARM", "PLIST", "POST", "READ", "READC", "READE", "READP", "READPE", "REALLOC", "REL", "RESET", "RETURN", "ROLBK", "SCAN", "SELECT", "SETGT", "SETLL", "SETOFF", "SETON", "SHTDN", "SORTA", "SQRT", "SUB", "SUBDUR", "SUBST", "TAG", "TEST", "TESTB", "TESTN", "TESTZ", "TIME", "UNLOCK", "UPDATE", "WHEN", "WHENxx", "WRITE", "XFOOT", "XLATE", "XML-INTO", "XML-SAX", "Z-ADD", "Z-SUB" } },{ Type.BIF, new[] {  "/\\%\\S*/" } },{ Type.SPECIAL, new[] {  "/\\*\\S*/" } },{ Type.DIRECTIVE, new[] {  "/\\/\\S*/" } },{ Type.INT_LITERAL, new[] {  "/^\\d+$/" } },{ Type.DOUBLE_LITERAL, new[] {  @"/(?<=^| )\\d+(\\.\\d+)?(?=$| )/" } },{ Type.WORD_LITERAL, new[] {  "/.*?/" } },{ Type.EQUALS, new[] {  "=" } },{ Type.OPEN_PAREN, new[] {  "(" } },{ Type.CLOSE_PAREN, new[] {  ")" } },{ Type.PARMS, new[] {  ":" } },{ Type.STMT_END, new[] {  ";" } },{ Type.DOT, new[] {  "." } },{ Type.ADD, new[] {  "+" } },{ Type.SUB, new[] {  "-" } },{ Type.DIV, new[] {  "/" } },{ Type.MUL, new[] {  "*" } }
 };
 
 
