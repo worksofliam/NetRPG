@@ -59,9 +59,7 @@ namespace NetRPG.Language
         private void HandleDeclare(RPGToken[] tokens)
         {
             //TODO: Check if DataSet already exists?
-            DataSet variable = new DataSet(tokens[1].Value);
-            Types varType;
-            string varLength;
+            DataSet dataSet = new DataSet(tokens[3].Value);
             Dictionary<string, string> config = new Dictionary<string, string>();
             
             for (int i = 3; i < tokens.Length; i++)
@@ -70,7 +68,7 @@ namespace NetRPG.Language
                     switch (tokens[i].Value.ToUpper())
                     {
                         case "DIM":
-                            variable._Dimentions = int.Parse(tokens[i+1].Block?[0].Value);
+                            dataSet._Dimentions = int.Parse(tokens[i+1].Block?[0].Value);
                             break;
                     }
                     i++;
@@ -83,8 +81,8 @@ namespace NetRPG.Language
                 switch (tokens[2].Value.ToUpper())
                 {
                     case "S":
-                        varType = StringToType(tokens[4].Value, tokens[5]?.Block?[0].Value);
-                        varLength = tokens[5]?.Block?[0].Value;
+                        dataSet._Type = StringToType(tokens[4].Value, tokens[5]?.Block?[0].Value);
+                        int.TryParse(tokens[5]?.Block?[0].Value, out dataSet._Length);
                         break;
                     case "F":
                         break;
@@ -94,11 +92,11 @@ namespace NetRPG.Language
                         break;
                 }
 
-                if (variable != null)
+                if (dataSet != null)
                     if (CurrentProcudure != null)
-                        CurrentProcudure.AddVariable(variable);
+                        CurrentProcudure.AddDataSet(dataSet);
                     else
-                        _Module.AddVariable(variable);
+                        _Module.AddDataSet(dataSet);
             }
         }
 
@@ -148,12 +146,6 @@ namespace NetRPG.Language
                     break;
                 
                 case "ELSE":
-                    // forElse = getLastScope();
-
-                    // Labels.Add(getScope()); 
-                    // Proc.addIL("br " + getScope()); Scope++;
-
-                    // Proc.addGoto(forElse);
                     forElse = Labels.getLastScope();
                     Labels.Add(Labels.getScope());
                     CurrentProcudure.AddInstruction(Instructions.BR, Labels.getScope());
@@ -161,16 +153,8 @@ namespace NetRPG.Language
 
                     CurrentProcudure.AddInstruction(Instructions.LABEL, forElse);
                     break;
+
                 case "ELSEIF":
-                    // forElse = getLastScope();
-
-                    // Labels.Add(getScope());
-                    // Build = Interpreter.StringBuilder(Pieces, 1, Pieces.Length);
-                    // Proc.Expression(Build);
-                    // Proc.addIL("brfalse " + getScope()); Scope++;
-
-                    // Proc.addGoto(forElse);
-
                     forElse = Labels.getLastScope();
                     Labels.Add(Labels.getScope());
 

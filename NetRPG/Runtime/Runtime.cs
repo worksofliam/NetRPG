@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace NetRPG.Runtime
 {
@@ -46,19 +47,19 @@ namespace NetRPG.Runtime
         public string _Name;
         public Types _ReturnType;
         private List<Instruction> _Instructions;
-        private Dictionary<string, DataSet> _Variables;
+        private Dictionary<string, DataSet> _DataSets;
 
         public Procedure(string Name, Types ReturnType = Types.Void)
         {
             _Name = Name;
             _ReturnType = ReturnType;
             _Instructions = new List<Instruction>();
-            _Variables = new Dictionary<string, DataSet>();
+            _DataSets = new Dictionary<string, DataSet>();
         }
 
-        public void AddVariable(DataSet var)
+        public void AddDataSet(DataSet var)
         {
-            _Variables.Add(var._Name, var);
+            _DataSets.Add(var._Name, var);
         }
 
         public void AddInstruction(Instructions Instruction, string Value = "")
@@ -68,6 +69,10 @@ namespace NetRPG.Runtime
 
         //TODO: Get variables
         public Instruction[] GetInstructions() => _Instructions.ToArray();
+        public string[] GetDataSetList() => _DataSets.Keys.ToArray();
+        public DataSet GetDataSet(string Name) {
+            return _DataSets[Name];
+        }
     }
 
     public enum Instructions
@@ -84,7 +89,6 @@ namespace NetRPG.Runtime
         STVAR, //Store variable
         STARR, //Store into array
 
-        GOTO,
         LABEL,
         CALL, //Functions
         ADD,
@@ -110,6 +114,7 @@ namespace NetRPG.Runtime
         String,
         Character,
         Varying,
+        Ind, //Char(1)
         Int64, //Int(20)
         Int32, //Int(10)
         Int16, //Int(5)
