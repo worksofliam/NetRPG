@@ -22,6 +22,7 @@ namespace NetRPG.Language
             return Out;
         }
     }
+
     class Reader
     {
 
@@ -167,7 +168,6 @@ namespace NetRPG.Language
                     Labels.Scope++;
                     break;
                 case "ENDIF":
-                    //Proc.addGoto(getLastScope());
                     CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getLastScope());
                     break;
 
@@ -197,7 +197,7 @@ namespace NetRPG.Language
                 switch (token.Type)
                 {
                     case RPGLex.Type.PARMS:
-                        CurrentOperation = Instructions.PARMS;
+                        CurrentOperation = Instructions.NOP;
                         continue;
                     case RPGLex.Type.EQUALS:
                         CurrentOperation = Instructions.EQUAL;
@@ -218,7 +218,22 @@ namespace NetRPG.Language
                         CurrentOperation = Instructions.MUL;
                         continue;
                     case RPGLex.Type.DOT:
-                        CurrentOperation = Instructions.PARMS;
+                        CurrentOperation = Instructions.LDFLD;
+                        continue;
+                    case RPGLex.Type.LESS_THAN:
+                        CurrentOperation = Instructions.LESSER;
+                        continue;
+                    case RPGLex.Type.MORE_THAN:
+                        CurrentOperation = Instructions.GREATER;
+                        continue;
+                    case RPGLex.Type.LT_EQUAL:
+                        CurrentOperation = Instructions.LESSER_EQUAL;
+                        continue;
+                    case RPGLex.Type.MT_EQUAL:
+                        CurrentOperation = Instructions.GREATER_EQUAL;
+                        continue;
+                    case RPGLex.Type.NOT:
+                        CurrentOperation = Instructions.NOT_EQUAL;
                         continue;
 
                     case RPGLex.Type.BIF:
@@ -234,9 +249,28 @@ namespace NetRPG.Language
                         ParseExpression(token.Block.ToArray());
                         break;
                     case RPGLex.Type.WORD_LITERAL:
-                        if (token.Block != null)
+                        if (i + 1 < tokens.Length && tokens[i+1].Block != null)
                         {
-                            //TODO: check if it's an array, else it's a procedure
+                            //DONE: check if it's an array, else it's a procedure
+                            if (_Module.GetDataSetList().Contains(tokens[i].Value))
+                            {
+                                CurrentProcudure.AddInstruction(Instructions.LDGBL, token.Value); //Load global
+                                ParseExpression(tokens[i + 1].Block.ToArray());
+                                CurrentProcudure.AddInstruction(Instructions.LDARR);
+                            }
+                            else if (CurrentProcudure.GetDataSetList().Contains(tokens[i].Value))
+                            {
+                                CurrentProcudure.AddInstruction(Instructions.LDVAR, token.Value); //Load local
+                                ParseExpression(tokens[i + 1].Block.ToArray());
+                                CurrentProcudure.AddInstruction(Instructions.LDARR);
+                            }
+                            else
+                            {
+                                ParseExpression(tokens[i + 1].Block.ToArray());
+                                CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
+                            }
+                            
+                            i++;
                         }
                         else
                         {

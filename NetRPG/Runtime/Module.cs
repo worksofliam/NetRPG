@@ -55,7 +55,7 @@ namespace NetRPG.Runtime
                 
                 foreach (Instruction inst in proc.GetInstructions())
                 {
-                    Console.WriteLine("\t" + inst._Instruction.ToString().PadRight(10) + " " + inst._Value);
+                    Console.WriteLine("\t" + inst._Instruction.ToString().PadRight(15) + " " + inst._Value);
                 }
 
                 Console.WriteLine();

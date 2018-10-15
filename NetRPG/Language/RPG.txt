@@ -1,4 +1,4 @@
-﻿OPERATORS: ".", "(", ")", ";", ":", "=", "+", "/", "*", "-"
+﻿OPERATORS: "<>", "<=", ">=", ".", "(", ")", ";", ":", "=", "+", "/", "*", "-", "<", ">"
 STRING_LITERAL: '\''
 
 BLOCK_OPEN: "("
@@ -14,8 +14,6 @@ DOUBLE_LITERAL: @"/(?<=^| )\\d+(\\.\\d+)?(?=$| )/"
 WORD_LITERAL: "/.*?/"
 
 EQUALS: "="
-OPEN_PAREN: "("
-CLOSE_PAREN: ")"
 PARMS: ":"
 STMT_END: ";"
 DOT: "."
@@ -23,3 +21,8 @@ ADD: "+"
 SUB: "-"
 DIV: "/"
 MUL: "*"
+LESS_THAN: "<"
+MORE_THAN: ">"
+NOT: "<>"
+MT_EQUAL: ">="
+LT_EQUAL: "<="

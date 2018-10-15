@@ -5,25 +5,6 @@ using System.Linq;
 
 namespace NetRPG.Runtime
 {
-    /// <summary>
-    /// A DataSet can be a variable, file, or struct
-    /// </summary>
-    public class DataSet
-    {
-        public string _Name;
-        public Types _Type;
-        public int _Length;
-        public int _Dimentions; //If 0, not an array
-
-        public object _InitialValue;
-
-        public DataSet(string name)
-        {
-            _Name = name;
-        }
-
-        public bool IsArray() => (_Dimentions > 0);
-    }
 
     public class Instruction
     {
@@ -36,46 +17,15 @@ namespace NetRPG.Runtime
         }
     }
 
-    public class Procedure
-    {
-        public string _Name;
-        public Types _ReturnType;
-        private List<Instruction> _Instructions;
-        private Dictionary<string, DataSet> _DataSets;
-
-        public Procedure(string Name, Types ReturnType = Types.Void)
-        {
-            _Name = Name;
-            _ReturnType = ReturnType;
-            _Instructions = new List<Instruction>();
-            _DataSets = new Dictionary<string, DataSet>();
-        }
-
-        public void AddDataSet(DataSet var)
-        {
-            _DataSets.Add(var._Name, var);
-        }
-
-        public void AddInstruction(Instructions Instruction, string Value = "")
-        {
-            _Instructions.Add(new Instruction(Instruction, Value));
-        }
-
-        //TODO: Get variables
-        public Instruction[] GetInstructions() => _Instructions.ToArray();
-        public string[] GetDataSetList() => _DataSets.Keys.ToArray();
-        public DataSet GetDataSet(string Name) {
-            return _DataSets[Name];
-        }
-    }
-
     public enum Instructions
     {
         NOP, //Do nothing
         PARMS, //Do nothing
 
-        LDVAR, //Load var onto stack
-        LDARR, //Load from array
+        LDGBL, //Load from global variables
+        LDVAR, //Load DataSet onto stack - e.g. variable, struct or array
+        LDARR, //Get element from array: Stack-1 is array, Stack-0 is indec
+        LDFLD, //Load field from struct: Stack-1 is struct, Stack-1 is name        
 
         LDSTR, //Load constant string onto stack
         LDNUM, //Load constant numeric onto stack
@@ -91,7 +41,13 @@ namespace NetRPG.Runtime
         DIV,
         APPEND,
         NOT, //Negate
+        OR,
         EQUAL,
+        NOT_EQUAL,
+        GREATER, //Stack-1 is great than Stack-0
+        GREATER_EQUAL,
+        LESSER, //Stack-1 is less than Stack-0
+        LESSER_EQUAL,
         ASSIGN,
         RETURN,
         ENTRYPOINT, //Program entry point

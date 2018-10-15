@@ -12,8 +12,7 @@ namespace NetRPG
             string SourcePath = Path.Combine(Environment.CurrentDirectory, "RPGCode", "test1.rpgle");
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             string NewLine = (isWindows ? Environment.NewLine : "");
-
-            Console.WriteLine("Hello World: " + Environment.CurrentDirectory);
+            
             Preprocessor prep = new Preprocessor();
 
             prep.ReadFile(SourcePath);
@@ -27,7 +26,7 @@ namespace NetRPG
             reader.ReadStatements(Statements);
             reader.GetModule().Print();
 
-            //Console.ReadKey();
+            Console.ReadKey();
         }
     }
 }
