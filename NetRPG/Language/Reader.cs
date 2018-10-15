@@ -61,25 +61,27 @@ namespace NetRPG.Language
                 }
             }
 
-            switch (tokens[0].Value.ToUpper())
-            {
-                case "DCL-S":
-                    varType = StringToType(tokens[2].Value, tokens[2].Block?[0].Value);
-                    varLength = tokens[2].Block?[0].Value;
-                    break;
-                case "DCL-F":
-                    break;
-                case "DCL-C":
-                    break;
-                case "DCL-DS":
-                    break;
-            }
+            if (tokens[1].Type == RPGLex.Type.SUB) {
+                switch (tokens[2].Value.ToUpper())
+                {
+                    case "S":
+                        varType = StringToType(tokens[4].Value, tokens[5]?.Block?[0].Value);
+                        varLength = tokens[5]?.Block?[0].Value;
+                        break;
+                    case "F":
+                        break;
+                    case "C":
+                        break;
+                    case "DS":
+                        break;
+                }
 
-            if (variable != null)
-                if (CurrentProcudure != null)
-                    CurrentProcudure.AddVariable(variable);
-                else
-                    _Module.AddVariable(variable);
+                if (variable != null)
+                    if (CurrentProcudure != null)
+                        CurrentProcudure.AddVariable(variable);
+                    else
+                        _Module.AddVariable(variable);
+            }
         }
 
         private static Types StringToType(string Value, string length = "0")
