@@ -155,6 +155,7 @@ private Dictionary<Type, string[]> Pieces = new Dictionary<Type, string[]>
                                 {
                                     if (BLOCK_OPEN.Contains(piece))
                                     {
+                                        GetLastToken().Add(new RPGToken(Type.BLOCK, null, CurrentLine));
                                         GetLastToken(1);
                                     }
                                     else if (BLOCK_CLOSE.Contains(piece))

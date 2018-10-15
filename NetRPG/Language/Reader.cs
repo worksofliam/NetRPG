@@ -48,11 +48,16 @@ namespace NetRPG.Language
             
             for (int i = 3; i < tokens.Length; i++)
             {
-                switch (tokens[i].Value.ToUpper())
-                {
-                    case "DIM":
-                        variable._Dimentions = int.Parse(tokens[i].Block?[0].Value);
-                        break;
+                if (tokens[i+1].Type == RPGLex.Type.BLOCK) {
+                    switch (tokens[i].Value.ToUpper())
+                    {
+                        case "DIM":
+                            variable._Dimentions = int.Parse(tokens[i+1].Block?[0].Value);
+                            break;
+                    }
+                    i++;
+                } else {
+                    
                 }
             }
 
@@ -126,52 +131,54 @@ namespace NetRPG.Language
 
         private void ParseExpression(RPGToken[] tokens)
         {
+            RPGToken token;
             if (tokens == null) return;
             if (tokens.Count() == 0) return;
 
             Types lastType = Types.Void;
             Instructions CurrentOperation = Instructions.NOP;
 
-            foreach (RPGToken token in tokens)
+            for (int i = 0; i < tokens.Length; i++)
             {
+                token = tokens[i];
                 switch (token.Type)
                 {
                     case RPGLex.Type.PARMS:
                         CurrentOperation = Instructions.PARMS;
-                        if (token.Block != null) ParseExpression(token.Block.ToArray());
                         continue;
                     case RPGLex.Type.EQUALS:
                         CurrentOperation = Instructions.EQUAL;
-                        if (token.Block != null) ParseExpression(token.Block.ToArray());
                         continue;
                     case RPGLex.Type.ADD:
                         if (lastType == Types.Character || lastType == Types.Varying || lastType == Types.String)
                             CurrentOperation = Instructions.APPEND;
                         else
                             CurrentOperation = Instructions.ADD;
-
-                        if (token.Block != null) ParseExpression(token.Block.ToArray());
                         continue;
                     case RPGLex.Type.SUB:
                         CurrentOperation = Instructions.SUB;
-                        if (token.Block != null) ParseExpression(token.Block.ToArray());
                         continue;
                     case RPGLex.Type.DIV:
                         CurrentOperation = Instructions.DIV;
-                        if (token.Block != null) ParseExpression(token.Block.ToArray());
                         continue;
                     case RPGLex.Type.MUL:
                         CurrentOperation = Instructions.MUL;
-                        if (token.Block != null) ParseExpression(token.Block.ToArray());
                         continue;
                     case RPGLex.Type.DOT:
                         CurrentOperation = Instructions.PARMS;
-                        if (token.Block != null) ParseExpression(token.Block.ToArray());
                         continue;
 
                     case RPGLex.Type.BIF:
+                        if (tokens[i+1].Block != null) { 
+                            ParseExpression(tokens[i+1].Block.ToArray());
+                            CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
+                            i++;
+                        } else {
+                            //TODO: What if no parameters?
+                        }
+                        break;
+                    case RPGLex.Type.BLOCK:
                         ParseExpression(token.Block.ToArray());
-                        CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
                         break;
                     case RPGLex.Type.WORD_LITERAL:
                         if (token.Block != null)
