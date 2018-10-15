@@ -5,8 +5,26 @@ using NetRPG.Runtime;
 
 namespace NetRPG.Language
 {
+    class Labels {
+        private static List<String> _Labels = new List<String>();
+        public static int Scope = 0;
+        public static void Add(string Label) {
+            _Labels.Add(Label);
+        }
+        public static String getScope()
+        {
+            return "SCOPE" + Scope.ToString();
+        }
+        public static String getLastScope()
+        {
+            String Out = _Labels[_Labels.Count - 1];
+            _Labels.RemoveAt(_Labels.Count - 1);
+            return Out;
+        }
+    }
     class Reader
     {
+
         private Module _Module;
         private Procedure CurrentProcudure;
 
@@ -115,11 +133,57 @@ namespace NetRPG.Language
 
         private void HandleOperation(RPGToken[] tokens)
         {
+            string forElse;
             if (CurrentProcudure == null)
                 CurrentProcudure = new Procedure("entry");
 
             switch (tokens[0].Value.ToUpper())
             {
+                case "IF":
+                    ParseExpression(tokens.Skip(1).ToArray());
+
+                    Labels.Add(Labels.getScope());
+                    CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
+                    Labels.Scope++;
+                    break;
+                
+                case "ELSE":
+                    // forElse = getLastScope();
+
+                    // Labels.Add(getScope()); 
+                    // Proc.addIL("br " + getScope()); Scope++;
+
+                    // Proc.addGoto(forElse);
+                    forElse = Labels.getLastScope();
+                    Labels.Add(Labels.getScope());
+                    CurrentProcudure.AddInstruction(Instructions.BR, Labels.getScope());
+                    Labels.Scope++;
+
+                    CurrentProcudure.AddInstruction(Instructions.LABEL, forElse);
+                    break;
+                case "ELSEIF":
+                    // forElse = getLastScope();
+
+                    // Labels.Add(getScope());
+                    // Build = Interpreter.StringBuilder(Pieces, 1, Pieces.Length);
+                    // Proc.Expression(Build);
+                    // Proc.addIL("brfalse " + getScope()); Scope++;
+
+                    // Proc.addGoto(forElse);
+
+                    forElse = Labels.getLastScope();
+                    Labels.Add(Labels.getScope());
+
+                    CurrentProcudure.AddInstruction(Instructions.LABEL, forElse);
+                    ParseExpression(tokens.Skip(1).ToArray());
+                    CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
+                    Labels.Scope++;
+                    break;
+                case "ENDIF":
+                    //Proc.addGoto(getLastScope());
+                    CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getLastScope());
+                    break;
+
                 case "DSPLY":
                     ParseExpression(tokens.Skip(1).ToArray());
                     CurrentProcudure.AddInstruction(Instructions.CALL, "DSPLY");

@@ -96,7 +96,10 @@ namespace NetRPG.Runtime
         EQUAL,
         ASSIGN,
         RETURN,
-        ENTRYPOINT //Program entry point
+        ENTRYPOINT, //Program entry point
+        BRFALSE, //Break if false
+        BRTRUE, //Break if true
+        BR //Break
     };
 
     public enum Types
