@@ -70,6 +70,9 @@ namespace NetRPG.Language
                         case "DIM":
                             dataSet._Dimentions = int.Parse(tokens[i+1].Block?[0].Value);
                             break;
+                        case "INZ":
+                            dataSet._InitialValue = tokens[i+1].Block?[0].Value;
+                            break;
                     }
                     i++;
                 } else {

@@ -15,17 +15,11 @@ namespace NetRPG.Runtime
         public int _Length;
         public int _Dimentions; //If 0, not an array
 
+        public object _InitialValue;
+
         public DataSet(string name)
         {
             _Name = name;
-        }
-
-        public DataSet(string name, Types type, int length = 0, int dimentions = 0)
-        {
-            _Name = name;
-            _Type = type;
-            _Length = length;
-            _Dimentions = 0;
         }
 
         public bool IsArray() => (_Dimentions > 0);
