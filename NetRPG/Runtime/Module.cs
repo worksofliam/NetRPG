@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace NetRPG.Runtime
 {
-    class Module
+    public class Module
     {
         private Dictionary<string, DataSet> GlobalDataSets;
         private List<Procedure> Procedures;
@@ -21,6 +21,8 @@ namespace NetRPG.Runtime
         public DataSet GetDataSet(string Name) {
             return GlobalDataSets[Name];
         }
+
+        public Procedure[] GetProcedures() => Procedures.ToArray();
 
         public void AddDataSet(DataSet var)
         {

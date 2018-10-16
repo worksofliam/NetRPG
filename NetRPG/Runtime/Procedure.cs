@@ -12,12 +12,15 @@ namespace NetRPG.Runtime
         private List<Instruction> _Instructions;
         private Dictionary<string, DataSet> _DataSets;
 
+        private bool _HasEntrypoint;
+
         public Procedure(string Name, Types ReturnType = Types.Void)
         {
             _Name = Name;
             _ReturnType = ReturnType;
             _Instructions = new List<Instruction>();
             _DataSets = new Dictionary<string, DataSet>();
+            _HasEntrypoint = false;
         }
 
         public void AddDataSet(DataSet var)
@@ -28,6 +31,9 @@ namespace NetRPG.Runtime
         public void AddInstruction(Instructions Instruction, string Value = "")
         {
             _Instructions.Add(new Instruction(Instruction, Value));
+
+            if (Instruction == Instructions.ENTRYPOINT) 
+                _HasEntrypoint = true;
         }
 
         //TODO: Get variables
@@ -35,7 +41,11 @@ namespace NetRPG.Runtime
         public string[] GetDataSetList() => _DataSets.Keys.ToArray();
         public DataSet GetDataSet(string Name)
         {
+            //TODO: Throw if no exist?
             return _DataSets[Name];
         }
+
+        public string GetName() => _Name;
+        public bool HasEntrypoint => _HasEntrypoint;
     }
 }
