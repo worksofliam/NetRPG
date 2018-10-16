@@ -25,8 +25,6 @@ namespace NetRPG
             Reader reader = new Reader();
             reader.ReadStatements(Statements);
             reader.GetModule().Print();
-
-            Console.ReadKey();
         }
     }
 }
