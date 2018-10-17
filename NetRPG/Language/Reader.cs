@@ -219,7 +219,6 @@ namespace NetRPG.Language
                     CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
                     Labels.Scope++;
                     break;
-                
                 case "ELSE":
                     forElse = Labels.getLastScope();
                     Labels.Add(Labels.getScope());
@@ -228,7 +227,6 @@ namespace NetRPG.Language
 
                     CurrentProcudure.AddInstruction(Instructions.LABEL, forElse);
                     break;
-
                 case "ELSEIF":
                     forElse = Labels.getLastScope();
                     Labels.Add(Labels.getScope());
@@ -240,6 +238,25 @@ namespace NetRPG.Language
                     break;
                 case "ENDIF":
                     CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getLastScope());
+                    break;
+
+                
+                case "SELECT":
+                    Labels.Add(Labels.getScope());
+                    Labels.Scope++;
+                    break;
+                case "WHEN":
+                    forElse = Labels.getLastScope();
+                    CurrentProcudure.AddInstruction(Instructions.LABEL, forElse);
+
+                    Labels.Add(Labels.getScope());
+                    ParseExpression(tokens.Skip(1).ToArray());
+                    CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
+                    Labels.Scope++;
+                    break;
+                case "ENDSL":
+                    CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getLastScope());
+                    Labels.Scope++;
                     break;
 
                 case "DSPLY":

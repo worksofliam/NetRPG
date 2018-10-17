@@ -30,8 +30,6 @@ namespace NetRPG
             VM vm = new VM();
             vm.AddModule(reader.GetModule());
             vm.Run();
-
-            Console.ReadLine();
         }
     }
 }
