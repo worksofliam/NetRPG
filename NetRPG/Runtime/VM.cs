@@ -37,8 +37,6 @@ namespace NetRPG.Runtime
 
         public void Run()
         {
-            //TODO: initialise globals
-            //TODO: Run entrypoint procedure
             Execute(_EntryProcedure);
         }
 
@@ -54,13 +52,13 @@ namespace NetRPG.Runtime
             Dictionary<string, int> Labels = new Dictionary<string, int>();
             Dictionary<string, DataValue> LocalVariables = new Dictionary<string, DataValue>();
             Instruction[] instructions = _Procedures[Name].GetInstructions();
-
-            //TODO: initialise variables
-            foreach (String global in _Procedures[Name].GetDataSetList())
+            
+            //Initialise local variables
+            foreach (string local in _Procedures[Name].GetDataSetList())
             {
-                DataValue set = _Procedures[Name].GetDataSet(global).ToDataValue();
+                DataValue set = _Procedures[Name].GetDataSet(local).ToDataValue();
                 LocalVariables.Add(set.GetName(), set);
-                LocalVariables[set.GetName()].Set(_Procedures[Name].GetDataSet(global)._InitialValue);
+                LocalVariables[set.GetName()].Set(_Procedures[Name].GetDataSet(local)._InitialValue);
             }
 
             //TODO: Do this only once and not everytime a procedure is called.
@@ -89,7 +87,6 @@ namespace NetRPG.Runtime
                         Stack.Add(Operate(instructions[ip]._Instruction, Values[0], Values[1]));
                         break;
                         
-
                     case Instructions.BR:
                         ip = Labels[instructions[ip]._Value];
                         break;
@@ -186,7 +183,7 @@ namespace NetRPG.Runtime
                         Values[0] = Stack[Stack.Count - 2];
                         Values[1] = Stack[Stack.Count - 1]; //Value
 
-                        if (Values[0] is int)
+                        if (Values[0] is int) //TODO: Accept other numeric type?
                         {
                             tempDataValue = (DataValue)Stack[Stack.Count - 3]; //DataValue
                             tempIndex = int.Parse(Values[0].ToString()) - 1;
@@ -201,8 +198,6 @@ namespace NetRPG.Runtime
                         }
                         
                         break;
-                        
-                        
                 }
 
             }
