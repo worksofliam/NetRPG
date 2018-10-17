@@ -259,6 +259,27 @@ namespace NetRPG.Language
                     Labels.Scope++;
                     break;
 
+                
+
+                case "DOW":
+                    CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getScope());
+                    Labels.Add(Labels.getScope());
+                    Labels.Scope++;
+
+                    ParseExpression(tokens.Skip(1).ToArray());
+                    CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
+                    Labels.Add(Labels.getScope());
+                    Labels.Scope++;
+                    break;
+                case "ENDDO":
+                    //TODO: Move these variables!!!
+                    string end = Labels.getLastScope();
+                    string start = Labels.getLastScope();
+                    CurrentProcudure.AddInstruction(Instructions.BR, start);
+                    CurrentProcudure.AddInstruction(Instructions.LABEL, end);
+                    Labels.Scope++;
+                    break;
+
                 case "DSPLY":
                     ParseExpression(tokens.Skip(1).ToArray());
                     CurrentProcudure.AddInstruction(Instructions.CALL, "DSPLY");

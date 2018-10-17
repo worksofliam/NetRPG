@@ -12,7 +12,7 @@ Dcl-Ds QualDimTest Qualified Dim(10);
   Dcl-Subf boom2 Char(10);
 End-Ds;
 
-MyField = 'bye';
+MyField = '';
 QualDimTest(5).Boom = 'yolo';
 QualTest.Random = 'yolo';
 
@@ -24,6 +24,16 @@ QualTest.Random = 'yolo';
 // Endif;
 
 QualDimTest(1).boom2 = 'Hi';
+
+Dow MyField <> 'aaaaaaaa';
+  MyField = MyField + 'a';
+  Dsply MyField;
+  If (MyField = 'aaaa');
+    Dsply 'Half way!!';
+  Else;
+    Dsply 'boo';
+  Endif;
+Enddo;
 
 // If (QualDimTest(5).Boom = QualTest.Random);
 //   Dsply 'Hi!!';
@@ -46,19 +56,19 @@ QualDimTest(1).boom2 = 'Hi';
 
 // Endif;
 
-Select;
-  When (QualDimTest(1).Boom <> QualDimTest(5).Boom);
-    Dsply 'Hello';
-  When (QualTest.Random = 'swag');
-    Dsply QualTest.Random;
-  When QualDimTest(1).boom2 = 'Hi';
-    Select;
-      When (MyField = 'no');
-        Dsply 'hhi';
-    Endsl;
-  When MyField = 'bye';
-    Dsply 'Do a thing';
-Endsl;
+// Select;
+//   When (QualDimTest(1).Boom <> QualDimTest(5).Boom);
+//     Dsply 'Hello';
+//   When (QualTest.Random = 'swag');
+//     Dsply QualTest.Random;
+//   When QualDimTest(1).boom2 = 'Hi';
+//     Select;
+//       When (MyField = 'no');
+//         Dsply 'hhi';
+//     Endsl;
+//   When MyField = 'bye';
+//     Dsply 'Do a thing';
+// Endsl;
 
 *InLR = *On;
 Return;
