@@ -13,6 +13,8 @@ if UserList(1) = 'Dave';
   Dsply UserName + ' is the name';
 
   Dsply 'hi';
+
+  Dsply (56 + 10);
 Endif;
 
 *InLR = *On;

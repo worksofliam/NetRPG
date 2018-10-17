@@ -28,7 +28,8 @@ namespace NetRPG.Runtime
         LDFLDV, //Load field from struct: Stack-1 is struct, Stack-0 is name        
         
         LDSTR, //Load constant string onto stack
-        LDNUM, //Load constant numeric onto stack
+        LDINT, //Load constant int onto 
+        LDDOU, //Load constant double onto stack
 
         //Loading DataSets
         LDGBLD,

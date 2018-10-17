@@ -141,7 +141,10 @@ namespace NetRPG.Runtime
                         Stack.Add(LocalVariables[instructions[ip]._Value].Get());
                         break;
 
-                    case Instructions.LDNUM:
+                    case Instructions.LDINT:
+                        Stack.Add(int.Parse(instructions[ip]._Value));
+                        break;
+                    case Instructions.LDDOU:
                         Stack.Add(double.Parse(instructions[ip]._Value));
                         break;
 
@@ -183,7 +186,7 @@ namespace NetRPG.Runtime
                         Values[0] = Stack[Stack.Count - 2];
                         Values[1] = Stack[Stack.Count - 1]; //Value
 
-                        if (Values[0] is double)
+                        if (Values[0] is int)
                         {
                             tempDataValue = (DataValue)Stack[Stack.Count - 3]; //DataValue
                             tempIndex = int.Parse(Values[0].ToString()) - 1;

@@ -278,8 +278,10 @@ namespace NetRPG.Language
                         CurrentProcudure.AddInstruction(Instructions.LDSTR, token.Value);
                         break;
                     case RPGLex.Type.INT_LITERAL:
+                        CurrentProcudure.AddInstruction(Instructions.LDINT, token.Value);
+                        break;
                     case RPGLex.Type.DOUBLE_LITERAL:
-                        CurrentProcudure.AddInstruction(Instructions.LDNUM, token.Value);
+                        CurrentProcudure.AddInstruction(Instructions.LDDOU, token.Value);
                         break;
                 }
             }
@@ -406,8 +408,10 @@ namespace NetRPG.Language
                         //TODO: handle special
                         break;
                     case RPGLex.Type.INT_LITERAL:
+                        CurrentProcudure.AddInstruction(Instructions.LDINT, token.Value);
+                        break;
                     case RPGLex.Type.DOUBLE_LITERAL:
-                        CurrentProcudure.AddInstruction(Instructions.LDNUM, token.Value);
+                        CurrentProcudure.AddInstruction(Instructions.LDDOU, token.Value);
                         break;
                 }
 
