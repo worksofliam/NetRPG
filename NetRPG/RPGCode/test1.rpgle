@@ -1,11 +1,19 @@
-﻿Dcl-S UserName Char(10) Inz(*USER);
+﻿Dcl-S UserName Char(10) Inz('Barry');
 Dcl-S UserList Char(10) Dim(10);
 
-Dsply ('Liam' + ' is the user');
-UserName = 'Barry';
-Dsply (UserName + ' is the user');
 UserList(1) = 'Dave';
-Dsply (UserList(1) + ' is the user');
+
+if UserList(1) = 'Dave';
+  If (UserName = 'Barry');
+    Dsply ('yolo');
+  Else;
+    Dsply ('No no');
+  Endif;
+
+  Dsply UserName + ' is the name';
+
+  Dsply 'hi';
+Endif;
 
 *InLR = *On;
 Return;

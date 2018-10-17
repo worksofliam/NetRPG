@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Linq;
+using NetRPG.Runtime.Typing;
 
 namespace NetRPG.Runtime
 {
@@ -239,66 +240,7 @@ namespace NetRPG.Runtime
         }
     }
 
-   public class DataValue
-    {
-        protected string Name;
-        protected Types Type;
-        protected Object[] Value;
-        protected int Dimentions = 1;
-        protected Dictionary<string, string> Properties;
-        protected Dictionary<string, DataValue> Subfields;
 
-        public void SetArray(int Count)
-        {
-            this.Dimentions = Count;
-            this.Value = new object[this.Dimentions];
-        }
 
-        public string GetName() => this.Name;
-        
-        public void Set(object value, int index = 0)
-        {
-            this.Value[index] = value;
-        }
 
-        public dynamic Get()
-        {
-            if (Dimentions > 1) //If it's an array
-                return this.Value;
-            else
-                return this.Value[0];
-        }
-
-        public DataValue Get(string subfield)
-        {
-            return this.Subfields[subfield];
-        }
-    }
-
-    class Character : DataValue
-    {
-        public Character(string name, int length, string initialValue = "")
-        {
-            this.Name = name;
-            this.Type = Types.Character;
-            this.Properties = new Dictionary<string, string>();
-            this.Properties.Add("length", length.ToString());
-
-            this.Dimentions = 1;
-            this.Value = new object[this.Dimentions];
-        }
-        
-        public new void Set(object value, int index = 0)
-        {
-            string NewValue = (string)value;
-            int Length = int.Parse(this.Properties["length"]);
-
-            if (NewValue.Length > Length)
-                value = NewValue.Substring(0, Length);
-            else
-                value = NewValue.PadRight(Length);
-            
-            this.Value[index] = NewValue;
-        }
-    }
 }
