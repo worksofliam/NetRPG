@@ -118,16 +118,51 @@ namespace NetRPG.Runtime
                         break;
 
                     case Instructions.LDARRV:
-                        tempArray = (object[])Stack[Stack.Count - 2];
+                        
+                        Values[0] = Stack[Stack.Count - 2];
                         Values[1] = Stack[Stack.Count - 1];
-
                         tempIndex = int.Parse(Values[1].ToString()) - 1;
-                        Stack.RemoveRange(Stack.Count - 2, 2);
-                        Stack.Add(tempArray[tempIndex]);
+
+                        if (Values[0] is object[])
+                        {
+                            tempArray = (object[])Stack[Stack.Count - 2];
+
+                            Stack.RemoveRange(Stack.Count - 2, 2);
+                            Stack.Add(tempArray[tempIndex]);
+                        }
+                        else
+                        {
+                            tempDataValue = (DataValue)Stack[Stack.Count - 2];
+                            tempArray = (object[]) tempDataValue.Get();
+                            tempArray = (object[]) tempArray[tempIndex];
+
+                            Stack.RemoveRange(Stack.Count - 2, 2);
+                            Stack.Add(tempArray);
+                        }
                         break;
 
                     case Instructions.LDFLDV:
-                        Stack.Add(GlobalVariables[instructions[ip]._Value].Get());
+                        Values[0] = Stack[Stack.Count - 1];
+
+                        Stack.RemoveRange(Stack.Count - 1, 1);
+                        if (Values[0] is DataValue[])
+                        {
+                            tempArray = (DataValue[])Values[0];
+                            foreach (DataValue data in tempArray)
+                            {
+                                if (data.GetName() == instructions[ip]._Value)
+                                {
+                                    Stack.Add(data.Get());
+                                    break;
+                                }
+                            }
+                        } 
+                        else if (Values[0] is DataValue)
+                        {
+                            tempDataValue = (DataValue) Values[0];
+                            Stack.Add(tempDataValue.Get(instructions[ip]._Value));
+                        }
+                            
                         break;
 
                     case Instructions.LDGBLV:
@@ -157,10 +192,38 @@ namespace NetRPG.Runtime
                         Stack.Add(GlobalVariables[instructions[ip]._Value]);
                         break;
 
+                    case Instructions.LDARRD: //Only really used to get a array subfield
+                        tempDataValue = (DataValue) Stack[Stack.Count - 2];
+                        Values[1] = Stack[Stack.Count - 1];
+
+                        tempIndex = int.Parse(Values[1].ToString()) - 1;
+                        Stack.RemoveRange(Stack.Count - 2, 2);
+                        Values[0] = tempDataValue.Get(tempIndex);
+                        Stack.Add(Values[0]);
+                        break;
+
                     case Instructions.LDFLDD:
-                        tempDataValue = (DataValue)Stack[Stack.Count - 1]; //DataValue
-                        Stack.RemoveRange(Stack.Count - 1, 1);
-                        Stack.Add(tempDataValue.Get(instructions[ip]._Value));
+                        Values[0] = Stack[Stack.Count - 1]; //DataValue[]
+
+                        if (Values[0] is object[])
+                        {
+                            tempArray = (object[]) Values[0];
+                            Stack.RemoveRange(Stack.Count - 1, 1);
+
+                            foreach (DataValue data in tempArray)
+                            {
+                                if (data.GetName() == instructions[ip]._Value)
+                                {
+                                    Stack.Add(data);
+                                    break;
+                                }
+                            }
+                        }
+                        else if (Values[0] is DataValue)
+                        {
+                            tempDataValue = (DataValue)Values[0];
+                            Stack.Add(tempDataValue.GetData(instructions[ip]._Value));
+                        }
                         break;
                         
                     case Instructions.NOT:
@@ -190,6 +253,12 @@ namespace NetRPG.Runtime
                             tempDataValue.Set(Values[1], tempIndex);
                             Stack.RemoveRange(Stack.Count - 3, 3);
                         }
+                        else if (Values[0] is string)
+                        {
+                            tempDataValue = (Structure)Stack[Stack.Count - 3]; //DataValue
+                            tempDataValue.Set(Values[1], Values[0].ToString());
+                            Stack.RemoveRange(Stack.Count - 3, 3);
+                        }
                         else
                         {
                             tempDataValue = (DataValue)Stack[Stack.Count - 2]; //DataValue OR index
@@ -197,6 +266,14 @@ namespace NetRPG.Runtime
                             Stack.RemoveRange(Stack.Count - 2, 2);
                         }
                         
+                        break;
+
+                    case Instructions.ENTRYPOINT:
+                    case Instructions.LABEL:
+                        //Do nothing
+                        break;
+                    default:
+                        Console.WriteLine("Unused instruction: " + instructions[ip]._Instruction.ToString());
                         break;
                 }
 

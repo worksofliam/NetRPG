@@ -8,6 +8,9 @@ namespace NetRPG.Runtime.Typing
     {
         public Character(string name, int length, string initialValue = "")
         {
+            if (initialValue == null)
+                initialValue = "";
+
             this.Name = name;
             this.Type = Types.Character;
             this.Properties = new Dictionary<string, dynamic>();

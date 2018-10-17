@@ -11,7 +11,7 @@ namespace NetRPG.Runtime.Typing
         protected Object[] Value;
         protected int Dimentions = 1;
         protected Dictionary<string, dynamic> Properties;
-        protected Dictionary<string, DataValue> Subfields;
+        protected Dictionary<string, int> Subfields;
 
         public void SetArray(int Count)
         {
@@ -25,8 +25,12 @@ namespace NetRPG.Runtime.Typing
 
         public virtual void Set(object value, int index = 0)
         {
-            //this.Value[index] = value;
-            this.Set(value, index);
+            this.Value[index] = value;
+        }
+
+        public virtual void Set(object value, string subfield)
+        {
+            this.Value[this.Subfields[subfield]] = value;
         }
 
         public dynamic Get()
@@ -37,12 +41,31 @@ namespace NetRPG.Runtime.Typing
                 return this.Value[0];
         }
 
-        public DataValue Get(string subfield)
+        public virtual void SetSubfields(DataSet[] subfieldsData) { }
+
+        public int GetSubfield(string subfield)
         {
             return this.Subfields[subfield];
         }
 
-        protected void InitialValue()
+        public DataValue GetData(string subfield, int index = 0)
+        {
+            DataValue[] temp = (DataValue[])this.Value[index];
+            return temp[this.Subfields[subfield]];
+        }
+
+        public dynamic Get(string subfield, int index = 0)
+        {
+            DataValue[] temp = (DataValue[])this.Value[index];
+            return temp[this.Subfields[subfield]].Get();
+        }
+
+        public dynamic Get(int index)
+        {
+            return this.Value[index];
+        }
+
+        public void InitialValue()
         {
             dynamic initialValue = null;
             if (this.Properties.ContainsKey("initialValue"))
@@ -76,5 +99,6 @@ namespace NetRPG.Runtime.Typing
             for (int x = 0; x < this.Dimentions; x++)
                 this.Value[x] = initialValue;
         }
+
     }
 }

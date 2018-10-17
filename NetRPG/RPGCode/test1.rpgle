@@ -1,20 +1,28 @@
-﻿Dcl-S UserName Char(10) Inz('Barry');
-Dcl-S UserList Char(10) Dim(10);
+﻿
+Dcl-DS HelloWorld;
+  Dcl-Subf MyField Char(10);
+End-Ds;
 
-UserList(1) = 'Dave';
+Dcl-Ds QualTest Qualified;
+  Dcl-Subf Random Char(10);
+End-Ds;
 
-if UserList(1) = 'Dave';
-  If (UserName = 'Barry');
-    Dsply ('yolo');
-  Else;
-    Dsply ('No no');
-  Endif;
+Dcl-Ds QualDimTest Qualified Dim(10);
+  Dcl-Subf Boom Char(10);
+  Dcl-Subf boom2 Char(10);
+End-Ds;
 
-  Dsply UserName + ' is the name';
+MyField = 'bye';
+QualDimTest(5).Boom = 'yolo';
+QualTest.Random = 'yolo';
 
-  Dsply 'hi';
+Dsply QualDimTest(1).Boom;
+Dsply QualDimTest(5).Boom;
 
-  Dsply (56 + 10);
+If (QualDimTest(5).Boom = QualTest.Random);
+  Dsply 'Hi!!';
+Else;
+  Dsply MyField;
 Endif;
 
 *InLR = *On;

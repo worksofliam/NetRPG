@@ -25,6 +25,8 @@ namespace NetRPG.Language
 
     class Reader
     {
+        private Dictionary<string, DataSet> Struct_Templates;
+        private List<DataSet> Current_Structs;
 
         private Module _Module;
         private Procedure CurrentProcudure;
@@ -33,6 +35,11 @@ namespace NetRPG.Language
         {
             _Module = new Module();
             CurrentProcudure = null;
+
+            Struct_Templates = new Dictionary<string, DataSet>();
+            Current_Structs = new List<DataSet>();
+
+            SubfieldLevel = -1;
         }
 
         public void ReadStatements(Statement[] Statements)
@@ -53,11 +60,49 @@ namespace NetRPG.Language
                     case RPGLex.Type.WORD_LITERAL:
                         HandleAssignment(tokens);
                         break;
+                    case RPGLex.Type.ENDDCL:
+                        HandleEnd(tokens);
+                        break;
                 }
             }
 
             if (CurrentProcudure != null)
                 _Module.AddProcedure(CurrentProcudure);
+        }
+
+        private int SubfieldLevel;
+        private void HandleEnd(RPGToken[] tokens)
+        {
+            if (tokens[1].Type == RPGLex.Type.SUB)
+            {
+                switch (tokens[2].Value.ToUpper())
+                {
+                    case "DS":
+                        Struct_Templates.Add(Current_Structs[SubfieldLevel]._Name, Current_Structs[SubfieldLevel]);
+                        if (Current_Structs[SubfieldLevel]._Template == false) //if it's not a template, also define it
+                        {
+                            if (Current_Structs[SubfieldLevel]._Qualified == true)
+                            {
+                                if (CurrentProcudure != null)
+                                    CurrentProcudure.AddDataSet(Current_Structs[SubfieldLevel]);
+                                else
+                                    _Module.AddDataSet(Current_Structs[SubfieldLevel]);
+                            }
+                            else
+                            {
+                                foreach(DataSet var in Current_Structs[SubfieldLevel]._Subfields)
+                                    if (CurrentProcudure != null)
+                                        CurrentProcudure.AddDataSet(var);
+                                    else
+                                        _Module.AddDataSet(var);
+                            }
+                        }
+
+                        SubfieldLevel--;
+                        Current_Structs.RemoveAt(Current_Structs.Count - 1);
+                        break;
+                }
+            }
         }
 
         private void HandleDeclare(RPGToken[] tokens)
@@ -68,7 +113,7 @@ namespace NetRPG.Language
             
             for (int i = 3; i < tokens.Length; i++)
             {
-                if (tokens[i+1].Type == RPGLex.Type.BLOCK) {
+                if (i+1 < tokens.Length && tokens[i+1].Type == RPGLex.Type.BLOCK) {
                     switch (tokens[i].Value.ToUpper())
                     {
                         case "DIM":
@@ -80,7 +125,15 @@ namespace NetRPG.Language
                     }
                     i++;
                 } else {
-                    
+                    switch (tokens[i].Value.ToUpper())
+                    {
+                        case "QUALIFIED":
+                            dataSet._Qualified = true;
+                            break;
+                        case "TEMPLATE":
+                            dataSet._Template = true;
+                            break;
+                    }
                 }
             }
 
@@ -88,6 +141,7 @@ namespace NetRPG.Language
                 switch (tokens[2].Value.ToUpper())
                 {
                     case "S":
+                    case "SUBF":
                         dataSet._Type = StringToType(tokens[4].Value, tokens[5]?.Block?[0].Value);
                         int.TryParse(tokens[5]?.Block?[0].Value, out dataSet._Length);
                         break;
@@ -96,10 +150,21 @@ namespace NetRPG.Language
                     case "C":
                         break;
                     case "DS":
+                        dataSet._Type = Types.Structure;
+                        dataSet._Subfields = new List<DataSet>();
                         break;
                 }
 
-                if (dataSet != null)
+                if (SubfieldLevel >= 0)
+                {
+                    Current_Structs[SubfieldLevel]._Subfields.Add(dataSet);
+                }
+                else if (dataSet._Type == Types.Structure)
+                {
+                    SubfieldLevel++;
+                    Current_Structs.Add(dataSet);
+                }
+                else if (dataSet != null)
                     if (CurrentProcudure != null)
                         CurrentProcudure.AddDataSet(dataSet);
                     else
@@ -210,7 +275,7 @@ namespace NetRPG.Language
                 }
             }
 
-            ParseAssignment(tokens.SkipLast(assignIndex).ToArray());
+            ParseAssignment(tokens.Take(assignIndex).ToArray());
             ParseExpression(tokens.Skip(assignIndex + 1).ToArray());
             CurrentProcudure.AddInstruction(Instructions.STORE);
             //TODO: figure out how we're storing data, lol
@@ -243,16 +308,17 @@ namespace NetRPG.Language
                     case RPGLex.Type.WORD_LITERAL:
                         if (i + 1 < tokens.Length && tokens[i + 1].Block != null)
                         {
-                            //DONE: check if it's an array, else it's a procedure
                             if (_Module.GetDataSetList().Contains(tokens[i].Value))
                             {
                                 CurrentProcudure.AddInstruction(Instructions.LDGBLD, token.Value); //Load global
                                 ParseExpression(tokens[i + 1].Block.ToArray());
+                                CurrentProcudure.AddInstruction(Instructions.LDARRD);
                             }
                             else if (CurrentProcudure.GetDataSetList().Contains(tokens[i].Value))
                             {
                                 CurrentProcudure.AddInstruction(Instructions.LDVARD, token.Value); //Load local
                                 ParseExpression(tokens[i + 1].Block.ToArray());
+                                CurrentProcudure.AddInstruction(Instructions.LDARRD);
                             }
                             else
                             {
@@ -294,7 +360,7 @@ namespace NetRPG.Language
             if (tokens.Count() == 0) return;
 
             Types lastType = Types.Void;
-            Instructions CurrentOperation = Instructions.NOP;
+            List<Instructions> Append = new List<Instructions>();
 
             for (int i = 0; i < tokens.Length; i++)
             {
@@ -302,43 +368,41 @@ namespace NetRPG.Language
                 switch (token.Type)
                 {
                     case RPGLex.Type.PARMS:
-                        CurrentOperation = Instructions.NOP;
                         continue;
                     case RPGLex.Type.EQUALS:
-                        CurrentOperation = Instructions.EQUAL;
+                        Append.Add(Instructions.EQUAL);
                         continue;
                     case RPGLex.Type.ADD:
                         if (lastType == Types.Character || lastType == Types.Varying || lastType == Types.String)
-                            CurrentOperation = Instructions.APPEND;
+                            Append.Add(Instructions.APPEND);
                         else
-                            CurrentOperation = Instructions.ADD;
+                            Append.Add(Instructions.ADD);
                         continue;
                     case RPGLex.Type.SUB:
-                        CurrentOperation = Instructions.SUB;
+                        Append.Add(Instructions.SUB);
                         continue;
                     case RPGLex.Type.DIV:
-                        CurrentOperation = Instructions.DIV;
+                        Append.Add(Instructions.DIV);
                         continue;
                     case RPGLex.Type.MUL:
-                        CurrentOperation = Instructions.MUL;
+                        Append.Add(Instructions.MUL);
                         continue;
                     case RPGLex.Type.DOT:
-                        CurrentOperation = Instructions.LDFLDV;
                         continue;
                     case RPGLex.Type.LESS_THAN:
-                        CurrentOperation = Instructions.LESSER;
+                        Append.Add(Instructions.LESSER);
                         continue;
                     case RPGLex.Type.MORE_THAN:
-                        CurrentOperation = Instructions.GREATER;
+                        Append.Add(Instructions.GREATER);
                         continue;
                     case RPGLex.Type.LT_EQUAL:
-                        CurrentOperation = Instructions.LESSER_EQUAL;
+                        Append.Add(Instructions.LESSER_EQUAL);
                         continue;
                     case RPGLex.Type.MT_EQUAL:
-                        CurrentOperation = Instructions.GREATER_EQUAL;
+                        Append.Add(Instructions.GREATER_EQUAL);
                         continue;
                     case RPGLex.Type.NOT:
-                        CurrentOperation = Instructions.NOT_EQUAL;
+                        Append.Add(Instructions.NOT_EQUAL);
                         continue;
 
                     case RPGLex.Type.BIF:
@@ -387,7 +451,10 @@ namespace NetRPG.Language
                             if (_Module.GetDataSetList().Contains(tokens[i].Value))
                             {
                                 lastType = _Module.GetDataSet(tokens[i].Value)._Type;
-                                CurrentProcudure.AddInstruction(Instructions.LDGBLV, token.Value); //Load global
+                                if (lastType == Types.Structure)
+                                    CurrentProcudure.AddInstruction(Instructions.LDGBLD, token.Value); //Load global data
+                                else
+                                    CurrentProcudure.AddInstruction(Instructions.LDGBLV, token.Value); //Load global value
                             }
                             else if (CurrentProcudure.GetDataSetList().Contains(tokens[i].Value))
                             {
@@ -414,16 +481,11 @@ namespace NetRPG.Language
                         CurrentProcudure.AddInstruction(Instructions.LDDOU, token.Value);
                         break;
                 }
-
-                if (CurrentOperation != Instructions.NOP)
-                {
-                    CurrentProcudure.AddInstruction(CurrentOperation);
-                    CurrentOperation = Instructions.NOP;
-                }
+                
             }
-
-            if (CurrentOperation != Instructions.NOP)
-                CurrentProcudure.AddInstruction(CurrentOperation);
+            
+            for (int x = Append.Count - 1; x >= 0; x--)
+                CurrentProcudure.AddInstruction(Append[x]);
         }
 
         public Module GetModule() => _Module;
