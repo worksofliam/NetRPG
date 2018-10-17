@@ -22,16 +22,21 @@ namespace NetRPG.Runtime
         NOP, //Do nothing
         PARMS, //Do nothing
 
-        LDGBL, //Load from global variables
-        LDVAR, //Load DataSet onto stack - e.g. variable, struct or array
-        LDARR, //Get element from array: Stack-1 is array, Stack-0 is indec
-        LDFLD, //Load field from struct: Stack-1 is struct, Stack-1 is name        
-
+        LDGBLV, //Load from global variables
+        LDVARV, //Load DataSet onto stack - e.g. variable, struct or array
+        LDARRV, //Get element from array: Stack-1 is array, Stack-0 is index
+        LDFLDV, //Load field from struct: Stack-1 is struct, Stack-0 is name        
+        
         LDSTR, //Load constant string onto stack
         LDNUM, //Load constant numeric onto stack
 
-        STVAR, //Store variable
-        STARR, //Store into array
+        //Loading DataSets
+        LDGBLD,
+        LDVARD,
+        LDARRD,
+        LDFLDD,
+
+        STORE, //Store generic
 
         LABEL,
         CALL, //Functions

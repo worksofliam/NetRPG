@@ -50,6 +50,9 @@ namespace NetRPG.Language
                     case RPGLex.Type.OPERATION:
                         HandleOperation(tokens);
                         break;
+                    case RPGLex.Type.WORD_LITERAL:
+                        HandleAssignment(tokens);
+                        break;
                 }
             }
 
@@ -185,6 +188,103 @@ namespace NetRPG.Language
             }
         }
 
+        private void HandleAssignment(RPGToken[] tokens)
+        {
+            if (CurrentProcudure == null)
+            {
+                CurrentProcudure = new Procedure("entry");
+                CurrentProcudure.AddInstruction(Instructions.ENTRYPOINT);
+            }
+
+            if (tokens == null) return;
+            if (tokens.Count() == 0) return;
+
+            int assignIndex = -1;
+
+            for (var i = 0; i < tokens.Count(); i++)
+            {
+                if (tokens[i].Type == RPGLex.Type.EQUALS)
+                {
+                    assignIndex = i;
+                    break;
+                }
+            }
+
+            ParseAssignment(tokens.SkipLast(assignIndex).ToArray());
+            ParseExpression(tokens.Skip(assignIndex + 1).ToArray());
+            CurrentProcudure.AddInstruction(Instructions.STORE);
+            //TODO: figure out how we're storing data, lol
+        }
+
+        private void ParseAssignment(RPGToken[] tokens)
+        {
+            RPGToken token;
+
+            if (tokens == null) return;
+            if (tokens.Count() == 0) return;
+            for (int i = 0; i < tokens.Length; i++)
+            {
+                token = tokens[i];
+                switch (token.Type)
+                {
+                    case RPGLex.Type.BIF: //TODO: Subst assignment
+                        if (tokens[i + 1].Block != null)
+                        {
+                            ParseExpression(tokens[i + 1].Block.ToArray());
+                            CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
+                            i++;
+                        }
+                        else
+                        {
+                            //TODO: What if no parameters?
+                        }
+                        break;
+
+                    case RPGLex.Type.WORD_LITERAL:
+                        if (i + 1 < tokens.Length && tokens[i + 1].Block != null)
+                        {
+                            //DONE: check if it's an array, else it's a procedure
+                            if (_Module.GetDataSetList().Contains(tokens[i].Value))
+                            {
+                                CurrentProcudure.AddInstruction(Instructions.LDGBLD, token.Value); //Load global
+                                ParseExpression(tokens[i + 1].Block.ToArray());
+                            }
+                            else if (CurrentProcudure.GetDataSetList().Contains(tokens[i].Value))
+                            {
+                                CurrentProcudure.AddInstruction(Instructions.LDVARD, token.Value); //Load local
+                                ParseExpression(tokens[i + 1].Block.ToArray());
+                            }
+                            else
+                            {
+                                //TODO: IS FIELD?
+                                ParseExpression(tokens[i + 1].Block.ToArray());
+                                CurrentProcudure.AddInstruction(Instructions.LDFLDD, token.Value);
+                            }
+
+                            i++;
+                        }
+                        else
+                        {
+                            if (_Module.GetDataSetList().Contains(tokens[i].Value))
+                                CurrentProcudure.AddInstruction(Instructions.LDGBLD, token.Value); //Load global
+                            else if (CurrentProcudure.GetDataSetList().Contains(tokens[i].Value))
+                                CurrentProcudure.AddInstruction(Instructions.LDVARD, token.Value); //Load local
+                            else
+                                CurrentProcudure.AddInstruction(Instructions.LDFLDD, token.Value); //Load field?
+                            
+                        }
+                        break;
+                    case RPGLex.Type.STRING_LITERAL:
+                        CurrentProcudure.AddInstruction(Instructions.LDSTR, token.Value);
+                        break;
+                    case RPGLex.Type.INT_LITERAL:
+                    case RPGLex.Type.DOUBLE_LITERAL:
+                        CurrentProcudure.AddInstruction(Instructions.LDNUM, token.Value);
+                        break;
+                }
+            }
+        }
+
         private void ParseExpression(RPGToken[] tokens)
         {
             RPGToken token;
@@ -221,7 +321,7 @@ namespace NetRPG.Language
                         CurrentOperation = Instructions.MUL;
                         continue;
                     case RPGLex.Type.DOT:
-                        CurrentOperation = Instructions.LDFLD;
+                        CurrentOperation = Instructions.LDFLDV;
                         continue;
                     case RPGLex.Type.LESS_THAN:
                         CurrentOperation = Instructions.LESSER;
@@ -251,24 +351,29 @@ namespace NetRPG.Language
                     case RPGLex.Type.BLOCK:
                         ParseExpression(token.Block.ToArray());
                         break;
+
                     case RPGLex.Type.WORD_LITERAL:
                         if (i + 1 < tokens.Length && tokens[i+1].Block != null)
                         {
-                            //DONE: check if it's an array, else it's a procedure
                             if (_Module.GetDataSetList().Contains(tokens[i].Value))
                             {
-                                CurrentProcudure.AddInstruction(Instructions.LDGBL, token.Value); //Load global
+                                lastType = _Module.GetDataSet(tokens[i].Value)._Type;
+
+                                CurrentProcudure.AddInstruction(Instructions.LDGBLV, token.Value); //Load global
                                 ParseExpression(tokens[i + 1].Block.ToArray());
-                                CurrentProcudure.AddInstruction(Instructions.LDARR);
+                                CurrentProcudure.AddInstruction(Instructions.LDARRV);
                             }
                             else if (CurrentProcudure.GetDataSetList().Contains(tokens[i].Value))
                             {
-                                CurrentProcudure.AddInstruction(Instructions.LDVAR, token.Value); //Load local
+                                lastType = CurrentProcudure.GetDataSet(tokens[i].Value)._Type;
+
+                                CurrentProcudure.AddInstruction(Instructions.LDVARV, token.Value); //Load local
                                 ParseExpression(tokens[i + 1].Block.ToArray());
-                                CurrentProcudure.AddInstruction(Instructions.LDARR);
+                                CurrentProcudure.AddInstruction(Instructions.LDARRV);
                             }
                             else
                             {
+                                //TODO: Maybe check the procedure exists? Could be an array within a struct
                                 ParseExpression(tokens[i + 1].Block.ToArray());
                                 CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
                             }
@@ -277,11 +382,24 @@ namespace NetRPG.Language
                         }
                         else
                         {
-                            //TODO: check if the variable exists, else crash
-                            CurrentProcudure.AddInstruction(Instructions.LDVAR, token.Value);
+                            if (_Module.GetDataSetList().Contains(tokens[i].Value))
+                            {
+                                lastType = _Module.GetDataSet(tokens[i].Value)._Type;
+                                CurrentProcudure.AddInstruction(Instructions.LDGBLV, token.Value); //Load global
+                            }
+                            else if (CurrentProcudure.GetDataSetList().Contains(tokens[i].Value))
+                            {
+                                lastType = CurrentProcudure.GetDataSet(tokens[i].Value)._Type;
+                                CurrentProcudure.AddInstruction(Instructions.LDVARV, token.Value); //Load local
+                            }
+                            else
+                            {
+                                CurrentProcudure.AddInstruction(Instructions.LDFLDV, token.Value); //Load field?
+                            }
                         }
                         break;
                     case RPGLex.Type.STRING_LITERAL:
+                        lastType = Types.String;
                         CurrentProcudure.AddInstruction(Instructions.LDSTR, token.Value);
                         break;
                     case RPGLex.Type.SPECIAL:

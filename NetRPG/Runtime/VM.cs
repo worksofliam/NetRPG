@@ -43,8 +43,11 @@ namespace NetRPG.Runtime
 
         private object Execute(string Name, DataValue[] Parms = null)
         {
+            DataValue tempDataValue;
             object[] tempArray;
             object[] Values = new object[3];
+            int tempIndex = 1;
+
             List<object> Stack = new List<object>();
 
             Dictionary<string, int> Labels = new Dictionary<string, int>();
@@ -116,19 +119,25 @@ namespace NetRPG.Runtime
                         }
                         break;
 
-                    case Instructions.LDARR:
+                    case Instructions.LDARRV:
                         tempArray = (object[])Stack[Stack.Count - 2];
                         Values[1] = Stack[Stack.Count - 1];
+
+                        tempIndex = int.Parse(Values[1].ToString()) - 1;
                         Stack.RemoveRange(Stack.Count - 2, 2);
-                        Stack.Add(tempArray[(int) Values[1]]);
+                        Stack.Add(tempArray[tempIndex]);
                         break;
 
-                    case Instructions.LDFLD:
-                        //TODO implement
-                        break;
-
-                    case Instructions.LDGBL:
+                    case Instructions.LDFLDV:
                         Stack.Add(GlobalVariables[instructions[ip]._Value].Get());
+                        break;
+
+                    case Instructions.LDGBLV:
+                        Stack.Add(GlobalVariables[instructions[ip]._Value].Get());
+                        break;
+
+                    case Instructions.LDVARV:
+                        Stack.Add(LocalVariables[instructions[ip]._Value].Get());
                         break;
 
                     case Instructions.LDNUM:
@@ -139,10 +148,20 @@ namespace NetRPG.Runtime
                         Stack.Add(instructions[ip]._Value);
                         break;
 
-                    case Instructions.LDVAR:
-                        Stack.Add(LocalVariables[instructions[ip]._Value].Get());
+                    case Instructions.LDGBLD:
+                        Stack.Add(GlobalVariables[instructions[ip]._Value]);
                         break;
 
+                    case Instructions.LDVARD:
+                        Stack.Add(GlobalVariables[instructions[ip]._Value]);
+                        break;
+
+                    case Instructions.LDFLDD:
+                        tempDataValue = (DataValue)Stack[Stack.Count - 1]; //DataValue
+                        Stack.RemoveRange(Stack.Count - 1, 1);
+                        Stack.Add(tempDataValue.Get(instructions[ip]._Value));
+                        break;
+                        
                     case Instructions.NOT:
                         Values[0] = Stack[Stack.Count - 1];
                         Stack.RemoveRange(Stack.Count - 1, 1);
@@ -157,29 +176,29 @@ namespace NetRPG.Runtime
                             Values[0] = Stack[Stack.Count - 1];
                             return Values[0];
                         }
-                            
-                    case Instructions.STARR:
+
+                    case Instructions.STORE:
+                        
                         Values[0] = Stack[Stack.Count - 2];
-                        Values[1] = Stack[Stack.Count - 1];
+                        Values[1] = Stack[Stack.Count - 1]; //Value
 
-                        if (GlobalVariables.ContainsKey(instructions[ip]._Value))
-                            GlobalVariables[instructions[ip]._Value].Set(Values[0], (int)Values[1]);
-                        else if (LocalVariables.ContainsKey(instructions[ip]._Value))
-                            LocalVariables[instructions[ip]._Value].Set(Values[0], (int)Values[1]);
-
-                        Stack.RemoveRange(Stack.Count - 2, 2);
+                        if (Values[0] is double)
+                        {
+                            tempDataValue = (DataValue)Stack[Stack.Count - 3]; //DataValue
+                            tempIndex = int.Parse(Values[0].ToString()) - 1;
+                            tempDataValue.Set(Values[1], tempIndex);
+                            Stack.RemoveRange(Stack.Count - 3, 3);
+                        }
+                        else
+                        {
+                            tempDataValue = (DataValue)Stack[Stack.Count - 2]; //DataValue OR index
+                            tempDataValue.Set(Values[1]);
+                            Stack.RemoveRange(Stack.Count - 2, 2);
+                        }
+                        
                         break;
-
-                    case Instructions.STVAR:
-                        Values[0] = Stack[Stack.Count - 1];
-
-                        if (GlobalVariables.ContainsKey(instructions[ip]._Value))
-                            GlobalVariables[instructions[ip]._Value].Set(Values[0]);
-                        else if (LocalVariables.ContainsKey(instructions[ip]._Value))
-                            LocalVariables[instructions[ip]._Value].Set(Values[0]);
-
-                        Stack.RemoveRange(Stack.Count - 1, 1);
-                        break;
+                        
+                        
                 }
 
             }
@@ -225,30 +244,34 @@ namespace NetRPG.Runtime
         protected string Name;
         protected Types Type;
         protected Object[] Value;
-        protected int Dimentions = 0;
+        protected int Dimentions = 1;
         protected Dictionary<string, string> Properties;
         protected Dictionary<string, DataValue> Subfields;
 
         public void SetArray(int Count)
         {
             this.Dimentions = Count;
+            this.Value = new object[this.Dimentions];
         }
 
         public string GetName() => this.Name;
-
+        
         public void Set(object value, int index = 0)
         {
             this.Value[index] = value;
         }
 
-        public object Get(int index = -0)
+        public dynamic Get()
         {
-            if (this.Type == Types.Structure)
-                return this.Subfields;
-            else if (index >= 0)
+            if (Dimentions > 1) //If it's an array
                 return this.Value;
             else
                 return this.Value[0];
+        }
+
+        public DataValue Get(string subfield)
+        {
+            return this.Subfields[subfield];
         }
     }
 

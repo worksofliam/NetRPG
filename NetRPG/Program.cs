@@ -25,7 +25,7 @@ namespace NetRPG
 
             Reader reader = new Reader();
             reader.ReadStatements(Statements);
-            //reader.GetModule().Print();
+            reader.GetModule().Print();
 
             VM vm = new VM();
             vm.AddModule(reader.GetModule());
