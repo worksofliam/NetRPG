@@ -48,7 +48,6 @@ namespace NetRPG.Runtime
         GREATER_EQUAL,
         LESSER, //Stack-1 is less than Stack-0
         LESSER_EQUAL,
-        ASSIGN,
         RETURN,
         ENTRYPOINT, //Program entry point
         BRFALSE, //Break if false

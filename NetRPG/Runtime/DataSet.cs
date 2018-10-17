@@ -22,5 +22,23 @@ namespace NetRPG.Runtime
         }
 
         public bool IsArray() => (_Dimentions > 0);
+
+        public DataValue ToDataValue()
+        {
+            DataValue result = null;
+            
+            switch (this._Type)
+            {
+                case Types.Character:
+                    result = new Character(this._Name, this._Length, (string) this._InitialValue);
+                    if (IsArray()) result.SetArray(this._Dimentions);
+                    break;
+
+                default:
+                    throw new Exception(this._Type.ToString() + " is not a ready data type.");
+            }
+
+            return result;
+        }
     }
 }

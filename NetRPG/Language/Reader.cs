@@ -137,7 +137,10 @@ namespace NetRPG.Language
         {
             string forElse;
             if (CurrentProcudure == null)
+            {
                 CurrentProcudure = new Procedure("entry");
+                CurrentProcudure.AddInstruction(Instructions.ENTRYPOINT);
+            }
 
             switch (tokens[0].Value.ToUpper())
             {
