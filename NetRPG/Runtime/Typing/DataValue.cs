@@ -85,12 +85,14 @@ namespace NetRPG.Runtime.Typing
                         break;
                     case Types.Double:
                     case Types.Float:
+                    case Types.Packed:
+                    case Types.Zoned:
+                        initialValue = 0.0;
+                        break;
                     case Types.Int8:
                     case Types.Int16:
                     case Types.Int32:
                     case Types.Int64:
-                    case Types.Packed:
-                    case Types.Zoned:
                         initialValue = 0;
                         break;
                 }

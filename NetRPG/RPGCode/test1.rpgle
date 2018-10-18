@@ -10,11 +10,18 @@ End-Ds;
 Dcl-Ds QualDimTest Qualified Dim(10);
   Dcl-Subf Boom Char(10);
   Dcl-Subf boom2 Char(10);
+  Dcl-Subf boomint Int(5);
 End-Ds;
+
+Dcl-S MyVar Char(50);
+Dcl-S MyInt Int(5);
 
 MyField = '';
 QualDimTest(5).Boom = 'yolo';
 QualTest.Random = 'yolo';
+
+MyInt = 5;
+MyInt = MyInt + 5;
 
 // Dsply QualDimTest(1).Boom;
 // Dsply QualDimTest(5).Boom;
@@ -23,56 +30,19 @@ QualTest.Random = 'yolo';
 //   Dsply 'Correct';
 // Endif;
 
-QualDimTest(1).boom2 = 'Hi';
+QualDimTest(1).boom2 = 'Person';
+QualDimTest(3).boomint = 25234;
 
-Dsply 'You are ' + %Trim(QualDimTest(1).boom2 + ' world    ') + '"';
+Dsply '"You are ' + %Trim(QualDimTest(1).boom2) + '"';
 
-//QualDimTest(4).Boom = %Trim('hello world    ');
+QualDimTest(2).boom2 = '55.56634';
+Dsply %Char(%Dec(QualDimTest(2).boom2));
+Dsply %Char(%DecPos(%Dec(QualDimTest(2).boom2)));
 
-//Dow MyField <> 'aaaaaaaa';
-//  MyField = MyField + 'a';
-//  Dsply MyField;
-//  If (MyField = 'aaaa');
-//    Dsply 'Half way!!';
-//  Else;
-//    Dsply 'boo';
-//  Endif;
-//Enddo;
-
-// If (QualDimTest(5).Boom = QualTest.Random);
-//   Dsply 'Hi!!';
-// Else;
-//   Dsply MyField;
-// Endif;
-
-// If (1 = 1);
-
-//   If (2 = 3);
-
-//     If (3 = 3);
-//       Dsply 'hi1';
-//     Endif;
-//   else;
-//     If (1 = 1);
-//       Dsply 'hi2';
-//     Endif;
-//   Endif;
-
-// Endif;
-
-// Select;
-//   When (QualDimTest(1).Boom <> QualDimTest(5).Boom);
-//     Dsply 'Hello';
-//   When (QualTest.Random = 'swag');
-//     Dsply QualTest.Random;
-//   When QualDimTest(1).boom2 = 'Hi';
-//     Select;
-//       When (MyField = 'no');
-//         Dsply 'hhi';
-//     Endsl;
-//   When MyField = 'bye';
-//     Dsply 'Do a thing';
-// Endsl;
+Dsply %EditC(1000 * 12:'B':'$');
+Dsply %Char(MyInt);
+MyInt = 3;
+Dsply %Char(QualDimTest(MyInt).boomint);
 
 *InLR = *On;
 Return;

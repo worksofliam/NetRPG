@@ -39,6 +39,14 @@ namespace NetRPG.Runtime
                     if (IsArray()) result.SetArray(this._Dimentions);
                     break;
 
+                case Types.Int8:
+                case Types.Int16:
+                case Types.Int32:
+                case Types.Int64:
+                    result = new Int(this._Name, this._Type, Convert.ToInt32(this._InitialValue));
+                    if (IsArray()) result.SetArray(this._Dimentions);
+                    break;
+
                 case Types.Structure:
                     result = new Structure(this._Name);
                     if (IsArray()) result.SetArray(this._Dimentions);
