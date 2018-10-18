@@ -8,8 +8,15 @@ namespace NetRPG.Runtime.Functions.Operation
     {
         public override object Execute(object[] Parameters)
         {
-            string Result = (Parameters[0] as string);
-            Console.WriteLine(Result);
+            if (Parameters[0] is string)
+            {
+                string Result = (Parameters[0] as string);
+                Console.WriteLine(Result);
+            }
+            else
+            {
+                //TODO: throw error: incorrect type
+            }
             return null;
         }
     }

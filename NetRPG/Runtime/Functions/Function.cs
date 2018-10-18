@@ -11,6 +11,10 @@ namespace NetRPG.Runtime.Functions
             { "DSPLY", new Operation.Dsply() },
             { "%ABS", new BIF.Abs() },
             { "%CHAR", new BIF.Char() },
+            { "%DEC", new BIF.Dec() },
+            { "%DECH", new BIF.Dec() },
+            { "%DECPOS", new BIF.DecPos() },
+            { "%EDITC", new BIF.EditC() },
             { "%TRIM", new BIF.Trim() }
         };
 

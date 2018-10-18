@@ -30,6 +30,8 @@ namespace NetRPG.Runtime.Typing
 
             if (NewValue.Length > Length)
                 NewValue = NewValue.Substring(0, Length);
+            else
+                NewValue = NewValue.PadRight(Length);
 
             this.Value[index] = NewValue;
         }

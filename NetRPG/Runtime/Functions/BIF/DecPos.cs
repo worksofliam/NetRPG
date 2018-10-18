@@ -4,12 +4,12 @@ using System.Text;
 
 namespace NetRPG.Runtime.Functions.BIF
 {
-    class Char : Function
+    class DecPos : Function
     {
         public override object Execute(object[] Parameters)
         {
-            dynamic value = Parameters[0];
-            return Convert.ToString(value);
+            decimal argument = Convert.ToDecimal(Parameters[0]);
+            return BitConverter.GetBytes(decimal.GetBits(argument)[3])[2];
         }
     }
 }

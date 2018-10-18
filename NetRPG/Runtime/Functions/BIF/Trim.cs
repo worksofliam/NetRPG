@@ -8,7 +8,7 @@ namespace NetRPG.Runtime.Functions.BIF
     {
         public override object Execute(object[] Parameters)
         {
-            string Value = Parameters[0] as string;
+            string Value = (Parameters[0] as string);
             return Value.Trim();
         }
     }
