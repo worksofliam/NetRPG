@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Linq;
 using NetRPG.Runtime.Typing;
+using NetRPG.Runtime.Functions;
 
 namespace NetRPG.Runtime
 {
@@ -42,6 +43,7 @@ namespace NetRPG.Runtime
 
         private object Execute(string Name, DataValue[] Parms = null)
         {
+            Function callingFunction;
             DataValue tempDataValue;
             object[] tempArray;
             object[] Values = new object[3];
@@ -106,15 +108,14 @@ namespace NetRPG.Runtime
                         break;
 
                     case Instructions.CALL:
-                        //TODO: implement
-                        switch (instructions[ip]._Value.ToUpper())
-                        {
-                            case "DSPLY":
-                                Values[0] = Stack[Stack.Count - 1];
-                                Console.WriteLine(Values[0]);
-                                Stack.RemoveRange(Stack.Count - 1, 1);
-                                break;
-                        }
+                        //TODO: check for existing procedures first!
+                        callingFunction = Function.GetFunction(instructions[ip]._Value);
+                        tempIndex = callingFunction.GetParameterCount();
+                        Values[0] = callingFunction.Execute(Stack.GetRange(Stack.Count - tempIndex, tempIndex).ToArray());
+                        Stack.RemoveRange(Stack.Count - tempIndex, tempIndex);
+
+                        if (Values[0] != null)
+                            Stack.Add(Values[0]);
                         break;
 
                     case Instructions.LDARRV:

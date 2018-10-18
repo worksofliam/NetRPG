@@ -203,7 +203,7 @@ namespace NetRPG.Language
 
         private void HandleOperation(RPGToken[] tokens)
         {
-            string forElse;
+            string forElse, start, end;
             if (CurrentProcudure == null)
             {
                 CurrentProcudure = new Procedure("entry");
@@ -239,8 +239,7 @@ namespace NetRPG.Language
                 case "ENDIF":
                     CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getLastScope());
                     break;
-
-                
+                    
                 case "SELECT":
                     Labels.Add(Labels.getScope());
                     Labels.Scope++;
@@ -258,9 +257,7 @@ namespace NetRPG.Language
                     CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getLastScope());
                     Labels.Scope++;
                     break;
-
-                
-
+                    
                 case "DOW":
                     CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getScope());
                     Labels.Add(Labels.getScope());
@@ -272,9 +269,8 @@ namespace NetRPG.Language
                     Labels.Scope++;
                     break;
                 case "ENDDO":
-                    //TODO: Move these variables!!!
-                    string end = Labels.getLastScope();
-                    string start = Labels.getLastScope();
+                    end = Labels.getLastScope();
+                    start = Labels.getLastScope();
                     CurrentProcudure.AddInstruction(Instructions.BR, start);
                     CurrentProcudure.AddInstruction(Instructions.LABEL, end);
                     Labels.Scope++;

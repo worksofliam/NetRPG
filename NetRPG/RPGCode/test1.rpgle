@@ -25,15 +25,19 @@ QualTest.Random = 'yolo';
 
 QualDimTest(1).boom2 = 'Hi';
 
-Dow MyField <> 'aaaaaaaa';
-  MyField = MyField + 'a';
-  Dsply MyField;
-  If (MyField = 'aaaa');
-    Dsply 'Half way!!';
-  Else;
-    Dsply 'boo';
-  Endif;
-Enddo;
+Dsply 'You are ' + %Char(21);
+
+//QualDimTest(4).Boom = %Trim('hello world    ');
+
+//Dow MyField <> 'aaaaaaaa';
+//  MyField = MyField + 'a';
+//  Dsply MyField;
+//  If (MyField = 'aaaa');
+//    Dsply 'Half way!!';
+//  Else;
+//    Dsply 'boo';
+//  Endif;
+//Enddo;
 
 // If (QualDimTest(5).Boom = QualTest.Random);
 //   Dsply 'Hi!!';
