@@ -213,7 +213,7 @@ namespace NetRPG.Language
             switch (tokens[0].Value.ToUpper())
             {
                 case "IF":
-                    ParseExpression(tokens.Skip(1).ToArray());
+                    ParseExpression(tokens.Skip(1).ToList());
 
                     Labels.Add(Labels.getScope());
                     CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
@@ -232,7 +232,7 @@ namespace NetRPG.Language
                     Labels.Add(Labels.getScope());
 
                     CurrentProcudure.AddInstruction(Instructions.LABEL, forElse);
-                    ParseExpression(tokens.Skip(1).ToArray());
+                    ParseExpression(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
                     Labels.Scope++;
                     break;
@@ -249,7 +249,7 @@ namespace NetRPG.Language
                     CurrentProcudure.AddInstruction(Instructions.LABEL, forElse);
 
                     Labels.Add(Labels.getScope());
-                    ParseExpression(tokens.Skip(1).ToArray());
+                    ParseExpression(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
                     Labels.Scope++;
                     break;
@@ -263,7 +263,7 @@ namespace NetRPG.Language
                     Labels.Add(Labels.getScope());
                     Labels.Scope++;
 
-                    ParseExpression(tokens.Skip(1).ToArray());
+                    ParseExpression(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
                     Labels.Add(Labels.getScope());
                     Labels.Scope++;
@@ -277,12 +277,12 @@ namespace NetRPG.Language
                     break;
 
                 case "DSPLY":
-                    ParseExpression(tokens.Skip(1).ToArray());
+                    ParseExpression(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "DSPLY");
                     break;
                 case "RETURN":
-                    ParseExpression(tokens.Skip(1).ToArray());
+                    ParseExpression(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.RETURN);
                     break;
             }
@@ -311,7 +311,7 @@ namespace NetRPG.Language
             }
 
             ParseAssignment(tokens.Take(assignIndex).ToArray());
-            ParseExpression(tokens.Skip(assignIndex + 1).ToArray());
+            ParseExpression(tokens.Skip(assignIndex + 1).ToList());
             CurrentProcudure.AddInstruction(Instructions.STORE);
             //TODO: figure out how we're storing data, lol
         }
@@ -330,7 +330,7 @@ namespace NetRPG.Language
                     case RPGLex.Type.BIF: //TODO: Subst assignment
                         if (tokens[i + 1].Block != null)
                         {
-                            ParseExpression(tokens[i + 1].Block.ToArray());
+                            ParseExpression(tokens[i + 1].Block);
                             CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
                             i++;
                         }
@@ -346,19 +346,19 @@ namespace NetRPG.Language
                             if (_Module.GetDataSetList().Contains(tokens[i].Value))
                             {
                                 CurrentProcudure.AddInstruction(Instructions.LDGBLD, token.Value); //Load global
-                                ParseExpression(tokens[i + 1].Block.ToArray());
+                                ParseExpression(tokens[i + 1].Block);
                                 CurrentProcudure.AddInstruction(Instructions.LDARRD);
                             }
                             else if (CurrentProcudure.GetDataSetList().Contains(tokens[i].Value))
                             {
                                 CurrentProcudure.AddInstruction(Instructions.LDVARD, token.Value); //Load local
-                                ParseExpression(tokens[i + 1].Block.ToArray());
+                                ParseExpression(tokens[i + 1].Block);
                                 CurrentProcudure.AddInstruction(Instructions.LDARRD);
                             }
                             else
                             {
                                 //TODO: IS FIELD?
-                                ParseExpression(tokens[i + 1].Block.ToArray());
+                                ParseExpression(tokens[i + 1].Block);
                                 CurrentProcudure.AddInstruction(Instructions.LDFLDD, token.Value);
                             }
 
@@ -388,18 +388,63 @@ namespace NetRPG.Language
             }
         }
 
-        private int ParseExpression(RPGToken[] tokens)
+        private int ParseExpression(List<RPGToken> tokens)
         {
+            bool ChangeMade = false;
             int ParmCount = 1;
             int AppendCount = 0;
-            RPGToken token;
+            RPGToken token = null;
             if (tokens == null) return 0;
             if (tokens.Count() == 0) return 0;
 
             Types lastType = Types.Void;
             List<Instructions> Append = new List<Instructions>();
 
-            for (int i = 0; i < tokens.Length; i++)
+            for (int i = 0; i < tokens.Count; i++)
+            {
+                ChangeMade = false;
+                switch (tokens[i].Type)
+                {
+                    case RPGLex.Type.INT_LITERAL:
+                        if (i + 2 < tokens.Count)
+                        {
+                            if (tokens[i + 1].Type == RPGLex.Type.DOT)
+                            {
+                                if (tokens[i + 2].Type == RPGLex.Type.INT_LITERAL)
+                                {
+                                    token = new RPGToken(RPGLex.Type.DOUBLE_LITERAL, tokens[i].Value + "." + tokens[i + 2].Value, tokens[i].Line);
+                                    ChangeMade = true;
+                                }
+                            }
+                        }
+
+                        if (ChangeMade)
+                        {
+                            tokens.RemoveRange(i, 3);
+                            tokens.Insert(i, token);
+                        }
+                        break;
+
+                    case RPGLex.Type.MUL:
+                        if (i + 1 < tokens.Count)
+                        {
+                            if (tokens[i + 1].Type == RPGLex.Type.WORD_LITERAL)
+                            {
+                                token = new RPGToken(RPGLex.Type.SPECIAL, "*" + tokens[i + 1].Value, tokens[i].Line);
+                                ChangeMade = true;
+                            }
+                        }
+
+                        if (ChangeMade)
+                        {
+                            tokens.RemoveRange(i, 2);
+                            tokens.Insert(i, token);
+                        }
+                        break;
+                }
+            }
+
+            for (int i = 0; i < tokens.Count; i++)
             {
                 token = tokens[i];
                 switch (token.Type)
@@ -445,7 +490,7 @@ namespace NetRPG.Language
 
                     case RPGLex.Type.BIF:
                         if (tokens[i+1].Block != null) {
-                            AppendCount = ParseExpression(tokens[i+1].Block.ToArray());
+                            AppendCount = ParseExpression(tokens[i+1].Block);
                             CurrentProcudure.AddInstruction(Instructions.LDINT, AppendCount.ToString());
                             CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
                             i++;
@@ -454,18 +499,18 @@ namespace NetRPG.Language
                         }
                         break;
                     case RPGLex.Type.BLOCK:
-                        ParseExpression(token.Block.ToArray());
+                        ParseExpression(token.Block);
                         break;
 
                     case RPGLex.Type.WORD_LITERAL:
-                        if (i + 1 < tokens.Length && tokens[i+1].Block != null)
+                        if (i + 1 < tokens.Count && tokens[i+1].Block != null)
                         {
                             if (_Module.GetDataSetList().Contains(tokens[i].Value))
                             {
                                 lastType = _Module.GetDataSet(tokens[i].Value)._Type;
 
                                 CurrentProcudure.AddInstruction(Instructions.LDGBLV, token.Value); //Load global
-                                ParseExpression(tokens[i + 1].Block.ToArray());
+                                ParseExpression(tokens[i + 1].Block);
                                 CurrentProcudure.AddInstruction(Instructions.LDARRV);
                             }
                             else if (CurrentProcudure.GetDataSetList().Contains(tokens[i].Value))
@@ -473,13 +518,13 @@ namespace NetRPG.Language
                                 lastType = CurrentProcudure.GetDataSet(tokens[i].Value)._Type;
 
                                 CurrentProcudure.AddInstruction(Instructions.LDVARV, token.Value); //Load local
-                                ParseExpression(tokens[i + 1].Block.ToArray());
+                                ParseExpression(tokens[i + 1].Block);
                                 CurrentProcudure.AddInstruction(Instructions.LDARRV);
                             }
                             else
                             {
                                 //TODO: Maybe check the procedure exists? Could be an array within a struct
-                                AppendCount = ParseExpression(tokens[i + 1].Block.ToArray());
+                                AppendCount = ParseExpression(tokens[i + 1].Block);
                                 CurrentProcudure.AddInstruction(Instructions.LDINT, AppendCount.ToString());
                                 CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
                             }
