@@ -110,9 +110,9 @@ namespace NetRPG.Runtime
                     case Instructions.CALL:
                         //TODO: check for existing procedures first!
                         callingFunction = Function.GetFunction(instructions[ip]._Value);
-                        tempIndex = callingFunction.GetParameterCount();
-                        Values[0] = callingFunction.Execute(Stack.GetRange(Stack.Count - tempIndex, tempIndex).ToArray());
-                        Stack.RemoveRange(Stack.Count - tempIndex, tempIndex);
+                        tempIndex = (int) Stack[Stack.Count - 1];
+                        Values[0] = callingFunction.Execute(Stack.GetRange(Stack.Count - (tempIndex+1), tempIndex).ToArray());
+                        Stack.RemoveRange(Stack.Count - (tempIndex+1), tempIndex+1);
 
                         if (Values[0] != null)
                             Stack.Add(Values[0]);

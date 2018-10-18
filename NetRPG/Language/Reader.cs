@@ -278,6 +278,7 @@ namespace NetRPG.Language
 
                 case "DSPLY":
                     ParseExpression(tokens.Skip(1).ToArray());
+                    CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "DSPLY");
                     break;
                 case "RETURN":
@@ -387,11 +388,13 @@ namespace NetRPG.Language
             }
         }
 
-        private void ParseExpression(RPGToken[] tokens)
+        private int ParseExpression(RPGToken[] tokens)
         {
+            int ParmCount = 1;
+            int AppendCount = 0;
             RPGToken token;
-            if (tokens == null) return;
-            if (tokens.Count() == 0) return;
+            if (tokens == null) return 0;
+            if (tokens.Count() == 0) return 0;
 
             Types lastType = Types.Void;
             List<Instructions> Append = new List<Instructions>();
@@ -402,6 +405,7 @@ namespace NetRPG.Language
                 switch (token.Type)
                 {
                     case RPGLex.Type.PARMS:
+                        ParmCount++;
                         continue;
                     case RPGLex.Type.EQUALS:
                         Append.Add(Instructions.EQUAL);
@@ -440,8 +444,9 @@ namespace NetRPG.Language
                         continue;
 
                     case RPGLex.Type.BIF:
-                        if (tokens[i+1].Block != null) { 
-                            ParseExpression(tokens[i+1].Block.ToArray());
+                        if (tokens[i+1].Block != null) {
+                            AppendCount = ParseExpression(tokens[i+1].Block.ToArray());
+                            CurrentProcudure.AddInstruction(Instructions.LDINT, AppendCount.ToString());
                             CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
                             i++;
                         } else {
@@ -474,7 +479,8 @@ namespace NetRPG.Language
                             else
                             {
                                 //TODO: Maybe check the procedure exists? Could be an array within a struct
-                                ParseExpression(tokens[i + 1].Block.ToArray());
+                                AppendCount = ParseExpression(tokens[i + 1].Block.ToArray());
+                                CurrentProcudure.AddInstruction(Instructions.LDINT, AppendCount.ToString());
                                 CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
                             }
                             
@@ -520,6 +526,8 @@ namespace NetRPG.Language
             
             for (int x = Append.Count - 1; x >= 0; x--)
                 CurrentProcudure.AddInstruction(Append[x]);
+
+            return ParmCount;
         }
 
         public Module GetModule() => _Module;

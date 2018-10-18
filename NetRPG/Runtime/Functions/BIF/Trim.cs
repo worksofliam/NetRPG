@@ -4,12 +4,12 @@ using System.Text;
 
 namespace NetRPG.Runtime.Functions.BIF
 {
-    class Char : Function
+    class Trim : Function
     {
         public override object Execute(object[] Parameters)
         {
-            dynamic value = Parameters[0];
-            return Convert.ToSingle(value);
+            string Value = Parameters[0] as string;
+            return Value.Trim();
         }
     }
 }

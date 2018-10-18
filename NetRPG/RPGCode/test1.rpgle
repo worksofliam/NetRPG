@@ -25,7 +25,7 @@ QualTest.Random = 'yolo';
 
 QualDimTest(1).boom2 = 'Hi';
 
-Dsply 'You are ' + %Char(21);
+Dsply 'You are ' + %Trim(QualDimTest(1).boom2 + ' world    ') + '"';
 
 //QualDimTest(4).Boom = %Trim('hello world    ');
 

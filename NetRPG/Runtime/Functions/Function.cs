@@ -10,7 +10,8 @@ namespace NetRPG.Runtime.Functions
         {
             { "DSPLY", new Operation.Dsply() },
             { "%ABS", new BIF.Abs() },
-            { "%CHAR", new BIF.Char() }
+            { "%CHAR", new BIF.Char() },
+            { "%TRIM", new BIF.Trim() }
         };
 
         public static Function GetFunction(string Name)
@@ -22,16 +23,7 @@ namespace NetRPG.Runtime.Functions
             else
                 return null; //TODO: throw error
         }
-
-        protected int _ParametersCount;
-
-        public Function(int parameterCount = 0)
-        {
-            _ParametersCount = parameterCount;
-        }
-
-        public int GetParameterCount() => this._ParametersCount;
-
+        
         public virtual object Execute(object[] Parameters)
         {
             return null;
