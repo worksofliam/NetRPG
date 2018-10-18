@@ -76,6 +76,7 @@ namespace NetRPG.Runtime
                     case Instructions.ADD:
                     case Instructions.SUB:
                     case Instructions.DIV:
+                    case Instructions.MUL:
                     case Instructions.EQUAL:
                     case Instructions.GREATER:
                     case Instructions.GREATER_EQUAL:
@@ -305,7 +306,7 @@ namespace NetRPG.Runtime
                 case Instructions.DIV:
                     return a / b;
                 case Instructions.MUL:
-                    return a / b;
+                    return a * b;
                 case Instructions.NOT_EQUAL:
                     return a != b;
                 case Instructions.OR:

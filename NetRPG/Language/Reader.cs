@@ -451,6 +451,9 @@ namespace NetRPG.Language
                 {
                     case RPGLex.Type.PARMS:
                         ParmCount++;
+                        for (int x = Append.Count - 1; x >= 0; x--)
+                            CurrentProcudure.AddInstruction(Append[x]);
+                        Append.Clear();
                         continue;
                     case RPGLex.Type.EQUALS:
                         Append.Add(Instructions.EQUAL);
@@ -571,6 +574,7 @@ namespace NetRPG.Language
             
             for (int x = Append.Count - 1; x >= 0; x--)
                 CurrentProcudure.AddInstruction(Append[x]);
+            Append.Clear();
 
             return ParmCount;
         }
