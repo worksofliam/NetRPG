@@ -43,6 +43,6 @@ Dsply %EditC(1000 * 12:'B':'$');
 Dsply %Char(MyInt);
 MyInt = 3;
 Dsply %Char(QualDimTest(MyInt).boomint);
+Dsply %TrimR('hello   ');
 
-*InLR = *On;
 Return;

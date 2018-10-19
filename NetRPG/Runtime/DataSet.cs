@@ -54,7 +54,7 @@ namespace NetRPG.Runtime
                     break;
 
                 default:
-                    Error.ThrowError("DataSet.ToDataValue", this._Type.ToString() + " is not a ready data type.");
+                    Error.ThrowRuntimeError("DataSet.ToDataValue", this._Type.ToString() + " is not a ready data type.");
                     break;
             }
 

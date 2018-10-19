@@ -15,33 +15,35 @@ namespace NetRPG.Language
 
         public void ReadFile(string SourcePath)
         {
-            //TODO: Check SourcePath exists.
-            
             string[] Directive;
-            
-            foreach (string Line in File.ReadAllLines(SourcePath))
-            {
-                //Is directive and not comment
-                if (Line.Trim().StartsWith("//"))
+            if (File.Exists(SourcePath)) {
+                
+                foreach (string Line in File.ReadAllLines(SourcePath))
                 {
-                    continue;
-                }
-                else if (Line.Trim().StartsWith('/'))
-                {
-                    Directive = Line.Trim().Split(' ');
-                    switch (Directive[0])
+                    //Is directive and not comment
+                    if (Line.Trim().StartsWith("//"))
                     {
-                        case "/INCLUDE":
-                        case "/COPY":
-                            ReadFile(Directive[1]);
-                            break;
+                        continue;
+                    }
+                    else if (Line.Trim().StartsWith('/'))
+                    {
+                        Directive = Line.Trim().Split(' ');
+                        switch (Directive[0])
+                        {
+                            case "/INCLUDE":
+                            case "/COPY":
+                                ReadFile(Directive[1]);
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        //TODO: Remove comments
+                        _Output.Add(Line);
                     }
                 }
-                else
-                {
-                    //TODO: Remove comments
-                    _Output.Add(Line);
-                }
+            } else {
+                Error.ThrowCompileError(SourcePath + " does not exist.");
             }
         }
 

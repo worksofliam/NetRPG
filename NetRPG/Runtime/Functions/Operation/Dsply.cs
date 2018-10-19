@@ -16,7 +16,7 @@ namespace NetRPG.Runtime.Functions.Operation
             else
             {
                 //TODO: throw error: incorrect type
-                Error.ThrowError("DSPLY", "Only string type is accepted.");
+                Error.ThrowRuntimeError("DSPLY", "Only string type is accepted.");
             }
             return null;
         }

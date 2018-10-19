@@ -22,7 +22,7 @@ namespace NetRPG.Runtime
             if (GlobalDataSets.ContainsKey(Name)) {
                 return GlobalDataSets[Name];
             } else {
-                Error.ThrowError("Proedure.GetDataSet", Name + " does not exist globally.");
+                Error.ThrowRuntimeError("Proedure.GetDataSet", Name + " does not exist globally.");
                 return null;
             }
         }

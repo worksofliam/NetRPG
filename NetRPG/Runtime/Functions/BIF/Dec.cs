@@ -16,7 +16,7 @@ namespace NetRPG.Runtime.Functions.BIF
             else
             {
                 //TODO: throw error because incorrect type in
-                Error.ThrowError("%Dec", "Incorrect type passed into function.");
+                Error.ThrowRuntimeError("%Dec", "Incorrect type passed into function.");
             }
             //TODO: Handle DateTime stuff
             //https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_72/rzasd/bbdec.htm#bbdec

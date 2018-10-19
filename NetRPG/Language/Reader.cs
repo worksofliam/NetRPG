@@ -313,7 +313,6 @@ namespace NetRPG.Language
             ParseAssignment(tokens.Take(assignIndex).ToArray());
             ParseExpression(tokens.Skip(assignIndex + 1).ToList());
             CurrentProcudure.AddInstruction(Instructions.STORE);
-            //TODO: figure out how we're storing data, lol
         }
 
         private void ParseAssignment(RPGToken[] tokens)
@@ -357,7 +356,7 @@ namespace NetRPG.Language
                             }
                             else
                             {
-                                //TODO: IS FIELD?
+                                //Assuming is a field.
                                 ParseExpression(tokens[i + 1].Block);
                                 CurrentProcudure.AddInstruction(Instructions.LDFLDD, token.Value);
                             }
@@ -567,6 +566,11 @@ namespace NetRPG.Language
                         break;
                     case RPGLex.Type.DOUBLE_LITERAL:
                         CurrentProcudure.AddInstruction(Instructions.LDDOU, token.Value);
+                        break;
+
+                    case RPGLex.Type.OPERATION:
+                    case RPGLex.Type.DCL:
+                        Error.ThrowCompileError(token.Type + " not expected. Check for missing semi-colon.", token.Line);
                         break;
                 }
                 

@@ -45,7 +45,7 @@ namespace NetRPG.Runtime
             if (_DataSets.ContainsKey(Name))
                 return _DataSets[Name];
             else {
-                Error.ThrowError("Proedure.GetDataSet", Name + " does not exist in " + _Name);
+                Error.ThrowRuntimeError("Proedure.GetDataSet", Name + " does not exist in " + _Name);
                 return null;
             }
         }

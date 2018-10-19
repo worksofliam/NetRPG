@@ -12,7 +12,7 @@ namespace NetRPG.Runtime.Functions.BIF
                 string Value = (Parameters[0] as string);
                 return Value.Trim();
             } else {
-                Error.ThrowError("%Trim", "Only accepts string type.");
+                Error.ThrowRuntimeError("%Trim", "Only accepts string type.");
                 return null;
             }
         }

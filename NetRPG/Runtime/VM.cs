@@ -36,12 +36,19 @@ namespace NetRPG.Runtime
             }
         }
 
+        private List<string> CallStack;
         public void Run()
         {
+            CallStack = new List<string>();
             try {
                 Execute(_EntryProcedure);
             } catch (Exception e) {
-                Console.WriteLine(e);
+                Console.WriteLine("-- Error --");
+                Console.WriteLine(e.Message);
+                Console.WriteLine("Call stack: ");
+                foreach(string item in CallStack) {
+                    Console.WriteLine("\t" + item);
+                }
             }
         }
 
@@ -59,6 +66,8 @@ namespace NetRPG.Runtime
             Dictionary<string, DataValue> LocalVariables = new Dictionary<string, DataValue>();
             Instruction[] instructions = _Procedures[Name].GetInstructions();
             
+            CallStack.Add(Name);
+
             //Initialise local variables
             foreach (string local in _Procedures[Name].GetDataSetList())
             {
@@ -123,7 +132,7 @@ namespace NetRPG.Runtime
                             if (Values[0] != null)
                                 Stack.Add(Values[0]);
                         } else {
-                            Error.ThrowError(Name, "Function " + instructions[ip]._Value + " does not exist.", ip);
+                            Error.ThrowRuntimeError(Name, "Function " + instructions[ip]._Value + " does not exist.", ip);
                         }
                         break;
 
@@ -243,6 +252,7 @@ namespace NetRPG.Runtime
                         break;
 
                     case Instructions.RETURN:
+                        CallStack.RemoveAt(CallStack.Count-1);
                         if (_Procedures[Name]._ReturnType == Types.Void)
                             return null;
                         else
@@ -289,6 +299,7 @@ namespace NetRPG.Runtime
 
             }
             
+            CallStack.RemoveAt(CallStack.Count-1);
             return null;
         }
 
