@@ -42,7 +42,12 @@ namespace NetRPG.Runtime
         public DataSet GetDataSet(string Name)
         {
             //TODO: Throw if no exist?
-            return _DataSets[Name];
+            if (_DataSets.ContainsKey(Name))
+                return _DataSets[Name];
+            else {
+                Error.ThrowError("Proedure.GetDataSet", Name + " does not exist in " + _Name);
+                return null;
+            }
         }
 
         public string GetName() => _Name;

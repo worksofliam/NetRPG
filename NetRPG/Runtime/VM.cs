@@ -38,7 +38,11 @@ namespace NetRPG.Runtime
 
         public void Run()
         {
-            Execute(_EntryProcedure);
+            try {
+                Execute(_EntryProcedure);
+            } catch (Exception e) {
+                Console.WriteLine(e);
+            }
         }
 
         private object Execute(string Name, DataValue[] Parms = null)
@@ -111,12 +115,16 @@ namespace NetRPG.Runtime
                     case Instructions.CALL:
                         //TODO: check for existing procedures first!
                         callingFunction = Function.GetFunction(instructions[ip]._Value);
-                        tempIndex = (int) Stack[Stack.Count - 1];
-                        Values[0] = callingFunction.Execute(Stack.GetRange(Stack.Count - (tempIndex+1), tempIndex).ToArray());
-                        Stack.RemoveRange(Stack.Count - (tempIndex+1), tempIndex+1);
+                        if (callingFunction != null) {
+                            tempIndex = (int) Stack[Stack.Count - 1];
+                            Values[0] = callingFunction.Execute(Stack.GetRange(Stack.Count - (tempIndex+1), tempIndex).ToArray());
+                            Stack.RemoveRange(Stack.Count - (tempIndex+1), tempIndex+1);
 
-                        if (Values[0] != null)
-                            Stack.Add(Values[0]);
+                            if (Values[0] != null)
+                                Stack.Add(Values[0]);
+                        } else {
+                            Error.ThrowError(Name, "Function " + instructions[ip]._Value + " does not exist.", ip);
+                        }
                         break;
 
                     case Instructions.LDARRV:

@@ -8,8 +8,13 @@ namespace NetRPG.Runtime.Functions.BIF
     {
         public override object Execute(object[] Parameters)
         {
-            string Value = (Parameters[0] as string);
-            return Value.Trim();
+            if (Parameters[0] is string) {
+                string Value = (Parameters[0] as string);
+                return Value.Trim();
+            } else {
+                Error.ThrowError("%Trim", "Only accepts string type.");
+                return null;
+            }
         }
     }
 }

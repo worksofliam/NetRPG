@@ -19,7 +19,12 @@ namespace NetRPG.Runtime
 
         public string[] GetDataSetList() => GlobalDataSets.Keys.ToArray();
         public DataSet GetDataSet(string Name) {
-            return GlobalDataSets[Name];
+            if (GlobalDataSets.ContainsKey(Name)) {
+                return GlobalDataSets[Name];
+            } else {
+                Error.ThrowError("Proedure.GetDataSet", Name + " does not exist globally.");
+                return null;
+            }
         }
 
         public Procedure[] GetProcedures() => Procedures.ToArray();
