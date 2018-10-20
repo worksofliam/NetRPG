@@ -40,16 +40,18 @@ namespace NetRPG.Runtime
         public void Run()
         {
             CallStack = new List<string>();
-            try {
+            //try {
                 Execute(_EntryProcedure);
-            } catch (Exception e) {
-                Console.WriteLine("-- Error --");
-                Console.WriteLine(e.Message);
-                Console.WriteLine("Call stack: ");
-                foreach(string item in CallStack) {
-                    Console.WriteLine("\t" + item);
-                }
-            }
+            //} catch (Exception e) {
+            //    Console.WriteLine("-- Error --");
+            //    Console.WriteLine(e.Message);
+            //    Console.WriteLine("Call stack: ");
+            //    foreach(string item in CallStack) {
+            //        Console.WriteLine("\t" + item);
+            //    }
+            //    Console.WriteLine("-- Error --");
+            //    throw e;
+            //}
         }
 
         private object Execute(string Name, DataValue[] Parms = null)
@@ -137,7 +139,6 @@ namespace NetRPG.Runtime
                         break;
 
                     case Instructions.LDARRV:
-                        
                         Values[0] = Stack[Stack.Count - 2];
                         Values[1] = Stack[Stack.Count - 1];
                         tempIndex = int.Parse(Values[1].ToString()) - 1;

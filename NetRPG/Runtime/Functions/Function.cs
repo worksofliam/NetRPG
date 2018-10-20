@@ -18,6 +18,7 @@ namespace NetRPG.Runtime.Functions
             { "%FLOAT", new BIF.Float() },
             { "%INT", new BIF.Int() },
             { "%LEN", new BIF.Len() },
+            { "%LOOKUP", new BIF.Lookup() },
             { "%TRIM", new BIF.Trim() },
         };
 
