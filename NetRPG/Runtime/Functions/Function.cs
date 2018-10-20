@@ -15,7 +15,10 @@ namespace NetRPG.Runtime.Functions
             { "%DECH", new BIF.Dec() },
             { "%DECPOS", new BIF.DecPos() },
             { "%EDITC", new BIF.EditC() },
-            { "%TRIM", new BIF.Trim() }
+            { "%FLOAT", new BIF.Float() },
+            { "%INT", new BIF.Int() },
+            { "%LEN", new BIF.Len() },
+            { "%TRIM", new BIF.Trim() },
         };
 
         public static Function GetFunction(string Name)

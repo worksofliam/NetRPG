@@ -4,10 +4,11 @@ Dcl-S MyInt Int(5);
 Dcl-S MyPacked Packed(9:2);
 Dcl-S MyZoned Packed(9:2);
 
-MyPacked = 3123.24 * 2;
-Dsply %EditC(MyPacked:'1':'$');
+MyVar = '5';
+MyInt = %Int(MyVar);
+Dsply %Char(MyInt + 5);
 
-MyZoned = 234.25 * 2;
-Dsply %EditC(MyZoned:'B':'$');
+MyPacked = %Dec('1234.567':9:2);
+Dsply %Char(MyPacked);
 
 Return;

@@ -8,10 +8,15 @@ namespace NetRPG.Runtime.Functions.BIF
     {
         public override object Execute(object[] Parameters)
         {
-            //TODO: handle precision
+            double Result;
             if (Parameters[0] is string || Parameters[0] is int)
             {
-                return Convert.ToDouble(Parameters[0]);
+                Result = Convert.ToDouble(Parameters[0]);
+
+                if (Parameters.Length >= 3)
+                    Result = Math.Round(Result, (int)Parameters[2], MidpointRounding.AwayFromZero);
+
+                return Result;
             }
             else
             {
