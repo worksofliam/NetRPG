@@ -5,10 +5,12 @@ using NetRPG.Runtime;
 
 namespace NetRPG.Language
 {
-    class Labels {
+    class Labels
+    {
         private static List<String> _Labels = new List<String>();
         public static int Scope = 0;
-        public static void Add(string Label) {
+        public static void Add(string Label)
+        {
             _Labels.Add(Label);
         }
         public static String getScope()
@@ -90,7 +92,7 @@ namespace NetRPG.Language
                             }
                             else
                             {
-                                foreach(DataSet var in Current_Structs[SubfieldLevel]._Subfields)
+                                foreach (DataSet var in Current_Structs[SubfieldLevel]._Subfields)
                                     if (CurrentProcudure != null)
                                         CurrentProcudure.AddDataSet(var);
                                     else
@@ -110,21 +112,24 @@ namespace NetRPG.Language
             //TODO: Check if DataSet already exists?
             DataSet dataSet = new DataSet(tokens[3].Value);
             Dictionary<string, string> config = new Dictionary<string, string>();
-            
+
             for (int i = 3; i < tokens.Length; i++)
             {
-                if (i+1 < tokens.Length && tokens[i+1].Type == RPGLex.Type.BLOCK) {
+                if (i + 1 < tokens.Length && tokens[i + 1].Type == RPGLex.Type.BLOCK)
+                {
                     switch (tokens[i].Value.ToUpper())
                     {
                         case "DIM":
-                            dataSet._Dimentions = int.Parse(tokens[i+1].Block?[0].Value);
+                            dataSet._Dimentions = int.Parse(tokens[i + 1].Block?[0].Value);
                             break;
                         case "INZ":
-                            dataSet._InitialValue = tokens[i+1].Block?[0].Value;
+                            dataSet._InitialValue = tokens[i + 1].Block?[0].Value;
                             break;
                     }
                     i++;
-                } else {
+                }
+                else
+                {
                     switch (tokens[i].Value.ToUpper())
                     {
                         case "QUALIFIED":
@@ -137,7 +142,8 @@ namespace NetRPG.Language
                 }
             }
 
-            if (tokens[1].Type == RPGLex.Type.SUB) {
+            if (tokens[1].Type == RPGLex.Type.SUB)
+            {
                 switch (tokens[2].Value.ToUpper())
                 {
                     case "S":
@@ -245,7 +251,7 @@ namespace NetRPG.Language
                 case "ENDIF":
                     CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getLastScope());
                     break;
-                    
+
                 case "SELECT":
                     Labels.Add(Labels.getScope());
                     Labels.Scope++;
@@ -263,7 +269,7 @@ namespace NetRPG.Language
                     CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getLastScope());
                     Labels.Scope++;
                     break;
-                    
+
                 case "DOW":
                     CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getScope());
                     Labels.Add(Labels.getScope());
@@ -352,13 +358,17 @@ namespace NetRPG.Language
                             {
                                 CurrentProcudure.AddInstruction(Instructions.LDGBLD, token.Value); //Load global
                                 ParseExpression(tokens[i + 1].Block);
-                                CurrentProcudure.AddInstruction(Instructions.LDARRD);
+
+                                if (_Module.GetDataSet(token.Value)._Type == Types.Structure)
+                                    CurrentProcudure.AddInstruction(Instructions.LDARRD);
                             }
                             else if (CurrentProcudure.GetDataSetList().Contains(tokens[i].Value))
                             {
                                 CurrentProcudure.AddInstruction(Instructions.LDVARD, token.Value); //Load local
                                 ParseExpression(tokens[i + 1].Block);
-                                CurrentProcudure.AddInstruction(Instructions.LDARRD);
+
+                                if (CurrentProcudure.GetDataSet(token.Value)._Type == Types.Structure)
+                                    CurrentProcudure.AddInstruction(Instructions.LDARRD);
                             }
                             else
                             {
@@ -377,7 +387,7 @@ namespace NetRPG.Language
                                 CurrentProcudure.AddInstruction(Instructions.LDVARD, token.Value); //Load local
                             else
                                 CurrentProcudure.AddInstruction(Instructions.LDFLDD, token.Value); //Load field?
-                            
+
                         }
                         break;
                     case RPGLex.Type.STRING_LITERAL:
@@ -497,12 +507,15 @@ namespace NetRPG.Language
                         continue;
 
                     case RPGLex.Type.BIF:
-                        if (tokens[i+1].Block != null) {
-                            AppendCount = ParseExpression(tokens[i+1].Block);
+                        if (tokens[i + 1].Block != null)
+                        {
+                            AppendCount = ParseExpression(tokens[i + 1].Block);
                             CurrentProcudure.AddInstruction(Instructions.LDINT, AppendCount.ToString());
                             CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
                             i++;
-                        } else {
+                        }
+                        else
+                        {
                             //TODO: What if no parameters?
                         }
                         break;
@@ -511,7 +524,7 @@ namespace NetRPG.Language
                         break;
 
                     case RPGLex.Type.WORD_LITERAL:
-                        if (i + 1 < tokens.Count && tokens[i+1].Block != null)
+                        if (i + 1 < tokens.Count && tokens[i + 1].Block != null)
                         {
                             if (_Module.GetDataSetList().Contains(tokens[i].Value))
                             {
@@ -536,7 +549,7 @@ namespace NetRPG.Language
                                 CurrentProcudure.AddInstruction(Instructions.LDINT, AppendCount.ToString());
                                 CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
                             }
-                            
+
                             i++;
                         }
                         else
@@ -579,9 +592,9 @@ namespace NetRPG.Language
                         Error.ThrowCompileError(token.Type + " not expected. Check for missing semi-colon.", token.Line);
                         break;
                 }
-                
+
             }
-            
+
             for (int x = Append.Count - 1; x >= 0; x--)
                 CurrentProcudure.AddInstruction(Append[x]);
             Append.Clear();
