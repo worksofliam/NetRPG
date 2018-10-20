@@ -10,7 +10,6 @@ namespace NetRPG.Runtime.Typing
         {
             this.Name = name;
             this.Type = Types.Structure;
-            this.Properties = new Dictionary<string, dynamic>();
 
             this.Dimentions = 1;
             this.Value = new object[this.Dimentions];
@@ -32,7 +31,7 @@ namespace NetRPG.Runtime.Typing
                 }
 
                 foreach (DataValue subfield in subfields)
-                    subfield.InitialValue();
+                    subfield.DoInitialValue();
 
                 this.Value[x] = subfields;
             }

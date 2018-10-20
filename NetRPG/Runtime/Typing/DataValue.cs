@@ -10,7 +10,7 @@ namespace NetRPG.Runtime.Typing
         protected Types Type;
         protected Object[] Value;
         protected int Dimentions = 1;
-        protected Dictionary<string, dynamic> Properties;
+        protected dynamic InitValue = null;
         protected Dictionary<string, int> Subfields;
 
         public void SetArray(int Count)
@@ -18,7 +18,7 @@ namespace NetRPG.Runtime.Typing
             this.Dimentions = Count;
             this.Value = new object[this.Dimentions];
 
-            this.InitialValue();
+            this.DoInitialValue();
         }
 
         public string GetName() => this.Name;
@@ -65,12 +65,12 @@ namespace NetRPG.Runtime.Typing
             return this.Value[index];
         }
 
-        public void InitialValue()
+        public void DoInitialValue()
         {
             dynamic initialValue = null;
-            if (this.Properties.ContainsKey("initialValue"))
+            if (this.InitValue != null)
             {
-                initialValue = this.Properties["initialValue"];
+                initialValue = this.InitValue;
             }
             else
             {
@@ -85,8 +85,7 @@ namespace NetRPG.Runtime.Typing
                         break;
                     case Types.Double:
                     case Types.Float:
-                    case Types.Packed:
-                    case Types.Zoned:
+                    case Types.FixedDecimal:
                         initialValue = 0.0;
                         break;
                     case Types.Int8:

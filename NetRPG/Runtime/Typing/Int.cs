@@ -12,14 +12,12 @@ namespace NetRPG.Runtime.Typing
             this.Name = name;
 
             this.Type = type;
-            
-            this.Properties = new Dictionary<string, dynamic>();
-            this.Properties.Add("initialValue", initialValue);
+            this.InitValue = initialValue;
 
             this.Dimentions = 1;
             this.Value = new object[this.Dimentions];
 
-            this.InitialValue();
+            this.DoInitialValue();
         }
 
         public override void Set(object value, int index = 0)

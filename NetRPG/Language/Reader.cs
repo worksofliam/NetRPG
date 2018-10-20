@@ -143,6 +143,11 @@ namespace NetRPG.Language
                     case "S":
                     case "SUBF":
                         dataSet._Type = StringToType(tokens[4].Value, tokens[5]?.Block?[0].Value);
+                        if (tokens[5]?.Block.Count >= 3)
+                            dataSet._Precision = int.Parse(tokens[5]?.Block?[2].Value);
+                        else
+                            dataSet._Precision = 0;
+
                         int.TryParse(tokens[5]?.Block?[0].Value, out dataSet._Length);
                         break;
                     case "F":
@@ -194,8 +199,9 @@ namespace NetRPG.Language
                         case "8": return Types.Double;
                         default: return Types.Double;
                     }
-                case "ZONED": return Types.Double;
-                case "PACKED": return Types.Double;
+                case "ZONED":
+                case "PACKED":
+                    return Types.FixedDecimal;
             }
 
             return Types.Void;

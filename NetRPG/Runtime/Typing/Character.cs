@@ -6,6 +6,7 @@ namespace NetRPG.Runtime.Typing
 {
     class Character : DataValue
     {
+        private int Length;
         public Character(string name, int length, string initialValue = "")
         {
             if (initialValue == null)
@@ -13,25 +14,24 @@ namespace NetRPG.Runtime.Typing
 
             this.Name = name;
             this.Type = Types.Character;
-            this.Properties = new Dictionary<string, dynamic>();
-            this.Properties.Add("length", length);
-            this.Properties.Add("initialValue", initialValue);
+            this.InitValue = initialValue;
+
+            this.Length = length;
 
             this.Dimentions = 1;
             this.Value = new object[this.Dimentions];
 
-            this.InitialValue();
+            this.DoInitialValue();
         }
 
         public override void Set(object value, int index = 0)
         {
             string NewValue = (string)value;
-            int Length = this.Properties["length"];
-
-            if (NewValue.Length > Length)
-                NewValue = NewValue.Substring(0, Length);
+            
+            if (NewValue.Length > this.Length)
+                NewValue = NewValue.Substring(0, this.Length);
             else
-                NewValue = NewValue.PadRight(Length);
+                NewValue = NewValue.PadRight(this.Length);
 
             this.Value[index] = NewValue;
         }

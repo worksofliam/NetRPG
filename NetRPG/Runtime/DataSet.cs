@@ -12,6 +12,7 @@ namespace NetRPG.Runtime
         public string _Name;
         public Types _Type;
         public int _Length; //For non-structures
+        public int _Precision;
         public int _Dimentions; //If 0, not an array
         public object _InitialValue;
         public List<DataSet> _Subfields;
@@ -51,6 +52,11 @@ namespace NetRPG.Runtime
                     result = new Structure(this._Name);
                     if (IsArray()) result.SetArray(this._Dimentions);
                     result.SetSubfields(_Subfields.ToArray());
+                    break;
+                    
+                case Types.FixedDecimal: //Packed / Zoned
+                    result = new FixedDecimal(this._Name, this._Type, this._Precision, Convert.ToDouble(this._InitialValue));
+                    if (IsArray()) result.SetArray(this._Dimentions);
                     break;
 
                 default:
