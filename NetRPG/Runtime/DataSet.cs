@@ -37,7 +37,6 @@ namespace NetRPG.Runtime
             {
                 case Types.Character:
                     result = new Character(this._Name, this._Length, (string) this._InitialValue);
-                    if (IsArray()) result.SetArray(this._Dimentions);
                     break;
 
                 case Types.Int8:
@@ -45,24 +44,24 @@ namespace NetRPG.Runtime
                 case Types.Int32:
                 case Types.Int64:
                     result = new Int(this._Name, this._Type, Convert.ToInt32(this._InitialValue));
-                    if (IsArray()) result.SetArray(this._Dimentions);
                     break;
 
                 case Types.Structure:
                     result = new Structure(this._Name);
-                    if (IsArray()) result.SetArray(this._Dimentions);
-                    result.SetSubfields(_Subfields.ToArray());
                     break;
                     
                 case Types.FixedDecimal: //Packed / Zoned
                     result = new FixedDecimal(this._Name, this._Type, this._Precision, Convert.ToDouble(this._InitialValue));
-                    if (IsArray()) result.SetArray(this._Dimentions);
                     break;
 
                 default:
                     Error.ThrowRuntimeError("DataSet.ToDataValue", this._Type.ToString() + " is not a ready data type.");
                     break;
             }
+
+            if (IsArray()) result.SetArray(this._Dimentions);
+            if (this._Type == Types.Structure)
+                result.SetSubfields(_Subfields.ToArray()); //Must be run after array size has been set
 
 
             return result;

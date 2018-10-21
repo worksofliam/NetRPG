@@ -14,7 +14,7 @@ namespace NetRPG.Runtime.Typing
 
             this.Name = name;
             this.Type = Types.Character;
-            this.InitValue = initialValue;
+            this.InitValue = initialValue.PadRight(length);
 
             this.Length = length;
 

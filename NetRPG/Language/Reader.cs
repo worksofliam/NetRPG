@@ -111,6 +111,7 @@ namespace NetRPG.Language
         {
             //TODO: Check if DataSet already exists?
             DataSet dataSet = new DataSet(tokens[3].Value);
+            string length = "";
             Dictionary<string, string> config = new Dictionary<string, string>();
 
             for (int i = 3; i < tokens.Length; i++)
@@ -148,13 +149,20 @@ namespace NetRPG.Language
                 {
                     case "S":
                     case "SUBF":
-                        dataSet._Type = StringToType(tokens[4].Value, tokens[5]?.Block?[0].Value);
-                        if (tokens[5]?.Block.Count >= 3)
-                            dataSet._Precision = int.Parse(tokens[5]?.Block?[2].Value);
-                        else
-                            dataSet._Precision = 0;
 
-                        int.TryParse(tokens[5]?.Block?[0].Value, out dataSet._Length);
+                        dataSet._Precision = 0;
+                        if (tokens.Count() >= 6)
+                        {
+                            length = tokens?[5].Block?[0].Value;
+
+                            if (tokens[5]?.Block.Count >= 3)
+                                dataSet._Precision = int.Parse(tokens[5]?.Block?[2].Value);
+
+                            int.TryParse(tokens[5]?.Block?[0].Value, out dataSet._Length);
+                        }
+
+                        dataSet._Type = StringToType(tokens[4].Value, length);
+
                         break;
                     case "F":
                         break;

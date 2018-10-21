@@ -23,11 +23,20 @@ namespace NetRPG
             { "division.rpgle", "44.1" },
             { "multiplication.rpgle", "20648.66" },
             { "bif_abs.rpgle", 5 },
-            { "bif_char.rpgle", "5512.34"}
+            { "bif_char.rpgle", "5512.34"},
+            { "bif_dec.rpgle", 1234.56 },
+            { "bif_decpos.rpgle", 2 },
+            { "bif_float.rpgle", 5f },
+            { "bif_int.rpgle", 10 },
+            { "bif_len.rpgle", 50 },
+            { "bif_lookup.rpgle", 4 },
+            { "bif_trim.rpgle", "Hello" }
         };
 
         public static void RunTests(string testsStarting = "")
         {
+            ConsoleColor originalColor = Console.ForegroundColor;
+
             string SourcePath;
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             string NewLine = (isWindows ? Environment.NewLine : "");
@@ -37,12 +46,17 @@ namespace NetRPG
             Reader reader;
             VM vm;
 
+            int run = 0, passed = 0, failed = 0;
+            Exception lastError = null;
+
             dynamic result;
 
             foreach (string file in TestCases.Keys)
             {
                 if (testsStarting == "" || file.StartsWith(testsStarting))
                 {
+                    run++;
+
                     Console.Write("Testing " + file.PadRight(35) + " ... ");
                     SourcePath = Path.Combine(Environment.CurrentDirectory, "RPGCode", file);
 
@@ -58,27 +72,48 @@ namespace NetRPG
                     reader.ReadStatements(Statements);
 
                     vm = new VM(true);
-                    vm.AddModule(reader.GetModule());
 
-                    result = vm.Run();
-
-                    if (result == TestCases[file])
+                    try
                     {
+                        vm.AddModule(reader.GetModule());
+                        result = vm.Run();
+                    }
+                    catch (Exception e)
+                    {
+                        lastError = e;
+                        result = null;
+                    }
+
+                    if (result != null && result == TestCases[file])
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("successful.");
+                        Console.ForegroundColor = originalColor;
+
+                        passed++;
                     }
                     else
                     {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("failed.");
+                        Console.ForegroundColor = originalColor;
                         Console.WriteLine();
-                        Console.WriteLine(".. failed.");
+                        Console.WriteLine(lastError.Message);
+                        Console.WriteLine(lastError.StackTrace);
                         Console.WriteLine();
                         reader.GetModule().Print();
-                        Console.WriteLine();
                         Console.WriteLine("\tExpected: " + Convert.ToString(TestCases[file]));
                         Console.WriteLine("\tReturned: " + Convert.ToString(result));
                         Console.WriteLine();
+
+                        lastError = null;
+                        failed++;
                     }
                 }
             }
+
+            Console.WriteLine();
+            Console.WriteLine(run.ToString() + " ran, " + passed.ToString() + " passed, " + failed.ToString() + " failed");
         }
     }
 }
