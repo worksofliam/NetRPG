@@ -16,7 +16,14 @@ namespace NetRPG
             { "dcl_fixed.rpgle", 24691.35 },
             { "dcl_char_array.rpgle", 6 },
             { "dcl_ds_qualified.rpgle", "Hello     World     10" },
-            { "dcl_ds_qualified_array.rpgle", "Hello     World     3" }
+            { "dcl_ds_qualified_array.rpgle", "Hello     World     3" },
+            { "assignment.rpgle", "Hello world    23421234.56" },
+            { "addition.rpgle", "Hello world    23421234.56" },
+            { "subtraction.rpgle", "5304.33" },
+            { "division.rpgle", "44.1" },
+            { "multiplication.rpgle", "20648.66" },
+            { "bif_abs.rpgle", 5 },
+            { "bif_char.rpgle", "5512.34"}
         };
 
         public static void RunTests()
@@ -34,7 +41,7 @@ namespace NetRPG
 
             foreach (string file in TestCases.Keys)
             {
-                Console.Write("Testing " + file.PadRight(20) + " ... ");
+                Console.Write("Testing " + file.PadRight(35) + " ... ");
                 SourcePath = Path.Combine(Environment.CurrentDirectory, "RPGCode", file);
 
                 prep = new Preprocessor();
@@ -50,14 +57,8 @@ namespace NetRPG
 
                 vm = new VM(true);
                 vm.AddModule(reader.GetModule());
-                try
-                {
-                    result = vm.Run();
-                }
-                catch (Exception e)
-                {
-                    result = null;
-                }
+
+                result = vm.Run();
 
                 if (result == TestCases[file])
                 {
