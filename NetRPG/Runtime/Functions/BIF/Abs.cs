@@ -9,8 +9,7 @@ namespace NetRPG.Runtime.Functions.BIF
         public override object Execute(object[] Parameters)
         {
             dynamic param = Parameters[0];
-            Math.Abs(param);
-            return param;
+            return Math.Abs(param);
         }
     }
 }

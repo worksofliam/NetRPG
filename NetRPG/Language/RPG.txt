@@ -10,7 +10,7 @@ BIF: "/\\%\\S*/"
 SPECIAL: "/\\*\\S*/"
 DIRECTIVE: "/\\/\\S*/"
 
-INT_LITERAL: "/^\\d+$/"
+INT_LITERAL: "/^[-+]?\\d+$/"
 DOUBLE_LITERAL: @"/(?<=^| )\\d+(\\.\\d+)?(?=$| )/"
 WORD_LITERAL: "/.*?/"
 

@@ -26,7 +26,7 @@ namespace NetRPG
             { "bif_char.rpgle", "5512.34"}
         };
 
-        public static void RunTests()
+        public static void RunTests(string testsStarting = "")
         {
             string SourcePath;
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
@@ -41,39 +41,42 @@ namespace NetRPG
 
             foreach (string file in TestCases.Keys)
             {
-                Console.Write("Testing " + file.PadRight(35) + " ... ");
-                SourcePath = Path.Combine(Environment.CurrentDirectory, "RPGCode", file);
-
-                prep = new Preprocessor();
-                prep.ReadFile(SourcePath);
-
-                lexer = new RPGLex();
-                lexer.Lex(String.Join(NewLine, prep.GetLines()));
-
-                Statements = Statement.ParseDocument(lexer.GetTokens());
-
-                reader = new Reader();
-                reader.ReadStatements(Statements);
-
-                vm = new VM(true);
-                vm.AddModule(reader.GetModule());
-
-                result = vm.Run();
-
-                if (result == TestCases[file])
+                if (testsStarting == "" || file.StartsWith(testsStarting))
                 {
-                    Console.WriteLine("successful.");
-                }
-                else
-                {
-                    Console.WriteLine();
-                    Console.WriteLine(".. failed.");
-                    Console.WriteLine();
-                    reader.GetModule().Print();
-                    Console.WriteLine();
-                    Console.WriteLine("\tExpected: " + Convert.ToString(TestCases[file]));
-                    Console.WriteLine("\tReturned: " + Convert.ToString(result));
-                    Console.WriteLine();
+                    Console.Write("Testing " + file.PadRight(35) + " ... ");
+                    SourcePath = Path.Combine(Environment.CurrentDirectory, "RPGCode", file);
+
+                    prep = new Preprocessor();
+                    prep.ReadFile(SourcePath);
+
+                    lexer = new RPGLex();
+                    lexer.Lex(String.Join(NewLine, prep.GetLines()));
+
+                    Statements = Statement.ParseDocument(lexer.GetTokens());
+
+                    reader = new Reader();
+                    reader.ReadStatements(Statements);
+
+                    vm = new VM(true);
+                    vm.AddModule(reader.GetModule());
+
+                    result = vm.Run();
+
+                    if (result == TestCases[file])
+                    {
+                        Console.WriteLine("successful.");
+                    }
+                    else
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine(".. failed.");
+                        Console.WriteLine();
+                        reader.GetModule().Print();
+                        Console.WriteLine();
+                        Console.WriteLine("\tExpected: " + Convert.ToString(TestCases[file]));
+                        Console.WriteLine("\tReturned: " + Convert.ToString(result));
+                        Console.WriteLine();
+                    }
                 }
             }
         }
