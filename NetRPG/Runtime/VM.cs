@@ -10,12 +10,14 @@ namespace NetRPG.Runtime
 
     public class VM
     {
+        private bool IsTestingEnv;
         private Dictionary<string, DataValue> GlobalVariables;
         private string _EntryProcedure;
         private Dictionary<string, Procedure> _Procedures;
 
-        public VM()
+        public VM(bool testingVM = false)
         {
+            IsTestingEnv = testingVM;
             _EntryProcedure = "";
             _Procedures = new Dictionary<string, Procedure>();
             GlobalVariables = new Dictionary<string, DataValue>();
@@ -25,6 +27,9 @@ namespace NetRPG.Runtime
         {
             foreach (Procedure proc in module.GetProcedures())
             {
+                if (proc._ReturnType == Types.Void)
+                    proc._ReturnType = Types.Pointer; //Any
+
                 _Procedures.Add(proc.GetName(), proc);
                 if (proc.HasEntrypoint) _EntryProcedure = proc.GetName();
             }
@@ -37,21 +42,23 @@ namespace NetRPG.Runtime
         }
 
         private List<string> CallStack;
-        public void Run()
+        public object Run()
         {
             CallStack = new List<string>();
-            //try {
-                Execute(_EntryProcedure);
-            //} catch (Exception e) {
-            //    Console.WriteLine("-- Error --");
-            //    Console.WriteLine(e.Message);
-            //    Console.WriteLine("Call stack: ");
-            //    foreach(string item in CallStack) {
-            //        Console.WriteLine("\t" + item);
-            //    }
-            //    Console.WriteLine("-- Error --");
-            //    throw e;
-            //}
+            try {
+                return Execute(_EntryProcedure);
+            } catch (Exception e) {
+                Console.WriteLine("-- Error --");
+                Console.WriteLine(e.Message);
+                Console.WriteLine("RPG call stack: ");
+                foreach(string item in CallStack) {
+                    Console.WriteLine("\t" + item);
+                }
+                Console.WriteLine(".NET call stack:");
+                Console.WriteLine(e.StackTrace);
+                Console.WriteLine("-- Error --");
+                return null;
+            }
         }
 
         private object Execute(string Name, DataValue[] Parms = null)
@@ -317,6 +324,10 @@ namespace NetRPG.Runtime
                 case Instructions.LESSER_EQUAL:
                     return a <= b;
                 case Instructions.EQUAL:
+                    if (a is string)
+                        a = a.Trim();
+                    if (b is string)
+                        b = b.Trim();
                     return a == b;
                 case Instructions.ADD:
                 case Instructions.APPEND:
