@@ -195,6 +195,7 @@ namespace NetRPG.Language
         {
             switch (Value.ToUpper())
             {
+                case "IND": return Types.Ind;
                 case "CHAR": return Types.Character;
                 case "VARCHAR": return Types.Varying;
                 case "INT":
@@ -586,7 +587,23 @@ namespace NetRPG.Language
                         CurrentProcudure.AddInstruction(Instructions.LDSTR, token.Value);
                         break;
                     case RPGLex.Type.SPECIAL:
-                        //TODO: handle special
+                        switch (token.Value.ToUpper())
+                        {
+                            case "*BLANK":
+                            case "*BLANKS":
+                                CurrentProcudure.AddInstruction(Instructions.LDSTR, "");
+                                break;
+                            case "*ZERO":
+                            case "*ZEROS":
+                                CurrentProcudure.AddInstruction(Instructions.LDINT, "0");
+                                break;
+                            case "*ON":
+                                CurrentProcudure.AddInstruction(Instructions.LDSTR, "1");
+                                break;
+                            case "*OFF":
+                                CurrentProcudure.AddInstruction(Instructions.LDSTR, "0");
+                                break;
+                        }
                         break;
                     case RPGLex.Type.INT_LITERAL:
                         CurrentProcudure.AddInstruction(Instructions.LDINT, token.Value);

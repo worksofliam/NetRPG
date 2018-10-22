@@ -14,6 +14,7 @@ namespace NetRPG
             { "dcl_char.rpgle", "Hello world    " },
             { "dcl_int.rpgle", 200 },
             { "dcl_fixed.rpgle", 24691.35 },
+            { "dcl_ind.rpgle", "101" },
             { "dcl_char_array.rpgle", 6 },
             { "dcl_ds_qualified.rpgle", "Hello     World     10" },
             { "dcl_ds_qualified_array.rpgle", "Hello     World     3" },
@@ -30,7 +31,7 @@ namespace NetRPG
             { "bif_int.rpgle", 10 },
             { "bif_len.rpgle", 50 },
             { "bif_lookup.rpgle", 4 },
-            { "bif_trim.rpgle", "Hello" }
+            { "bif_trim.rpgle", "Hello" },
         };
 
         public static void RunTests(string testsStarting = "")

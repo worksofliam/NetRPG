@@ -35,6 +35,10 @@ namespace NetRPG.Runtime
             
             switch (this._Type)
             {
+                case Types.Ind:
+                    result = new Ind(this._Name, (string)this._InitialValue);
+                    break;
+
                 case Types.Character:
                     result = new Character(this._Name, this._Length, (string) this._InitialValue);
                     break;
