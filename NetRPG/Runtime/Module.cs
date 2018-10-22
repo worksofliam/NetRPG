@@ -44,7 +44,11 @@ namespace NetRPG.Runtime
             DataSet dataSet;
             foreach (string Name in this.GetDataSetList()) {
                 dataSet = this.GetDataSet(Name);
-                Console.WriteLine("\t" + Name + " " + dataSet._Type + "(" + dataSet?._Length + ") " + dataSet?._Dimentions);
+                Console.Write("\t" + Name + " " + dataSet._Type + "(" + dataSet?._Length + ") ");
+                if (dataSet?._Dimentions > 0)
+                    Console.Write("Dim(" + dataSet?._Dimentions + ")");
+
+                Console.WriteLine();
             }
 
             Console.WriteLine();
