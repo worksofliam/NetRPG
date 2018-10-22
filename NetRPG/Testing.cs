@@ -32,6 +32,7 @@ namespace NetRPG
             { "bif_len.rpgle", 50 },
             { "bif_lookup.rpgle", 4 },
             { "bif_trim.rpgle", "Hello" },
+            { "op_if.rpgle", 3 }
         };
 
         public static void RunTests(string testsStarting = "")
