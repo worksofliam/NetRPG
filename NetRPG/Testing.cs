@@ -32,7 +32,11 @@ namespace NetRPG
             { "bif_len.rpgle", 50 },
             { "bif_lookup.rpgle", 4 },
             { "bif_trim.rpgle", "Hello" },
-            { "op_if.rpgle", 3 }
+            { "op_if.rpgle", 3 },
+            { "op_else.rpgle", 2 },
+            { "op_elseif.rpgle", 2 },
+            { "op_select.rpgle", 3 },
+            { "op_dow.rpgle", 11 }
         };
 
         public static void RunTests(string testsStarting = "")
@@ -100,9 +104,12 @@ namespace NetRPG
                         Console.WriteLine("failed.");
                         Console.ForegroundColor = originalColor;
                         Console.WriteLine();
-                        Console.WriteLine(lastError.Message);
-                        Console.WriteLine(lastError.StackTrace);
-                        Console.WriteLine();
+                        if (lastError != null)
+                        {
+                            Console.WriteLine(lastError.Message);
+                            Console.WriteLine(lastError.StackTrace);
+                            Console.WriteLine();
+                        }
                         reader.GetModule().Print();
                         Console.WriteLine("\tExpected: " + Convert.ToString(TestCases[file]));
                         Console.WriteLine("\tReturned: " + Convert.ToString(result));
