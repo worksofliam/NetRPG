@@ -97,15 +97,16 @@ namespace NetRPG.Runtime
                         {
                             set = (Parms[x] as DataValue).Clone();
                             LocalVariables.Add(Parameters[x], set);
+                            LocalVariables[Parameters[x]] = set;
                         }
                         else
-                            LocalVariables.Add(Parameters[x], (Parms[x] as DataValue));
+                            LocalVariables[Parameters[x]] = (Parms[x] as DataValue);
                     }
                     else
                     {
                         set = new DataValue();
                         set.Set(Parms[x]);
-                        LocalVariables.Add(Parameters[x], set);
+                        LocalVariables[Parameters[x]] = set;
                     }
                 }
             }
@@ -248,7 +249,7 @@ namespace NetRPG.Runtime
                         break;
 
                     case Instructions.LDVARD:
-                        Stack.Add(GlobalVariables[instructions[ip]._Value]);
+                        Stack.Add(LocalVariables[instructions[ip]._Value]);
                         break;
 
                     case Instructions.LDARRD: //Only really used to get a array subfield
@@ -261,7 +262,7 @@ namespace NetRPG.Runtime
                         Stack.Add(Values[0]);
                         break;
 
-                    case Instructions.LDFLDD:
+                    case Instructions.LDFLDD: //Load subfield data
                         Values[0] = Stack[Stack.Count - 1]; //DataValue[]
 
                         if (Values[0] is object[])

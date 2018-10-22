@@ -181,15 +181,30 @@ namespace NetRPG.Language
                         break;
                     case "PI":
                         if (tokens.Count() >= 6)
+                        {
                             length = tokens?[5].Block?[0].Value;
-                        
-                        CurrentProcudure._ReturnType = StringToType(tokens[4].Value, length);
+                            CurrentProcudure._ReturnType = StringToType(tokens[4].Value, length);
+                        }
+                        else
+                            CurrentProcudure._ReturnType = Types.Void;
+
                         dataSet = null;
                         break;
 
                     case "PARM":
-                        CurrentProcudure.AddParameter(tokens[4].Value);
-                        dataSet = null;
+                        dataSet._Precision = 0;
+                        if (tokens.Count() >= 6)
+                        {
+                            length = tokens?[5].Block?[0].Value;
+
+                            if (tokens[5]?.Block.Count >= 3)
+                                dataSet._Precision = int.Parse(tokens[5]?.Block?[2].Value);
+
+                            int.TryParse(tokens[5]?.Block?[0].Value, out dataSet._Length);
+                        }
+
+                        dataSet._Type = StringToType(tokens[4].Value, length);
+                        CurrentProcudure.AddParameter(tokens[3].Value);
                         break;
                 }
 
@@ -236,6 +251,9 @@ namespace NetRPG.Language
                 case "ZONED":
                 case "PACKED":
                     return Types.FixedDecimal;
+
+                case "LIKEDS":
+                    return Types.Structure;
             }
 
             Error.ThrowCompileError("Type '" + Value + "' does not exist or is not supported.");
