@@ -61,13 +61,14 @@ namespace NetRPG.Runtime
             }
         }
 
-        private object Execute(string Name, DataValue[] Parms = null)
+        private object Execute(string Name, object[] Parms = null)
         {
             Function callingFunction;
             DataValue tempDataValue;
             object[] tempArray;
             object[] Values = new object[3];
             int tempIndex = 1;
+            DataValue set;
 
             List<object> Stack = new List<object>();
 
@@ -80,9 +81,33 @@ namespace NetRPG.Runtime
             //Initialise local variables
             foreach (string local in _Procedures[Name].GetDataSetList())
             {
-                DataValue set = _Procedures[Name].GetDataSet(local).ToDataValue();
+                set = _Procedures[Name].GetDataSet(local).ToDataValue();
                 LocalVariables.Add(set.GetName(), set);
-                LocalVariables[set.GetName()].Set(_Procedures[Name].GetDataSet(local)._InitialValue);
+                LocalVariables[set.GetName()].DoInitialValue();
+            }
+
+            if (Parms != null)
+            {
+                string[] Parameters = _Procedures[Name].GetParameterNames();
+                for (int x = 0; x < Parameters.Length; x++)
+                {
+                    if (Parms[x] is DataValue)
+                    {
+                        if (_Procedures[Name].ParameterIsValue(Parameters[x]))
+                        {
+                            set = (Parms[x] as DataValue).Clone();
+                            LocalVariables.Add(Parameters[x], set);
+                        }
+                        else
+                            LocalVariables.Add(Parameters[x], (Parms[x] as DataValue));
+                    }
+                    else
+                    {
+                        set = new DataValue();
+                        set.Set(Parms[x]);
+                        LocalVariables.Add(Parameters[x], set);
+                    }
+                }
             }
 
             //TODO: Do this only once and not everytime a procedure is called.
@@ -131,18 +156,25 @@ namespace NetRPG.Runtime
                         break;
 
                     case Instructions.CALL:
-                        //TODO: check for existing procedures first!
-                        callingFunction = Function.GetFunction(instructions[ip]._Value);
-                        if (callingFunction != null) {
-                            tempIndex = (int) Stack[Stack.Count - 1];
-                            Values[0] = callingFunction.Execute(Stack.GetRange(Stack.Count - (tempIndex+1), tempIndex).ToArray());
-                            Stack.RemoveRange(Stack.Count - (tempIndex+1), tempIndex+1);
-
-                            if (Values[0] != null)
-                                Stack.Add(Values[0]);
-                        } else {
+                        tempIndex = (int)Stack[Stack.Count - 1];
+                        if (_Procedures.ContainsKey(instructions[ip]._Value))
+                        {
+                            Values[0] = Execute(instructions[ip]._Value, Stack.GetRange(Stack.Count - (tempIndex + 1), tempIndex).ToArray());
+                        }
+                        else if (Function.IsFunction(instructions[ip]._Value))
+                        {
+                            callingFunction = Function.GetFunction(instructions[ip]._Value);
+                            Values[0] = callingFunction.Execute(Stack.GetRange(Stack.Count - (tempIndex + 1), tempIndex).ToArray());
+                        }
+                        else
+                        {
                             Error.ThrowRuntimeError(Name, "Function " + instructions[ip]._Value + " does not exist.", ip);
                         }
+                        
+                        Stack.RemoveRange(Stack.Count - (tempIndex + 1), tempIndex + 1); //Remove parameters from stack
+
+                        if (Values[0] != null)
+                            Stack.Add(Values[0]);
                         break;
 
                     case Instructions.LDARRV:

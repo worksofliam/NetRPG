@@ -35,5 +35,26 @@ namespace NetRPG.Language
 
             return Statements.ToArray();
         }
+
+        public static Statement[] ParseParams(List<RPGToken> Tokens)
+        {
+            List<Statement> Statements = new List<Statement>();
+            List<RPGToken> CurrentStatement = new List<RPGToken>();
+
+            foreach (RPGToken token in Tokens)
+            {
+                if (token.Type == RPGLex.Type.PARMS)
+                {
+                    Statements.Add(new Statement(CurrentStatement.ToArray()));
+                    CurrentStatement = new List<RPGToken>();
+                }
+                else
+                {
+                    CurrentStatement.Add(token);
+                }
+            }
+
+            return Statements.ToArray();
+        }
     }
 }

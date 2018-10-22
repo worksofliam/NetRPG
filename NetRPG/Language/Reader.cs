@@ -149,7 +149,6 @@ namespace NetRPG.Language
                 {
                     case "S":
                     case "SUBF":
-
                         dataSet._Precision = 0;
                         if (tokens.Count() >= 6)
                         {
@@ -172,13 +171,33 @@ namespace NetRPG.Language
                         dataSet._Type = Types.Structure;
                         dataSet._Subfields = new List<DataSet>();
                         break;
+
+                    case "PROC":
+                        if (CurrentProcudure != null)
+                            _Module.AddProcedure(CurrentProcudure);
+
+                        CurrentProcudure = new Procedure(tokens[3].Value);
+                        dataSet = null;
+                        break;
+                    case "PI":
+                        if (tokens.Count() >= 6)
+                            length = tokens?[5].Block?[0].Value;
+                        
+                        CurrentProcudure._ReturnType = StringToType(tokens[4].Value, length);
+                        dataSet = null;
+                        break;
+
+                    case "PARM":
+                        CurrentProcudure.AddParameter(tokens[4].Value);
+                        dataSet = null;
+                        break;
                 }
 
                 if (SubfieldLevel >= 0)
                 {
                     Current_Structs[SubfieldLevel]._Subfields.Add(dataSet);
                 }
-                else if (dataSet._Type == Types.Structure)
+                else if (dataSet != null && dataSet._Type == Types.Structure)
                 {
                     SubfieldLevel++;
                     Current_Structs.Add(dataSet);
@@ -219,6 +238,7 @@ namespace NetRPG.Language
                     return Types.FixedDecimal;
             }
 
+            Error.ThrowCompileError("Type '" + Value + "' does not exist or is not supported.");
             return Types.Void;
         }
 
@@ -331,18 +351,27 @@ namespace NetRPG.Language
                 }
             }
 
-            ParseAssignment(tokens.Take(assignIndex).ToArray());
-            ParseExpression(tokens.Skip(assignIndex + 1).ToList());
-            CurrentProcudure.AddInstruction(Instructions.STORE);
+            if (assignIndex == -1)
+            {
+                //Possibly a function call
+                ParseExpression(tokens.ToList());
+            }
+            else
+            {
+                //Usually an assignment
+                ParseAssignment(tokens.Take(assignIndex).ToList());
+                ParseExpression(tokens.Skip(assignIndex + 1).ToList());
+                CurrentProcudure.AddInstruction(Instructions.STORE);
+            }
         }
 
-        private void ParseAssignment(RPGToken[] tokens)
+        private void ParseAssignment(List<RPGToken> tokens)
         {
             RPGToken token;
 
             if (tokens == null) return;
             if (tokens.Count() == 0) return;
-            for (int i = 0; i < tokens.Length; i++)
+            for (int i = 0; i < tokens.Count(); i++)
             {
                 token = tokens[i];
                 switch (token.Type)
@@ -361,7 +390,7 @@ namespace NetRPG.Language
                         break;
 
                     case RPGLex.Type.WORD_LITERAL:
-                        if (i + 1 < tokens.Length && tokens[i + 1].Block != null)
+                        if (i + 1 < tokens.Count() && tokens[i + 1].Block != null)
                         {
                             if (_Module.GetDataSetList().Contains(tokens[i].Value))
                             {
@@ -422,6 +451,7 @@ namespace NetRPG.Language
             if (tokens.Count() == 0) return 0;
 
             Types lastType = Types.Void;
+            Statement[] Parameters = null;
             List<Instructions> Append = new List<Instructions>();
 
             for (int i = 0; i < tokens.Count; i++)
@@ -553,8 +583,17 @@ namespace NetRPG.Language
                             }
                             else
                             {
-                                //TODO: Maybe check the procedure exists? Could be an array within a struct
-                                AppendCount = ParseExpression(tokens[i + 1].Block);
+                                if (Runtime.Functions.Function.IsFunction(token.Value))
+                                    AppendCount = ParseExpression(tokens[i + 1].Block);
+                                else
+                                {
+                                    //Always pass by ref, convert to value if needed at runtime
+                                    //TODO: determine if need to pass by value (because expressions in the param)
+                                    Parameters = Statement.ParseParams(tokens[i + 1].Block);
+                                    foreach (Statement parameter in Parameters)
+                                        ParseAssignment(tokens[i + 1].Block);
+                                    AppendCount = Parameters.Length;
+                                }
                                 CurrentProcudure.AddInstruction(Instructions.LDINT, AppendCount.ToString());
                                 CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
                             }

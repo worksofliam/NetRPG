@@ -10,6 +10,7 @@ namespace NetRPG.Runtime
         public string _Name;
         public Types _ReturnType;
         private List<Instruction> _Instructions;
+        private Dictionary<string, bool> _Parameters; //Name, passByValue
         private Dictionary<string, DataSet> _DataSets;
 
         private bool _HasEntrypoint;
@@ -19,6 +20,7 @@ namespace NetRPG.Runtime
             _Name = Name;
             _ReturnType = ReturnType;
             _Instructions = new List<Instruction>();
+            _Parameters = new Dictionary<string, bool>();
             _DataSets = new Dictionary<string, DataSet>();
             _HasEntrypoint = false;
         }
@@ -41,7 +43,6 @@ namespace NetRPG.Runtime
         public string[] GetDataSetList() => _DataSets.Keys.ToArray();
         public DataSet GetDataSet(string Name)
         {
-            //TODO: Throw if no exist?
             if (_DataSets.ContainsKey(Name))
                 return _DataSets[Name];
             else {
@@ -49,6 +50,11 @@ namespace NetRPG.Runtime
                 return null;
             }
         }
+
+        public void AddParameter(string value, bool byValue = false) => _Parameters.Add(value, byValue);
+        public string[] GetParameterNames() => _Parameters.Keys.ToArray();
+        public bool ParameterIsValue(string name) => _Parameters[name];
+        public bool ParamterIsValue(int index) => _Parameters.ElementAt(index).Value;
 
         public string GetName() => _Name;
         public bool HasEntrypoint => _HasEntrypoint;

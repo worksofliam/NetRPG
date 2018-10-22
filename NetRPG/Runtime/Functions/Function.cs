@@ -22,6 +22,11 @@ namespace NetRPG.Runtime.Functions
             { "%TRIM", new BIF.Trim() },
         };
 
+        public static bool IsFunction(string Name)
+        {
+            return List.ContainsKey(Name.ToUpper());
+        }
+
         public static Function GetFunction(string Name)
         {
             Name = Name.ToUpper();

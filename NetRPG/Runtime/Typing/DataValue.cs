@@ -101,5 +101,9 @@ namespace NetRPG.Runtime.Typing
                 this.Value[x] = initialValue;
         }
 
+        public DataValue Clone()
+        {
+            return (DataValue)this.MemberwiseClone();
+        }
     }
 }
