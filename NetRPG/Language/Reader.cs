@@ -609,7 +609,7 @@ namespace NetRPG.Language
                                     //TODO: determine if need to pass by value (because expressions in the param)
                                     Parameters = Statement.ParseParams(tokens[i + 1].Block);
                                     foreach (Statement parameter in Parameters)
-                                        ParseAssignment(tokens[i + 1].Block);
+                                        ParseAssignment(parameter.GetTokens().ToList());
                                     AppendCount = Parameters.Length;
                                 }
                                 CurrentProcudure.AddInstruction(Instructions.LDINT, AppendCount.ToString());
@@ -659,6 +659,9 @@ namespace NetRPG.Language
                                 break;
                             case "*OFF":
                                 CurrentProcudure.AddInstruction(Instructions.LDSTR, "0");
+                                break;
+                            case "*NULL":
+                                CurrentProcudure.AddInstruction(Instructions.LDNULL);
                                 break;
                         }
                         break;

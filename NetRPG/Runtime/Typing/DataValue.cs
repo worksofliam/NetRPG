@@ -28,6 +28,11 @@ namespace NetRPG.Runtime.Typing
             this.Value[index] = value;
         }
 
+        public virtual void SetNull(int index = 0)
+        {
+            this.Value[index] = null;
+        }
+
         public virtual void Set(object value, string subfield)
         {
             this.Value[this.Subfields[subfield]] = value;

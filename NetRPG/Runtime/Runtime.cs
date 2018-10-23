@@ -58,7 +58,8 @@ namespace NetRPG.Runtime
         ENTRYPOINT, //Program entry point
         BRFALSE, //Break if false
         BRTRUE, //Break if true
-        BR //Break
+        BR, //Break
+        LDNULL
     };
 
     public enum Types

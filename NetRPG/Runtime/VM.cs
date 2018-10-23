@@ -91,22 +91,27 @@ namespace NetRPG.Runtime
                 string[] Parameters = _Procedures[Name].GetParameterNames();
                 for (int x = 0; x < Parameters.Length; x++)
                 {
-                    if (Parms[x] is DataValue)
+                    if (x < Parms.Length)
                     {
-                        if (_Procedures[Name].ParameterIsValue(Parameters[x]))
+                        if (Parms[x] is DataValue)
                         {
-                            set = (Parms[x] as DataValue).Clone();
-                            LocalVariables.Add(Parameters[x], set);
-                            LocalVariables[Parameters[x]] = set;
+                            if (_Procedures[Name].ParameterIsValue(Parameters[x]))
+                            {
+                                set = (Parms[x] as DataValue).Clone();
+                                LocalVariables.Add(Parameters[x], set);
+                                LocalVariables[Parameters[x]] = set;
+                            }
+                            else
+                                LocalVariables[Parameters[x]] = (Parms[x] as DataValue);
                         }
                         else
-                            LocalVariables[Parameters[x]] = (Parms[x] as DataValue);
+                        {
+                            LocalVariables[Parameters[x]].Set(Parms[x]);
+                        }
                     }
                     else
                     {
-                        set = new DataValue();
-                        set.Set(Parms[x]);
-                        LocalVariables[Parameters[x]] = set;
+                        LocalVariables[Parameters[x]].SetNull();
                     }
                 }
             }
@@ -242,6 +247,10 @@ namespace NetRPG.Runtime
 
                     case Instructions.LDSTR:
                         Stack.Add(instructions[ip]._Value);
+                        break;
+
+                    case Instructions.LDNULL:
+                        Stack.Add(null);
                         break;
 
                     case Instructions.LDGBLD:
