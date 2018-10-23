@@ -18,6 +18,7 @@ namespace NetRPG
             { "dcl_char_array.rpgle", 6 },
             { "dcl_ds_qualified.rpgle", "Hello     World     10" },
             { "dcl_ds_qualified_array.rpgle", "Hello     World     3" },
+            { "dcl_ds_subf_array.rpgle", "Hello     World     " },
             { "dcl_proc_1.rpgle", "World" },
             { "dcl_proc_2.rpgle", "World" },
             { "dcl_proc_3.rpgle", "World" },

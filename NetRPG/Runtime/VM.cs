@@ -313,25 +313,25 @@ namespace NetRPG.Runtime
 
                     case Instructions.STORE:
                         
-                        Values[0] = Stack[Stack.Count - 2];
+                        Values[0] = Stack[Stack.Count - 2]; //Index of fieldname
                         Values[1] = Stack[Stack.Count - 1]; //Value
 
-                        if (Values[0] is int) //TODO: Accept other numeric type?
+                        if (Values[0] is int) //Storing value into array
                         {
                             tempDataValue = (DataValue)Stack[Stack.Count - 3]; //DataValue
                             tempIndex = int.Parse(Values[0].ToString()) - 1;
                             tempDataValue.Set(Values[1], tempIndex);
                             Stack.RemoveRange(Stack.Count - 3, 3);
                         }
-                        else if (Values[0] is string)
+                        else if (Values[0] is string) //Storing value into field?
                         {
                             tempDataValue = (Structure)Stack[Stack.Count - 3]; //DataValue
                             tempDataValue.Set(Values[1], Values[0].ToString());
                             Stack.RemoveRange(Stack.Count - 3, 3);
                         }
-                        else
+                        else //Story value into DataValue
                         {
-                            tempDataValue = (DataValue)Stack[Stack.Count - 2]; //DataValue OR index
+                            tempDataValue = (DataValue)Stack[Stack.Count - 2]; //DataValue
                             tempDataValue.Set(Values[1]);
                             Stack.RemoveRange(Stack.Count - 2, 2);
                         }
