@@ -54,7 +54,9 @@ namespace NetRPG.Language
                 }
             }
 
-            Statements.Add(new Statement(CurrentStatement.ToArray()));
+            if (CurrentStatement.Count > 0)
+                Statements.Add(new Statement(CurrentStatement.ToArray()));
+
             return Statements.ToArray();
         }
     }
