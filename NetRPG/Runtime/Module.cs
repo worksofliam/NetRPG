@@ -42,6 +42,8 @@ namespace NetRPG.Runtime
         public void Print()
         {
             DataSet dataSet;
+            int ip = 0;
+
             foreach (string Name in this.GetDataSetList()) {
                 dataSet = this.GetDataSet(Name);
                 Console.Write("\t" + Name + " " + dataSet._Type + "(" + dataSet?._Length + ") ");
@@ -50,11 +52,11 @@ namespace NetRPG.Runtime
 
                 Console.WriteLine();
             }
-
             Console.WriteLine();
 
             foreach (Procedure proc in Procedures)
             {
+                ip = 0;
                 Console.WriteLine("Procedure: " + proc._Name + ": " + proc._ReturnType.ToString());
 
                 foreach (string Name in proc.GetDataSetList()) {
@@ -70,7 +72,8 @@ namespace NetRPG.Runtime
                 
                 foreach (Instruction inst in proc.GetInstructions())
                 {
-                    Console.WriteLine("\t" + inst._Instruction.ToString().PadRight(15) + " " + inst._Value);
+                    Console.WriteLine("\t" + ip.ToString().PadRight(5) + inst._Instruction.ToString().PadRight(15) + " " + inst._Value);
+                    ip++;
                 }
 
                 Console.WriteLine();
