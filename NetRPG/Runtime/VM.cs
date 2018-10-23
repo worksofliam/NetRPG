@@ -313,6 +313,7 @@ namespace NetRPG.Runtime
 
                     case Instructions.STORE:
                         
+                        //Stack.Count - 3 is DateValue (usually)
                         Values[0] = Stack[Stack.Count - 2]; //Index of fieldname
                         Values[1] = Stack[Stack.Count - 1]; //Value
 

@@ -429,8 +429,8 @@ namespace NetRPG.Language
                             else
                             {
                                 //Assuming is a field.
-                                ParseExpression(tokens[i + 1].Block);
                                 CurrentProcudure.AddInstruction(Instructions.LDFLDD, token.Value);
+                                ParseExpression(tokens[i + 1].Block);
                             }
 
                             i++;
@@ -596,6 +596,12 @@ namespace NetRPG.Language
                                 lastType = CurrentProcudure.GetDataSet(tokens[i].Value)._Type;
 
                                 CurrentProcudure.AddInstruction(Instructions.LDVARV, token.Value); //Load local
+                                ParseExpression(tokens[i + 1].Block);
+                                CurrentProcudure.AddInstruction(Instructions.LDARRV);
+                            }
+                            else if (lastType == Types.Structure) 
+                            {
+                                CurrentProcudure.AddInstruction(Instructions.LDFLDV, token.Value); //Load local
                                 ParseExpression(tokens[i + 1].Block);
                                 CurrentProcudure.AddInstruction(Instructions.LDARRV);
                             }

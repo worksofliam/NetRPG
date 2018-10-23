@@ -4,7 +4,7 @@ Dcl-Ds MyDS Qualified;
   Dcl-Subf Boom2   Char(10) Dim(3);
 End-Ds;
 
-MyDS.Boom     = 'Hello';
-MyDs.Boom2(2) = 'World';
+MyDS.Boom = 'Hello';
+MyDS.Boom2(2) = 'World';
 
-Return MyDS.Boom + MyDs.Boom2(2);
+Return MyDS.Boom + MyDS.Boom2(2);

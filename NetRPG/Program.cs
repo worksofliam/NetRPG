@@ -12,7 +12,7 @@ namespace NetRPG
         {
             Testing.RunTests();
 
-            Console.ReadLine();
+            //Console.ReadLine();
         }
     }
 }
