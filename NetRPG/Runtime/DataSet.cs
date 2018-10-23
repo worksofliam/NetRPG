@@ -64,7 +64,7 @@ namespace NetRPG.Runtime
             }
 
             if (IsArray()) result.SetArray(this._Dimentions);
-            if (this._Type == Types.Structure)
+            if (this._Type == Types.Structure && _Subfields != null)
                 result.SetSubfields(_Subfields.ToArray()); //Must be run after array size has been set
 
 

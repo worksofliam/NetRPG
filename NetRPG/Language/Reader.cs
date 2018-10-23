@@ -212,7 +212,7 @@ namespace NetRPG.Language
                 {
                     Current_Structs[SubfieldLevel]._Subfields.Add(dataSet);
                 }
-                else if (dataSet != null && dataSet._Type == Types.Structure)
+                else if (dataSet != null && tokens[2].Value.ToUpper() == "DS" && dataSet._Type == Types.Structure)
                 {
                     SubfieldLevel++;
                     Current_Structs.Add(dataSet);

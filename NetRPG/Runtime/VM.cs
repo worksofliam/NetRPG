@@ -102,7 +102,7 @@ namespace NetRPG.Runtime
                                 LocalVariables[Parameters[x]] = set;
                             }
                             else
-                                LocalVariables[Parameters[x]] = (Parms[x] as DataValue);
+                                LocalVariables[Parameters[x]] = (DataValue)Parms[x];
                         }
                         else
                         {
