@@ -126,6 +126,10 @@ namespace NetRPG.Language
                         case "INZ":
                             dataSet._InitialValue = tokens[i + 1].Block?[0].Value;
                             break;
+                        case "LIKEDS":
+                            dataSet._Subfields = Struct_Templates[tokens[i + 1].Block?[0].Value]._Subfields;
+                            dataSet._Qualified = true;
+                            break;
                     }
                     i++;
                 }
@@ -169,7 +173,9 @@ namespace NetRPG.Language
                         break;
                     case "DS":
                         dataSet._Type = Types.Structure;
-                        dataSet._Subfields = new List<DataSet>();
+
+                        if (dataSet._Subfields == null)
+                            dataSet._Subfields = new List<DataSet>();
                         break;
 
                     case "PROC":
