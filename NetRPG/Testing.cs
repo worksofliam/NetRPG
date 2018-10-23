@@ -24,6 +24,7 @@ namespace NetRPG
             { "dcl_proc_4.rpgle", "Hello!" },
             { "dcl_proc_5.rpgle", "Hello     " },
             { "dcl_proc_6.rpgle", "001011" },
+            { "dcl_proc_7.rpgle", "World" },
             { "assignment.rpgle", "Hello world    23421234.56" },
             { "addition.rpgle", "Hello world    23421234.56" },
             { "subtraction.rpgle", "5304.33" },
