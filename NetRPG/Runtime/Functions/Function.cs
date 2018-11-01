@@ -6,6 +6,7 @@ namespace NetRPG.Runtime.Functions
 {
     class Function
     {
+        //TODO: only add items to this list if it's used
         private static Dictionary<string, Function> List = new Dictionary<string, Function>
         {
             { "DSPLY", new Operation.Dsply() },

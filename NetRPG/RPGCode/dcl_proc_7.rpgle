@@ -8,7 +8,7 @@ Dcl-Proc MyProc;
 End-Proc;
 
 Dcl-Proc OtherProc;
-  Dcl-Pi Anything Char(5);
+  Dcl-Pi Anything Char(5) End-Pi;
 
   Return 'World';
 End-Proc;
