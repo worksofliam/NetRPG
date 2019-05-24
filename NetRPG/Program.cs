@@ -10,7 +10,11 @@ namespace NetRPG
     {
         static void Main(string[] args)
         {
-            Testing.RunTests();
+            if (args.Length == 0) {
+                Testing.RunTests();
+            } else {
+
+            }
 
             //Console.ReadLine();
         }
