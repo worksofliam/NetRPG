@@ -307,8 +307,12 @@ namespace NetRPG.Runtime
                             return null;
                         else
                         {
-                            Values[0] = Stack[Stack.Count - 1];
-                            return Values[0];
+                            if (Stack.Count() >= 1) {
+                                Values[0] = Stack[Stack.Count - 1];
+                                return Values[0];
+                            } else {
+                                return null;
+                            }
                         }
 
                     case Instructions.STORE:
