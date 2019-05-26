@@ -78,6 +78,7 @@ namespace NetRPG.Runtime
         Double, //Float(8)
         Float, //Float(4)
         
-        FixedDecimal //Packed / Zoned
+        FixedDecimal, //Packed / Zoned
+        File
     }
 }

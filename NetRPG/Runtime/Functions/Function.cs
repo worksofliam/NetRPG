@@ -10,6 +10,9 @@ namespace NetRPG.Runtime.Functions
         private static Dictionary<string, Function> List = new Dictionary<string, Function>
         {
             { "DSPLY", new Operation.Dsply() },
+
+            { "OPEN", new Operation.Open() },
+
             { "%ABS", new BIF.Abs() },
             { "%CHAR", new BIF.Char() },
             { "%DEC", new BIF.Dec() },

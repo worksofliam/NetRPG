@@ -21,6 +21,8 @@ namespace NetRPG.Runtime
         public bool _Qualified; 
         public bool _Template;
 
+        public bool _UserOpen = false;
+
         public DataSet(string name)
         {
             _Name = name;
@@ -56,6 +58,10 @@ namespace NetRPG.Runtime
                     
                 case Types.FixedDecimal: //Packed / Zoned
                     result = new FixedDecimal(this._Name, this._Type, this._Precision, Convert.ToDouble(this._InitialValue));
+                    break;
+
+                case Types.File:
+                    result = new Table(this._Name, this._UserOpen);
                     break;
 
                 default:

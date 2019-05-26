@@ -130,6 +130,9 @@ namespace NetRPG.Language
                             dataSet._Subfields = Struct_Templates[tokens[i + 1].Block?[0].Value]._Subfields;
                             dataSet._Qualified = true;
                             break;
+                        case "USROPN":
+                            dataSet._UserOpen = true;
+                            break;
                     }
                     i++;
                 }
@@ -168,6 +171,7 @@ namespace NetRPG.Language
 
                         break;
                     case "F":
+                        dataSet._Type = Types.File;
                         break;
                     case "C":
                         break;
@@ -231,7 +235,7 @@ namespace NetRPG.Language
             }
         }
 
-        private static Types StringToType(string Value, string length = "0")
+        public static Types StringToType(string Value, string length = "0")
         {
             switch (Value.ToUpper())
             {
@@ -349,6 +353,12 @@ namespace NetRPG.Language
                 case "RETURN":
                     ParseExpression(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.RETURN);
+                    break;
+
+                case "OPEN":
+                    ParseAssignment(tokens.Skip(1).ToList());
+                    CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
+                    CurrentProcudure.AddInstruction(Instructions.CALL, "OPEN");
                     break;
             }
         }

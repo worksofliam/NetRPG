@@ -1,0 +1,16 @@
+{
+  "columns": {
+    "prid": {
+      "type": "int",
+      "length": 10
+    },
+    "prdesc": {
+      "type": "int",
+      "length": 10
+    }
+  },
+  "rows": [{
+    "prid": 1,
+    "prdesc": "My first product"
+  }]
+}
