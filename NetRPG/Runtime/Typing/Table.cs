@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json.Linq;
 using NetRPG.Language;
 
@@ -11,7 +12,7 @@ namespace NetRPG.Runtime.Typing
     {
       private string _Path;
       private int _RowPointer = -1;
-      private Dictionary<string, DataSet> _Columns;
+      private Dictionary<string, DataValue> _Columns;
       private List<Dictionary<string, dynamic>> _Data;
       public Table(string name, bool userOpen) {
           this.Name = name;
@@ -23,7 +24,7 @@ namespace NetRPG.Runtime.Typing
       }
 
       public void Open() {
-        this._Columns = new Dictionary<string, DataSet>();
+        this._Columns = new Dictionary<string, DataValue>();
         this._RowPointer = -1;
 
         string content = File.ReadAllText(this._Path);
@@ -34,14 +35,13 @@ namespace NetRPG.Runtime.Typing
         JObject json = JObject.Parse(content);
 
         DataSet dataSet;
-        foreach (JObject obj in json["columns"].Children<JObject>()) {
-            foreach (JProperty prop in obj.Properties())
-            {
-                dataSet = new DataSet(prop.Name);
-                dataSet._Type = Reader.StringToType(prop["type"].ToString());
-                dataSet._Length = (int)prop["length"];
-                this._Columns.Add(prop.Name, dataSet);
-            }
+        JProperty DataProperty;
+        foreach (JToken obj in json["columns"].ToList<JToken>()) {
+            DataProperty = obj.ToObject<JProperty>();
+            dataSet = new DataSet(DataProperty.Name);
+            dataSet._Type = Reader.StringToType(json["columns"][DataProperty.Name]["type"].ToString());
+            dataSet._Length = (int)json["columns"][DataProperty.Name]["length"];
+            this._Columns.Add(DataProperty.Name, dataSet.ToDataValue());
         }
 
         foreach (JObject obj in json["rows"].Children<JObject>())
