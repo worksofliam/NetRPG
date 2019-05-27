@@ -360,6 +360,12 @@ namespace NetRPG.Language
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "OPEN");
                     break;
+
+                case "READ":
+                    ParseAssignment(tokens.Skip(1).ToList());
+                    CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
+                    CurrentProcudure.AddInstruction(Instructions.CALL, "READ");
+                    break;
             }
         }
 

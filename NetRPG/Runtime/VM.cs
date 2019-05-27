@@ -38,6 +38,12 @@ namespace NetRPG.Runtime
             {
                 DataValue set = module.GetDataSet(global).ToDataValue();
                 GlobalVariables.Add(set.GetName(), set);
+
+                if (set is Table) {
+                    foreach (DataValue column in (set as Table).GetDataValues()) {
+                        GlobalVariables.Add(column.GetName(), column);
+                    }
+                }
             }
         }
 
@@ -84,6 +90,12 @@ namespace NetRPG.Runtime
                 set = _Procedures[Name].GetDataSet(local).ToDataValue();
                 LocalVariables.Add(set.GetName(), set);
                 LocalVariables[set.GetName()].DoInitialValue();
+
+                if (set is Table) {
+                    foreach (DataValue column in (set as Table).GetDataValues()) {
+                        LocalVariables.Add(column.GetName(), column);
+                    }
+                }
             }
 
             if (Parms != null)

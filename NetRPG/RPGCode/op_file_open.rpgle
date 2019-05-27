@@ -1,5 +1,3 @@
-Dcl-F example UsrOpn;
-
-Open example;
+Dcl-F example;
 
 Return 1;

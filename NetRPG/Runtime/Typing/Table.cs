@@ -14,14 +14,16 @@ namespace NetRPG.Runtime.Typing
       private int _RowPointer = -1;
       private Dictionary<string, DataValue> _Columns;
       private List<Dictionary<string, dynamic>> _Data;
+      private Boolean _EOF = false;
       public Table(string name, bool userOpen) {
-          this.Name = name;
-          _Path = Path.Combine(Environment.CurrentDirectory, "files", name + ".json");
+            this.Name = name;
+            _Path = Path.Combine(Environment.CurrentDirectory, "files", name + ".json");
 
-          if (userOpen == false) {
-              this.Open();
-          }
+            //UserOpen doesn't do anything, lmao
+            this.Open();
       }
+
+      public DataValue[] GetDataValues() => _Columns.Values.ToArray();
 
       public void Open() {
         this._Columns = new Dictionary<string, DataValue>();
@@ -49,9 +51,38 @@ namespace NetRPG.Runtime.Typing
             row = new Dictionary<string, dynamic>();
             foreach (JProperty property in obj.Properties())
             {
-                row[property.Name] = property.Value;
+                switch (property.First.Type) {
+                    case JTokenType.Boolean:
+                        row[property.Name] = (property.Value.ToString() == "1" ? "1" : "0" );
+                        break;
+                    case JTokenType.Integer:
+                        row[property.Name] = Convert.ToInt32((int)property.Value);
+                        break;
+                    case JTokenType.Float:
+                        row[property.Name] = Convert.ToDouble((float)property.Value);
+                        break;
+                    case JTokenType.String:
+                        row[property.Name] = property.Value.ToString();
+                        break;
+                }
             }
+            this._Data.Add(row);
         }
+      }
+
+      public void Read(dynamic key = null) {
+          this._RowPointer += 1;
+
+          if (this._RowPointer < this._Data.Count()) {
+              this._EOF = false;
+
+              foreach (string varName in this._Data[this._RowPointer].Keys.ToArray()) {
+                  this._Columns[varName].Set(this._Data[this._RowPointer][varName]);
+              }
+
+          } else {
+              this._EOF = true;
+          }
       }
     }
 }

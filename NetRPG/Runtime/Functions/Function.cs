@@ -12,6 +12,7 @@ namespace NetRPG.Runtime.Functions
             { "DSPLY", new Operation.Dsply() },
 
             { "OPEN", new Operation.Open() },
+            { "READ", new Operation.Read() },
 
             { "%ABS", new BIF.Abs() },
             { "%CHAR", new BIF.Char() },
