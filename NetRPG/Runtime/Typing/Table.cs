@@ -14,9 +14,9 @@ namespace NetRPG.Runtime.Typing
       private int _RowPointer = -1;
       private List<Dictionary<string, dynamic>> _Data;
       private Boolean _EOF = false;
-      public Table(string name, bool userOpen) {
+      public Table(string name, string file, bool userOpen) {
             this.Name = name;
-            _Path = Path.Combine(Environment.CurrentDirectory, "files", name + ".json");
+            _Path = Path.Combine(Environment.CurrentDirectory, "files", file + ".json");
 
             if (!userOpen)
                 this.Open();
@@ -25,7 +25,7 @@ namespace NetRPG.Runtime.Typing
       public static DataSet CreateStruct(string name) {
             string content = File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "files", name + ".json"));
 
-            DataSet Structure = new DataSet(name + "_ds");
+            DataSet Structure = new DataSet(name);
             Structure._Type = Types.Structure;
             Structure._Qualified = false;
             List<DataSet> subfields = new List<DataSet>();;

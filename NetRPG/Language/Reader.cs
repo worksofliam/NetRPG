@@ -191,7 +191,11 @@ namespace NetRPG.Language
                         break;
                     case "F":
                         dataSet._Type = Types.File;
-                        structure = Runtime.Typing.Table.CreateStruct(dataSet._Name);
+                        if (dataSet._File == null)
+                            dataSet._File = dataSet._Name;
+
+                        dataSet._Name += "_table"; //We do this so the DS can use the name instead
+                        structure = Runtime.Typing.Table.CreateStruct(dataSet._File);
 
                         if (CurrentProcudure != null) {
                             CurrentProcudure.AddDataSet(structure);
@@ -395,12 +399,11 @@ namespace NetRPG.Language
                     break;
 
                 case "READ":
-                    //load the table
-                    ParseAssignment(tokens.Skip(1).ToList());
-
-                    //Then load the ds
-                    tokens[1].Value += "_ds";
                     ParseAssignment(tokens.Skip(1).ToList()); //Load the DS first
+
+                    //Then load the table
+                    tokens[1].Value += "_table";
+                    ParseAssignment(tokens.Skip(1).ToList());
 
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "2");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "READ");

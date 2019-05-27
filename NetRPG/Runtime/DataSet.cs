@@ -23,6 +23,8 @@ namespace NetRPG.Runtime
 
         public bool _UserOpen = false;
 
+        public string _File;
+
         public DataSet(string name)
         {
             _Name = name;
@@ -61,7 +63,7 @@ namespace NetRPG.Runtime
                     break;
 
                 case Types.File:
-                    result = new Table(this._Name, this._UserOpen);
+                    result = new Table(this._Name, this._File, this._UserOpen);
                     break;
 
                 default:
