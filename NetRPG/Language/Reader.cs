@@ -25,6 +25,21 @@ namespace NetRPG.Language
         }
     }
 
+    public enum LOCATION {
+        Local,
+        Global
+    }
+
+    class CompileTimeSubfield {
+        public LOCATION Location;
+        public string Structure;
+
+        public CompileTimeSubfield(LOCATION loc, string parent) {
+            this.Location = loc;
+            this.Structure = parent;
+        }
+    }
+
     class Reader
     {
         private Dictionary<string, DataSet> Struct_Templates;
@@ -33,6 +48,8 @@ namespace NetRPG.Language
         private Module _Module;
         private Procedure CurrentProcudure;
 
+        private Dictionary<string, CompileTimeSubfield> GlobalSubfields;
+
         public Reader()
         {
             _Module = new Module();
@@ -40,6 +57,7 @@ namespace NetRPG.Language
 
             Struct_Templates = new Dictionary<string, DataSet>();
             Current_Structs = new List<DataSet>();
+            GlobalSubfields = new Dictionary<string, CompileTimeSubfield>();
 
             SubfieldLevel = -1;
         }
@@ -110,7 +128,8 @@ namespace NetRPG.Language
         private void HandleDeclare(RPGToken[] tokens)
         {
             //TODO: Check if DataSet already exists?
-            DataSet dataSet = new DataSet(tokens[3].Value);
+            DataSet dataSet = new DataSet(tokens[3].Value), structure;
+            LOCATION currentLocation;
             string length = "";
             Dictionary<string, string> config = new Dictionary<string, string>();
 
@@ -171,12 +190,21 @@ namespace NetRPG.Language
 
                         break;
                     case "F":
-                        dataSet._Type = Types.File;                                
-                        if (CurrentProcudure != null)
-                            CurrentProcudure.AddDataSet(Runtime.Typing.Table.CreateStruct(dataSet._Name));
-                        else
-                            _Module.AddDataSet(Runtime.Typing.Table.CreateStruct(dataSet._Name));
-                        
+                        dataSet._Type = Types.File;
+                        structure = Runtime.Typing.Table.CreateStruct(dataSet._Name);
+
+                        if (CurrentProcudure != null) {
+                            CurrentProcudure.AddDataSet(structure);
+                            currentLocation = LOCATION.Local;
+                        } else {
+                            _Module.AddDataSet(structure);
+                            currentLocation = LOCATION.Global;
+                        }
+
+                        foreach(DataSet subfield in structure._Subfields) {
+                            GlobalSubfields.Add(subfield._Name, new CompileTimeSubfield(currentLocation, structure._Name));
+                        }
+
                         break;
                     case "C":
                         break;
@@ -676,6 +704,16 @@ namespace NetRPG.Language
                             }
                             else
                             {
+                                if (GlobalSubfields.ContainsKey(token.Value)) {
+                                    switch (GlobalSubfields[token.Value].Location) {
+                                        case LOCATION.Global:
+                                            CurrentProcudure.AddInstruction(Instructions.LDGBLD, GlobalSubfields[token.Value].Structure); //Load global data
+                                            break;
+                                        case LOCATION.Local:
+                                            CurrentProcudure.AddInstruction(Instructions.LDVARD, GlobalSubfields[token.Value].Structure); //Load local data
+                                            break;
+                                    }
+                                }
                                 CurrentProcudure.AddInstruction(Instructions.LDFLDV, token.Value); //Load field?
                             }
                         }

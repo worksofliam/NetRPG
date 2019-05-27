@@ -57,7 +57,7 @@ namespace NetRPG
             { "op_dsply.rpgle", 1 },
 
             { "op_file_open.rpgle", 1 },
-            { "op_file_read.rpgle", "My first product" }
+            { "op_file_read.rpgle", "My first p" }
         };
 
         public static void RunTests(string testsStarting = "")
