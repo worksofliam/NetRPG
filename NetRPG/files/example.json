@@ -10,7 +10,12 @@
     }
   },
   "rows": [{
-    "prid": 1,
-    "prdesc": "My first product"
-  }]
+      "prid": 1,
+      "prdesc": "My first product"
+    },
+    {
+      "prid": 2,
+      "prdesc": "My second product"
+    }
+  ]
 }
