@@ -18,7 +18,7 @@ namespace NetRPG.Runtime
         public List<DataSet> _Subfields;
 
         //For data-structures
-        public bool _Qualified; 
+        public bool _Qualified = false; 
         public bool _Template;
 
         public bool _UserOpen = false;

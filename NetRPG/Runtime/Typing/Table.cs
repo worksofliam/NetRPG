@@ -22,12 +22,12 @@ namespace NetRPG.Runtime.Typing
                 this.Open();
       }
       
-      public static DataSet CreateStruct(string name) {
+      public static DataSet CreateStruct(string name, Boolean qualified = false) {
             string content = File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "files", name + ".json"));
 
             DataSet Structure = new DataSet(name);
             Structure._Type = Types.Structure;
-            Structure._Qualified = false;
+            Structure._Qualified = qualified;
             List<DataSet> subfields = new List<DataSet>();;
 
             JObject json = JObject.Parse(content);

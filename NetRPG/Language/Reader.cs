@@ -195,7 +195,7 @@ namespace NetRPG.Language
                             dataSet._File = dataSet._Name;
 
                         dataSet._Name += "_table"; //We do this so the DS can use the name instead
-                        structure = Runtime.Typing.Table.CreateStruct(dataSet._File);
+                        structure = Runtime.Typing.Table.CreateStruct(dataSet._File, dataSet._Qualified);
 
                         if (CurrentProcudure != null) {
                             CurrentProcudure.AddDataSet(structure);
@@ -205,8 +205,10 @@ namespace NetRPG.Language
                             currentLocation = LOCATION.Global;
                         }
 
-                        foreach(DataSet subfield in structure._Subfields) {
-                            GlobalSubfields.Add(subfield._Name, new CompileTimeSubfield(currentLocation, structure._Name));
+                        if (dataSet._Qualified == false) {
+                            foreach(DataSet subfield in structure._Subfields) {
+                                GlobalSubfields.Add(subfield._Name, new CompileTimeSubfield(currentLocation, structure._Name));
+                            }
                         }
 
                         break;
