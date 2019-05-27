@@ -9,10 +9,11 @@ namespace NetRPG.Runtime.Functions.Operation
     {
         public override object Execute(object[] Parameters)
         {
-            if (Parameters[0] is Table)
+
+            if (Parameters[0] is Table && Parameters[1] is Structure)
             {
                 Table table = Parameters[0] as Table;
-                table.Read();
+                table.Read(Parameters[1] as Structure);
             }
             else
             {

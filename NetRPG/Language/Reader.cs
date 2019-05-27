@@ -171,7 +171,12 @@ namespace NetRPG.Language
 
                         break;
                     case "F":
-                        dataSet._Type = Types.File;
+                        dataSet._Type = Types.File;                                
+                        if (CurrentProcudure != null)
+                            CurrentProcudure.AddDataSet(Runtime.Typing.Table.CreateStruct(dataSet._Name));
+                        else
+                            _Module.AddDataSet(Runtime.Typing.Table.CreateStruct(dataSet._Name));
+                        
                         break;
                     case "C":
                         break;
@@ -362,8 +367,14 @@ namespace NetRPG.Language
                     break;
 
                 case "READ":
+                    //load the table
                     ParseAssignment(tokens.Skip(1).ToList());
-                    CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
+
+                    //Then load the ds
+                    tokens[1].Value += "_ds";
+                    ParseAssignment(tokens.Skip(1).ToList()); //Load the DS first
+
+                    CurrentProcudure.AddInstruction(Instructions.LDINT, "2");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "READ");
                     break;
             }
@@ -607,7 +618,8 @@ namespace NetRPG.Language
                         {
                             if (_Module.GetDataSetList().Contains(tokens[i].Value))
                             {
-                                lastType = _Module.GetDataSet(tokens[i].Value)._Type;
+                                if (_Module.GetDataSet(tokens[i].Value) != null)
+                                    lastType = _Module.GetDataSet(tokens[i].Value)._Type;
 
                                 CurrentProcudure.AddInstruction(Instructions.LDGBLV, token.Value); //Load global
                                 ParseExpression(tokens[i + 1].Block);
@@ -615,7 +627,8 @@ namespace NetRPG.Language
                             }
                             else if (CurrentProcudure.GetDataSetList().Contains(tokens[i].Value))
                             {
-                                lastType = CurrentProcudure.GetDataSet(tokens[i].Value)._Type;
+                                if (CurrentProcudure.GetDataSet(tokens[i].Value) != null)
+                                    lastType = CurrentProcudure.GetDataSet(tokens[i].Value)._Type;
 
                                 CurrentProcudure.AddInstruction(Instructions.LDVARV, token.Value); //Load local
                                 ParseExpression(tokens[i + 1].Block);

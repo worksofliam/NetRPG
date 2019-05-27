@@ -2,4 +2,4 @@ Dcl-F example;
 
 read example;
 
-Return prdesc;
+Return example_ds.prdesc;

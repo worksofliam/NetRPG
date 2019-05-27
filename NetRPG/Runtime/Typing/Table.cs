@@ -12,21 +12,42 @@ namespace NetRPG.Runtime.Typing
     {
       private string _Path;
       private int _RowPointer = -1;
-      private Dictionary<string, DataValue> _Columns;
       private List<Dictionary<string, dynamic>> _Data;
       private Boolean _EOF = false;
       public Table(string name, bool userOpen) {
             this.Name = name;
             _Path = Path.Combine(Environment.CurrentDirectory, "files", name + ".json");
 
-            //UserOpen doesn't do anything, lmao
-            this.Open();
+            if (!userOpen)
+                this.Open();
+      }
+      
+      public static DataSet CreateStruct(string name) {
+            string content = File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "files", name + ".json"));
+
+            DataSet Structure = new DataSet(name + "_ds");
+            Structure._Type = Types.Structure;
+            Structure._Qualified = false;
+            List<DataSet> subfields = new List<DataSet>();;
+
+            JObject json = JObject.Parse(content);
+
+            DataSet subfield;
+            JProperty DataProperty;
+            foreach (JToken obj in json["columns"].ToList<JToken>()) {
+                DataProperty = obj.ToObject<JProperty>();
+                subfield = new DataSet(DataProperty.Name);
+                subfield._Type = Reader.StringToType(json["columns"][DataProperty.Name]["type"].ToString());
+                subfield._Length = (int)json["columns"][DataProperty.Name]["length"];
+                subfields.Add(subfield);
+            }
+
+            Structure._Subfields = subfields;
+
+            return Structure;
       }
 
-      public DataValue[] GetDataValues() => _Columns.Values.ToArray();
-
       public void Open() {
-        this._Columns = new Dictionary<string, DataValue>();
         this._RowPointer = -1;
 
         string content = File.ReadAllText(this._Path);
@@ -35,16 +56,6 @@ namespace NetRPG.Runtime.Typing
         Dictionary<string, dynamic> row;
 
         JObject json = JObject.Parse(content);
-
-        DataSet dataSet;
-        JProperty DataProperty;
-        foreach (JToken obj in json["columns"].ToList<JToken>()) {
-            DataProperty = obj.ToObject<JProperty>();
-            dataSet = new DataSet(DataProperty.Name);
-            dataSet._Type = Reader.StringToType(json["columns"][DataProperty.Name]["type"].ToString());
-            dataSet._Length = (int)json["columns"][DataProperty.Name]["length"];
-            this._Columns.Add(DataProperty.Name, dataSet.ToDataValue());
-        }
 
         foreach (JObject obj in json["rows"].Children<JObject>())
         {
@@ -70,14 +81,14 @@ namespace NetRPG.Runtime.Typing
         }
       }
 
-      public void Read(dynamic key = null) {
+      public void Read(DataValue Structure, dynamic key = null) {
           this._RowPointer += 1;
 
           if (this._RowPointer < this._Data.Count()) {
               this._EOF = false;
 
               foreach (string varName in this._Data[this._RowPointer].Keys.ToArray()) {
-                  this._Columns[varName].Set(this._Data[this._RowPointer][varName]);
+                  Structure.GetData(varName).Set(this._Data[this._RowPointer][varName]);
               }
 
           } else {
