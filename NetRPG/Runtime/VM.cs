@@ -44,6 +44,15 @@ namespace NetRPG.Runtime
                         GlobalVariables.Add(column.GetName(), column);
                     }
                 }
+
+                //If the DS is not qualfied, the subfields need to be access at a local level
+                if (set is Structure) {
+                    if (!(set as Structure).isQualified()) {
+                        foreach (string column in (set as Structure).GetSubfieldNames()) {
+                            GlobalVariables.Add(column, set.Get(set.GetSubfield(column)));
+                        }
+                    }
+                }
             }
         }
 
@@ -94,6 +103,14 @@ namespace NetRPG.Runtime
                 if (set is Table) {
                     foreach (DataValue column in (set as Table).GetDataValues()) {
                         LocalVariables.Add(column.GetName(), column);
+                    }
+                }
+
+                if (set is Structure) {
+                    if (!(set as Structure).isQualified()) {
+                        foreach (string column in (set as Structure).GetSubfieldNames()) {
+                            LocalVariables.Add(column, set.Get(set.GetSubfield(column)));
+                        }
                     }
                 }
             }

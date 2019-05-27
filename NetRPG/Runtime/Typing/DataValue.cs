@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace NetRPG.Runtime.Typing
 {
@@ -47,6 +48,8 @@ namespace NetRPG.Runtime.Typing
         }
 
         public virtual void SetSubfields(DataSet[] subfieldsData) { }
+
+        public string[] GetSubfieldNames() => this.Subfields.Keys.ToArray();
 
         public int GetSubfield(string subfield)
         {

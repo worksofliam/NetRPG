@@ -6,15 +6,19 @@ namespace NetRPG.Runtime.Typing
 {
     class Structure : DataValue
     {
-        public Structure(string name)
+        private Boolean _Qualified = false;
+        public Structure(string name, Boolean qualified)
         {
             this.Name = name;
             this.Type = Types.Structure;
 
             this.Dimentions = 1;
             this.Value = new object[this.Dimentions];
+
+            this._Qualified = qualified;
         }
 
+        public Boolean isQualified() => this._Qualified;
         public override void SetSubfields(DataSet[] subfieldsData)
         {
             DataValue[] subfields;

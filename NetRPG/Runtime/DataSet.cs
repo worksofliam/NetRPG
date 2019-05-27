@@ -53,7 +53,7 @@ namespace NetRPG.Runtime
                     break;
 
                 case Types.Structure:
-                    result = new Structure(this._Name);
+                    result = new Structure(this._Name, this._Qualified);
                     break;
                     
                 case Types.FixedDecimal: //Packed / Zoned
