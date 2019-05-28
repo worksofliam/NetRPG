@@ -14,6 +14,8 @@ namespace NetRPG.Runtime.Typing
         protected dynamic InitValue = null;
         protected Dictionary<string, int> Subfields;
 
+        public int GetDimentions() => this.Dimentions;
+
         public void SetArray(int Count)
         {
             this.Dimentions = Count;

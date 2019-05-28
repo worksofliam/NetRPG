@@ -459,6 +459,7 @@ namespace NetRPG.Language
             }
         }
 
+        private static string[] PoinerFunctions = new []{"ELEM"};
         private void ParseAssignment(List<RPGToken> tokens)
         {
             RPGToken token;

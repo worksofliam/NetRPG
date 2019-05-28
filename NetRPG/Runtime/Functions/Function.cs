@@ -21,6 +21,7 @@ namespace NetRPG.Runtime.Functions
             { "%DECH", new BIF.Dec() },
             { "%DECPOS", new BIF.DecPos() },
             { "%EDITC", new BIF.EditC() },
+            { "%ELEM", new BIF.Elem() },
             { "%FLOAT", new BIF.Float() },
             { "%INT", new BIF.Int() },
             { "%LEN", new BIF.Len() },

@@ -48,6 +48,9 @@ namespace NetRPG
             { "bif_trim_2.rpgle", "Hello          " },
             { "bif_trimr.rpgle", "    Hello"},
             { "bif_triml.rpgle", "Hello           "},
+            { "bif_elem1.rpgle", 2 },
+            { "bif_elem2.rpgle", 4 },
+
             { "op_if.rpgle", 3 },
             { "op_else.rpgle", 2 },
             { "op_elseif.rpgle", 2 },
