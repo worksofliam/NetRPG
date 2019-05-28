@@ -83,7 +83,7 @@ namespace NetRPG.Runtime.Typing
         }
       }
 
-      public void Read(DataValue Structure, dynamic key = null) {
+      public void Read(DataValue Structure) {
           this._RowPointer += 1;
 
           if (this._RowPointer >= 0 && this._RowPointer < this._Data.Count()) {
@@ -98,7 +98,7 @@ namespace NetRPG.Runtime.Typing
           }
       }
 
-      public void ReadPrevious(DataValue Structure, dynamic key = null) {
+      public void ReadPrevious(DataValue Structure) {
           this._RowPointer -= 1;
 
           if (this._RowPointer >= 0 && this._RowPointer < this._Data.Count()) {
