@@ -101,20 +101,19 @@ namespace NetRPG.Language
                         Struct_Templates.Add(Current_Structs[SubfieldLevel]._Name, Current_Structs[SubfieldLevel]);
                         if (Current_Structs[SubfieldLevel]._Template == false) //if it's not a template, also define it
                         {
-                            if (Current_Structs[SubfieldLevel]._Qualified == true)
-                            {
-                                if (CurrentProcudure != null)
-                                    CurrentProcudure.AddDataSet(Current_Structs[SubfieldLevel]);
-                                else
-                                    _Module.AddDataSet(Current_Structs[SubfieldLevel]);
-                            }
+                            if (CurrentProcudure != null)
+                                CurrentProcudure.AddDataSet(Current_Structs[SubfieldLevel]);
                             else
+                                _Module.AddDataSet(Current_Structs[SubfieldLevel]);
+
+                            if (Current_Structs[SubfieldLevel]._Qualified == false)
                             {
-                                foreach (DataSet var in Current_Structs[SubfieldLevel]._Subfields)
+                                foreach (DataSet var in Current_Structs[SubfieldLevel]._Subfields) {
                                     if (CurrentProcudure != null)
-                                        CurrentProcudure.AddDataSet(var);
+                                        GlobalSubfields.Add(var._Name, new CompileTimeSubfield(LOCATION.Local, Current_Structs[SubfieldLevel]._Name));
                                     else
-                                        _Module.AddDataSet(var);
+                                        GlobalSubfields.Add(var._Name, new CompileTimeSubfield(LOCATION.Global, Current_Structs[SubfieldLevel]._Name));
+                                }
                             }
                         }
 
@@ -507,8 +506,19 @@ namespace NetRPG.Language
                                 CurrentProcudure.AddInstruction(Instructions.LDGBLD, token.Value); //Load global
                             else if (CurrentProcudure.GetDataSetList().Contains(tokens[i].Value))
                                 CurrentProcudure.AddInstruction(Instructions.LDVARD, token.Value); //Load local
-                            else
+                            else {
+                                if (GlobalSubfields.ContainsKey(token.Value)) {
+                                    switch (GlobalSubfields[token.Value].Location) {
+                                        case LOCATION.Global:
+                                            CurrentProcudure.AddInstruction(Instructions.LDGBLD, GlobalSubfields[token.Value].Structure); //Load global data
+                                            break;
+                                        case LOCATION.Local:
+                                            CurrentProcudure.AddInstruction(Instructions.LDVARD, GlobalSubfields[token.Value].Structure); //Load local data
+                                            break;
+                                    }
+                                }
                                 CurrentProcudure.AddInstruction(Instructions.LDFLDD, token.Value); //Load field?
+                            }
 
                         }
                         break;
