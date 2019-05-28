@@ -409,6 +409,17 @@ namespace NetRPG.Language
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "2");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "READ");
                     break;
+
+                case "READP":
+                    ParseAssignment(tokens.Skip(1).ToList()); //Load the DS first
+
+                    //Then load the table
+                    tokens[1].Value += "_table";
+                    ParseAssignment(tokens.Skip(1).ToList());
+
+                    CurrentProcudure.AddInstruction(Instructions.LDINT, "2");
+                    CurrentProcudure.AddInstruction(Instructions.CALL, "READP");
+                    break;
             }
         }
 

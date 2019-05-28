@@ -13,6 +13,7 @@ namespace NetRPG.Runtime.Functions
 
             { "OPEN", new Operation.Open() },
             { "READ", new Operation.Read() },
+            { "READP", new Operation.ReadPrevious() },
 
             { "%ABS", new BIF.Abs() },
             { "%CHAR", new BIF.Char() },

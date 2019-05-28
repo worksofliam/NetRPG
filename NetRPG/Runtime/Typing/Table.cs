@@ -47,6 +47,8 @@ namespace NetRPG.Runtime.Typing
             return Structure;
       }
 
+      public Boolean isEOF() => this._EOF;
+
       public void Open() {
         this._RowPointer = -1;
 
@@ -84,7 +86,22 @@ namespace NetRPG.Runtime.Typing
       public void Read(DataValue Structure, dynamic key = null) {
           this._RowPointer += 1;
 
-          if (this._RowPointer < this._Data.Count()) {
+          if (this._RowPointer >= 0 && this._RowPointer < this._Data.Count()) {
+              this._EOF = false;
+
+              foreach (string varName in this._Data[this._RowPointer].Keys.ToArray()) {
+                  Structure.GetData(varName).Set(this._Data[this._RowPointer][varName]);
+              }
+
+          } else {
+              this._EOF = true;
+          }
+      }
+
+      public void ReadPrevious(DataValue Structure, dynamic key = null) {
+          this._RowPointer -= 1;
+
+          if (this._RowPointer >= 0 && this._RowPointer < this._Data.Count()) {
               this._EOF = false;
 
               foreach (string varName in this._Data[this._RowPointer].Keys.ToArray()) {

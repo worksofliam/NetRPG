@@ -1,0 +1,26 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using NetRPG.Runtime.Typing;
+
+namespace NetRPG.Runtime.Functions.Operation
+{
+    class ReadPrevious : Function
+    {
+        public override object Execute(object[] Parameters)
+        {
+
+            if (Parameters[0] is Structure && Parameters[1] is Table)
+            {
+                Table table = Parameters[1] as Table;
+                table.ReadPrevious(Parameters[0] as Structure);
+            }
+            else
+            {
+                //TODO: throw error: incorrect type
+                Error.ThrowRuntimeError("READ", "Table is required.");
+            }
+            return null;
+        }
+    }
+}
