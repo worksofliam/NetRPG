@@ -54,7 +54,7 @@ namespace NetRPG.Runtime
         public void AddParameter(string value, bool byValue = false) => _Parameters.Add(value, byValue);
         public string[] GetParameterNames() => _Parameters.Keys.ToArray();
         public bool ParameterIsValue(string name) => _Parameters[name];
-        public bool ParamterIsValue(int index) => _Parameters.ElementAt(index).Value;
+        public bool ParameterIsValue(int index) => _Parameters.ElementAt(index).Value;
 
         public string GetName() => _Name;
         public bool HasEntrypoint => _HasEntrypoint;

@@ -11,6 +11,9 @@ namespace NetRPG.Runtime.Functions.BIF
         {
             if (Parameters[0] is DataValue) {
                 return (Parameters[0] as DataValue).GetDimentions();
+            }
+            else if (Parameters[0] is object[]) {
+                return (Parameters[0] as object[]).Length;
             } else {
                 Error.ThrowRuntimeError("%Elem", "Only accepts data structures.");
                 return null;
