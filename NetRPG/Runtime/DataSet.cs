@@ -23,6 +23,8 @@ namespace NetRPG.Runtime
 
         public bool _UserOpen = false;
 
+        public bool _IsConstOrValue = false;
+
         public string _File;
 
         public DataSet(string name)

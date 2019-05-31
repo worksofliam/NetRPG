@@ -26,6 +26,11 @@ namespace NetRPG.Runtime.Typing
 
         public string GetName() => this.Name;
 
+        public virtual object[] GetEntire() => this.Value.Clone() as object[];
+        public virtual void SetEntire(object[] Value) {
+            this.Value = Value;
+        }
+
         public virtual void Set(object value, int index = 0)
         {
             this.Value[index] = value;

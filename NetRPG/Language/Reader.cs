@@ -164,6 +164,10 @@ namespace NetRPG.Language
                         case "TEMPLATE":
                             dataSet._Template = true;
                             break;
+                        case "CONST":
+                        case "VALUE":
+                            dataSet._IsConstOrValue = true;
+                            break;
                     }
                 }
             }
@@ -252,7 +256,7 @@ namespace NetRPG.Language
                         }
 
                         dataSet._Type = StringToType(tokens[4].Value, length);
-                        CurrentProcudure.AddParameter(tokens[3].Value);
+                        CurrentProcudure.AddParameter(tokens[3].Value, dataSet._IsConstOrValue);
                         break;
                 }
 

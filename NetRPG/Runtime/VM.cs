@@ -114,9 +114,7 @@ namespace NetRPG.Runtime
                         {
                             if (_Procedures[Name].ParameterIsValue(Parameters[x]))
                             {
-                                set = (Parms[x] as DataValue).Clone();
-                                LocalVariables.Add(Parameters[x], set);
-                                LocalVariables[Parameters[x]] = set;
+                                LocalVariables[Parameters[x]].SetEntire((Parms[x] as DataValue).GetEntire());
                             }
                             else
                                 LocalVariables[Parameters[x]] = (DataValue)Parms[x];

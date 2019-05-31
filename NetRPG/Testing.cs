@@ -29,6 +29,7 @@ namespace NetRPG
             { "dcl_proc_6.rpgle", "001011" },
             { "dcl_proc_7.rpgle", "World" },
             { "dcl_proc_8.rpgle", "Hello" },
+            { "dcl_proc_9_value.rpgle", "hello     " }, 
             { "dcl_inz.rpgle", "HelloWorld421234.5655" },
             { "dcl_likeds.rpgle", "     Hello" },
             { "assignment.rpgle", "Hello world    23421234.56" },
@@ -63,7 +64,7 @@ namespace NetRPG
             { "op_file_read.rpgle", "My first p" },
             { "op_file_read2.rpgle", "My second "},
             { "op_file_read_qualified.rpgle", "My second " },
-            { "op_file_readp.rpgle", "My first p" },
+            { "op_file_readp.rpgle", "My first p" }
         };
 
         public static void RunTests(string testsStarting = "")
