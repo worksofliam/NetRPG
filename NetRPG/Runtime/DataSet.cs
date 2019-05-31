@@ -64,6 +64,10 @@ namespace NetRPG.Runtime
                     result = new FixedDecimal(this._Name, this._Type, this._Precision, Convert.ToDouble(this._InitialValue));
                     break;
 
+                case Types.Timestamp:
+                    result = new Timestamp(this._Name, Convert.ToInt32(this._InitialValue));
+                    break;
+
                 case Types.File:
                     result = new Table(this._Name, this._File, this._UserOpen);
                     break;

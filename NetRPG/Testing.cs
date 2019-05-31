@@ -53,6 +53,8 @@ namespace NetRPG
             { "bif_elem1.rpgle", 2 },
             { "bif_elem2.rpgle", 4 },
 
+            { "dcl_timestamp.rpgle", 500 },
+
             { "op_if.rpgle", 3 },
             { "op_else.rpgle", 2 },
             { "op_elseif.rpgle", 2 },

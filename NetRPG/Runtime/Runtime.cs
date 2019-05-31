@@ -70,6 +70,7 @@ namespace NetRPG.Runtime
         String,
         Character,
         Varying,
+        Timestamp,
         Ind, //Char(1)
         Int64, //Int(20)
         Int32, //Int(10)

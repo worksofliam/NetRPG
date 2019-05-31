@@ -293,6 +293,8 @@ namespace NetRPG.Language
                         case "20": return Types.Int64;
                         default: return Types.Int32;
                     }
+                case "TIMESTAMP":
+                    return Types.Timestamp;
                 case "FLOAT":
                     switch (length)
                     {
