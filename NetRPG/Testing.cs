@@ -60,6 +60,7 @@ namespace NetRPG
             { "time_bif_minutes.rpgle", 120 },
             { "time_bif_seconds.rpgle", 47 },
             { "time_date_literal.rpgle", true },
+            { "time_time_literal.rpgle", true },
             { "time_dcl_date.rpgle", 860220000 },
             { "time_dcl_time.rpgle", true },
 

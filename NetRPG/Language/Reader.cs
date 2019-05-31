@@ -587,6 +587,7 @@ namespace NetRPG.Language
             if (tokens == null) return 0;
             if (tokens.Count() == 0) return 0;
 
+            string[] time;
             Types lastType = Types.Void;
             Statement[] Parameters = null;
             List<Instructions> Append = new List<Instructions>();
@@ -635,17 +636,27 @@ namespace NetRPG.Language
 
                     //Need to handle date and time literals
                     case RPGLex.Type.WORD_LITERAL:
-                        if (tokens[i].Value == "d") {
                             if (i + 1 < tokens.Count)
                             {
+
                                 if (tokens[i + 1].Type == RPGLex.Type.STRING_LITERAL)
                                 {
-                                    //TODO HANDLE DATE FORMAT SOMEHOW!!
-                                    token = new RPGToken(RPGLex.Type.INT_LITERAL, DateTimeOffset.Parse(tokens[i + 1].Value).ToUnixTimeSeconds().ToString(), tokens[i].Line);
-                                    ChangeMade = true;
+                                    switch (tokens[i].Value) {
+                                        case "d":
+                                            //TODO HANDLE DATE FORMAT SOMEHOW!!
+                                            token = new RPGToken(RPGLex.Type.INT_LITERAL, DateTimeOffset.Parse(tokens[i + 1].Value).ToUnixTimeSeconds().ToString(), tokens[i].Line);
+                                            ChangeMade = true;
+                                            break;
+                                        case "t":
+                                            time = tokens[i + 1].Value.Split(':');
+                                            if (time.Length != 3)
+                                                Error.ThrowCompileError("Incorrect time format: " + tokens[i+1].Value, tokens[i+1].Line);
+                                            token = new RPGToken(RPGLex.Type.INT_LITERAL, ((int.Parse(time[0]) * 3600) + (int.Parse(time[1]) * 60) + int.Parse(time[2])).ToString(), tokens[i].Line);
+                                            ChangeMade = true;
+                                            break;
+                                    }
                                 }
                             }
-                        }
 
                         if (ChangeMade)
                         {
