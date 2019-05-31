@@ -607,6 +607,27 @@ namespace NetRPG.Language
                             tokens.Insert(i, token);
                         }
                         break;
+
+                    //Need to handle date and time literals
+                    case RPGLex.Type.WORD_LITERAL:
+                        if (tokens[i].Value == "d") {
+                            if (i + 1 < tokens.Count)
+                            {
+                                if (tokens[i + 1].Type == RPGLex.Type.STRING_LITERAL)
+                                {
+                                    //TODO HANDLE DATE FORMAT SOMEHOW!!
+                                    token = new RPGToken(RPGLex.Type.INT_LITERAL, DateTimeOffset.Parse(tokens[i + 1].Value).ToUnixTimeSeconds().ToString(), tokens[i].Line);
+                                    ChangeMade = true;
+                                }
+                            }
+                        }
+
+                        if (ChangeMade)
+                        {
+                            tokens.RemoveRange(i, 2);
+                            tokens.Insert(i, token);
+                        }
+                        break;
                 }
             }
 
