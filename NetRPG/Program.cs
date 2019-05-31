@@ -11,7 +11,7 @@ namespace NetRPG
         static void Main(string[] args)
         {
             if (args.Length == 0) {
-                Testing.RunTests();
+                Testing.RunTests("bif_timestamp");
             } else {
                 Application.Execute(args[0]);
             }

@@ -28,7 +28,9 @@ namespace NetRPG.Runtime.Functions
             { "%LOOKUP", new BIF.Lookup() },
             { "%TRIM", new BIF.Trim() },
             { "%TRIMR", new BIF.TrimR() },
-            { "%TRIML", new BIF.TrimL() }
+            { "%TRIML", new BIF.TrimL() },
+
+            { "%TIMESTAMP", new BIF.Timestamp() }
         };
 
         public static bool IsFunction(string Name)
