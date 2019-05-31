@@ -832,6 +832,7 @@ namespace NetRPG.Language
                             case "*NULL":
                                 CurrentProcudure.AddInstruction(Instructions.LDNULL);
                                 break;
+
                             case "*ISO":
                                 CurrentProcudure.AddInstruction(Instructions.LDSTR, "yyyy-MM-dd-HH.mm.ss");
                                 break;
@@ -846,6 +847,21 @@ namespace NetRPG.Language
                                 break;
                             case "*USA":
                                 CurrentProcudure.AddInstruction(Instructions.LDSTR, "hh:mm tt");
+                                break;
+
+                            case "*SECONDS":
+                            case "*S":
+                            case "*MINUTES":
+                            case "*MN":
+                            case "*HOURS":
+                            case "*H":
+                            case "*DAYS":
+                            case "*D":
+                            case "*MONTHS":
+                            case "*M":
+                            case "*YEARS":
+                            case "*Y":
+                                CurrentProcudure.AddInstruction(Instructions.LDSTR, token.Value.ToUpper());
                                 break;
                         }
                         break;

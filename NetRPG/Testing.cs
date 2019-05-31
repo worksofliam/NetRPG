@@ -69,6 +69,8 @@ namespace NetRPG
             { "time_bif_char2.rpgle", "04/05/97" },
             { "time_bif_char3.rpgle", "97/04/05" },
             { "time_bif_char4.rpgle", "1997-04-05-12.00.00" },
+            { "time_bif_diff_days.rpgle", 1 },
+            { "time_bif_diff_seconds.rpgle", 86400 },
 
             { "op_if.rpgle", 3 },
             { "op_else.rpgle", 2 },
