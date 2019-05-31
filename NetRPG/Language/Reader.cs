@@ -644,7 +644,7 @@ namespace NetRPG.Language
                                     switch (tokens[i].Value) {
                                         case "d":
                                             //TODO HANDLE DATE FORMAT SOMEHOW!!
-                                            token = new RPGToken(RPGLex.Type.INT_LITERAL, DateTimeOffset.Parse(tokens[i + 1].Value).ToUnixTimeSeconds().ToString(), tokens[i].Line);
+                                            token = new RPGToken(RPGLex.Type.INT_LITERAL, (DateTime.Parse(tokens[i + 1].Value) - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds.ToString(), tokens[i].Line);
                                             ChangeMade = true;
                                             break;
                                         case "t":
@@ -831,6 +831,21 @@ namespace NetRPG.Language
                                 break;
                             case "*NULL":
                                 CurrentProcudure.AddInstruction(Instructions.LDNULL);
+                                break;
+                            case "*ISO":
+                                CurrentProcudure.AddInstruction(Instructions.LDSTR, "yyyy-MM-dd-HH.mm.ss");
+                                break;
+                            case "*MDY":
+                                CurrentProcudure.AddInstruction(Instructions.LDSTR, "MM/dd/yy");
+                                break;
+                            case "*DMY":
+                                CurrentProcudure.AddInstruction(Instructions.LDSTR, "dd/MM/yy");
+                                break;
+                            case "*YMD":
+                                CurrentProcudure.AddInstruction(Instructions.LDSTR, "yy/MM/dd");
+                                break;
+                            case "*USA":
+                                CurrentProcudure.AddInstruction(Instructions.LDSTR, "hh:mm tt");
                                 break;
                         }
                         break;

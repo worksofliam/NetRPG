@@ -61,8 +61,12 @@ namespace NetRPG
             { "time_bif_seconds.rpgle", 47 },
             { "time_date_literal.rpgle", true },
             { "time_time_literal.rpgle", true },
-            { "time_dcl_date.rpgle", 860220000 },
+            { "time_dcl_date.rpgle", 860198400 },
             { "time_dcl_time.rpgle", true },
+            { "time_bif_char1.rpgle", "05/04/97" },
+            { "time_bif_char2.rpgle", "04/05/97" },
+            { "time_bif_char3.rpgle", "97/04/05" },
+            { "time_bif_char4.rpgle", "1997-04-05-12.00.00" },
 
             { "op_if.rpgle", 3 },
             { "op_else.rpgle", 2 },
