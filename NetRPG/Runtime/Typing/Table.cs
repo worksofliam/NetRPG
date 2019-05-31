@@ -112,5 +112,30 @@ namespace NetRPG.Runtime.Typing
               this._EOF = true;
           }
       }
+
+      public void Chain(DataValue Structure, dynamic[] keys) {
+          this._EOF = true;
+
+          this._RowPointer = 0;
+
+          while (this._RowPointer >= 0 && this._RowPointer < this._Data.Count()) {
+
+              for (var i = 0; i < keys.Length; i++) {
+                  if (keys[i] != this._Data[this._RowPointer].ElementAt(i).Value) {
+                      continue;
+                  }
+
+                  foreach (string varName in this._Data[this._RowPointer].Keys.ToArray()) {
+                      Structure.GetData(varName).Set(this._Data[this._RowPointer][varName]);
+                  }
+
+                  this._EOF = false;
+                  return;
+              }
+
+              this._RowPointer += 1;
+
+          }
+      }
     }
 }

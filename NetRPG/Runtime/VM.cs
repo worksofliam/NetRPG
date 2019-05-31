@@ -309,6 +309,19 @@ namespace NetRPG.Runtime
                             Stack.Add(tempDataValue.GetData(instructions[ip]._Value));
                         }
                         break;
+
+                    case Instructions.CRTARR:
+                        Values[0] = Stack[Stack.Count - 1];
+                        List<dynamic> resultArray = new List<dynamic>();
+
+                        if (Values[0] is int)
+                            for (int i = 1; i <= Convert.ToInt32(Values[0]); i++)
+                                resultArray.Add(Stack[Stack.Count - 1 - i]);
+
+                        tempIndex = Convert.ToInt32(Values[0])+1;
+                        Stack.RemoveRange(Stack.Count - tempIndex, tempIndex);
+                        Stack.Add(resultArray.ToArray());
+                        break;
                         
                     case Instructions.NOT:
                         Values[0] = Stack[Stack.Count - 1];

@@ -29,7 +29,8 @@ namespace NetRPG.Runtime
         
         LDSTR, //Load constant string onto stack
         LDINT, //Load constant int onto 
-        LDDOU, //Load constant double onto stack
+        LDDOU, //Load constant double onto stack,
+        CRTARR, //Creates an array from items on the stack
 
         //Loading DataSets
         LDGBLD,
