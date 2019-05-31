@@ -4,14 +4,14 @@ using System.Text;
 
 namespace NetRPG.Runtime.Functions.BIF
 {
-    class Days : Function
+    class Years : Function
     {
         public override object Execute(object[] Parameters)
         {
             if (Parameters[0] is int) {
-              return Convert.ToInt32(Parameters[0]) * 2592000;
+              return Convert.ToInt32(Parameters[0]) * 31536000;
             } else {
-                Error.ThrowRuntimeError("%Seconds", "Requires integer parameter.");
+                Error.ThrowRuntimeError("%Years", "Requires integer parameter.");
                 return 0;
             }
         }

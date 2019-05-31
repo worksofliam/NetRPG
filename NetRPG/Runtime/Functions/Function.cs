@@ -35,7 +35,9 @@ namespace NetRPG.Runtime.Functions
             { "%SECONDS", new BIF.Seconds() },
             { "%MINUTES", new BIF.Minutes() },
             { "%HOURS", new BIF.Hours() },
-            { "%DAYS", new BIF.Days() }
+            { "%DAYS", new BIF.Days() },
+            { "%MONTHS", new BIF.Months() },
+            { "%YEARS", new BIF.Years() }
         };
 
         public static bool IsFunction(string Name)
