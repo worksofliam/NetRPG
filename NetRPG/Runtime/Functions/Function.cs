@@ -30,7 +30,11 @@ namespace NetRPG.Runtime.Functions
             { "%TRIMR", new BIF.TrimR() },
             { "%TRIML", new BIF.TrimL() },
 
-            { "%TIMESTAMP", new BIF.Timestamp() }
+            { "%TIMESTAMP", new BIF.Timestamp() },
+            { "%SECONDS", new BIF.Seconds() },
+            { "%MINUTES", new BIF.Minutes() },
+            { "%HOURS", new BIF.Hours() },
+            { "%DAYS", new BIF.Days() }
         };
 
         public static bool IsFunction(string Name)
