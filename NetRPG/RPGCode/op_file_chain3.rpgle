@@ -1,5 +1,5 @@
-Dcl-F example;
-Dcl-F users;
+Dcl-F example keyed;
+Dcl-F users keyed;
 
 chain (2) example;
 chain (2) users;

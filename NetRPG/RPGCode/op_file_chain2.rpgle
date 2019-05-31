@@ -1,4 +1,4 @@
-Dcl-F example;
+Dcl-F example keyed;
 
 dcl-s output char(10) dim(2);
 

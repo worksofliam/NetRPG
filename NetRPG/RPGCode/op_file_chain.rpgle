@@ -1,4 +1,4 @@
-Dcl-F example;
+Dcl-F example keyed;
 
 chain (2) example;
 
