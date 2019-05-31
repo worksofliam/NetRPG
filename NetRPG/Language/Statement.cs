@@ -6,14 +6,14 @@ namespace NetRPG.Language
 {
     class Statement
     {
-        private RPGToken[] _Tokens;
+        public List<RPGToken> _Tokens;
 
-        public Statement(RPGToken[] Tokens)
+        public Statement(List<RPGToken> Tokens)
         {
             _Tokens = Tokens;
         }
 
-        public RPGToken[] GetTokens() => _Tokens;
+        public RPGToken[] GetTokens() => _Tokens.ToArray();
 
         public static Statement[] ParseDocument(List<RPGToken> Tokens)
         {
@@ -24,7 +24,7 @@ namespace NetRPG.Language
             {
                 if (token.Type == RPGLex.Type.STMT_END)
                 {
-                    Statements.Add(new Statement(CurrentStatement.ToArray()));
+                    Statements.Add(new Statement(CurrentStatement));
                     CurrentStatement = new List<RPGToken>();
                 }
                 else
@@ -45,7 +45,7 @@ namespace NetRPG.Language
             {
                 if (token.Type == RPGLex.Type.PARMS)
                 {
-                    Statements.Add(new Statement(CurrentStatement.ToArray()));
+                    Statements.Add(new Statement(CurrentStatement));
                     CurrentStatement = new List<RPGToken>();
                 }
                 else
@@ -55,7 +55,7 @@ namespace NetRPG.Language
             }
 
             if (CurrentStatement.Count > 0)
-                Statements.Add(new Statement(CurrentStatement.ToArray()));
+                Statements.Add(new Statement(CurrentStatement));
 
             return Statements.ToArray();
         }

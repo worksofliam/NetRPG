@@ -1,6 +1,4 @@
-Dcl-S MyTS Timestamp;
-
-MyTS = d'04/05/1997';
+Dcl-S MyTS Timestamp Inz(d'04/05/1997');
 
 MyTS = MyTS + %Hours(6) + %Minutes(15);
 
