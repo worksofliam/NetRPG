@@ -181,12 +181,14 @@ namespace NetRPG.Language
                         dataSet._Precision = 0;
                         if (tokens.Count() >= 6)
                         {
-                            length = tokens?[5].Block?[0].Value;
+                            if (tokens[5].Block != null) {
+                                length = tokens?[5].Block?[0].Value;
 
-                            if (tokens[5]?.Block.Count >= 3)
-                                dataSet._Precision = int.Parse(tokens[5]?.Block?[2].Value);
+                                if (tokens[5]?.Block.Count >= 3)
+                                    dataSet._Precision = int.Parse(tokens[5]?.Block?[2].Value);
 
-                            int.TryParse(tokens[5]?.Block?[0].Value, out dataSet._Length);
+                                int.TryParse(tokens[5]?.Block?[0].Value, out dataSet._Length);
+                            }
                         }
 
                         dataSet._Type = StringToType(tokens[4].Value, length);
@@ -885,6 +887,86 @@ namespace NetRPG.Language
             Append.Clear();
 
             return ParmCount;
+        }
+
+        private void CorrectTokens(List<RPGToken> tokens) {
+            Boolean ChangeMade;
+            RPGToken token = null;
+            string[] time;
+            for (int i = 0; i < tokens.Count; i++)
+            {
+                ChangeMade = false;
+                switch (tokens[i].Type)
+                {
+                    case RPGLex.Type.INT_LITERAL:
+                        if (i + 2 < tokens.Count)
+                        {
+                            if (tokens[i + 1].Type == RPGLex.Type.DOT)
+                            {
+                                if (tokens[i + 2].Type == RPGLex.Type.INT_LITERAL)
+                                {
+                                    token = new RPGToken(RPGLex.Type.DOUBLE_LITERAL, tokens[i].Value + "." + tokens[i + 2].Value, tokens[i].Line);
+                                    ChangeMade = true;
+                                }
+                            }
+                        }
+
+                        if (ChangeMade)
+                        {
+                            tokens.RemoveRange(i, 3);
+                            tokens.Insert(i, token);
+                        }
+                        break;
+
+                    case RPGLex.Type.MUL:
+                        if (i + 1 < tokens.Count)
+                        {
+                            if (tokens[i + 1].Type == RPGLex.Type.WORD_LITERAL)
+                            {
+                                token = new RPGToken(RPGLex.Type.SPECIAL, "*" + tokens[i + 1].Value, tokens[i].Line);
+                                ChangeMade = true;
+                            }
+                        }
+
+                        if (ChangeMade)
+                        {
+                            tokens.RemoveRange(i, 2);
+                            tokens.Insert(i, token);
+                        }
+                        break;
+
+                    //Need to handle date and time literals
+                    case RPGLex.Type.WORD_LITERAL:
+                            if (i + 1 < tokens.Count)
+                            {
+
+                                if (tokens[i + 1].Type == RPGLex.Type.STRING_LITERAL)
+                                {
+                                    switch (tokens[i].Value) {
+                                        case "d":
+                                            //TODO HANDLE DATE FORMAT SOMEHOW!!
+                                            token = new RPGToken(RPGLex.Type.INT_LITERAL, (DateTime.Parse(tokens[i + 1].Value) - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds.ToString(), tokens[i].Line);
+                                            ChangeMade = true;
+                                            break;
+                                        case "t":
+                                            time = tokens[i + 1].Value.Split(':');
+                                            if (time.Length != 3)
+                                                Error.ThrowCompileError("Incorrect time format: " + tokens[i+1].Value, tokens[i+1].Line);
+                                            token = new RPGToken(RPGLex.Type.INT_LITERAL, ((int.Parse(time[0]) * 3600) + (int.Parse(time[1]) * 60) + int.Parse(time[2])).ToString(), tokens[i].Line);
+                                            ChangeMade = true;
+                                            break;
+                                    }
+                                }
+                            }
+
+                        if (ChangeMade)
+                        {
+                            tokens.RemoveRange(i, 2);
+                            tokens.Insert(i, token);
+                        }
+                        break;
+                }
+            }
         }
 
         public Module GetModule() => _Module;
