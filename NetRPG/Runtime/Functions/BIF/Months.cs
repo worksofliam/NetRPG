@@ -9,7 +9,7 @@ namespace NetRPG.Runtime.Functions.BIF
         public override object Execute(object[] Parameters)
         {
             if (Parameters[0] is int) {
-              return Convert.ToInt32(Parameters[0]) * 31536000;
+              return Convert.ToInt32(Parameters[0]) * 2592000;
             } else {
                 Error.ThrowRuntimeError("%Months", "Requires integer parameter.");
                 return 0;
