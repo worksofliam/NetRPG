@@ -1,0 +1,21 @@
+{
+  "columns": {
+    "uid": {
+      "type": "int",
+      "length": 10
+    },
+    "uname": {
+      "type": "char",
+      "length": 10
+    }
+  },
+  "rows": [{
+      "uid": 1,
+      "uname": "barry"
+    },
+    {
+      "uid": 2,
+      "uname": "beth"
+    }
+  ]
+}
