@@ -768,6 +768,9 @@ namespace NetRPG.Language
                             case "*DMY":
                                 CurrentProcudure.AddInstruction(Instructions.LDSTR, "dd/MM/yy");
                                 break;
+                            case "*EUR":
+                                CurrentProcudure.AddInstruction(Instructions.LDSTR, "dd.MM.yy");
+                                break;
                             case "*YMD":
                                 CurrentProcudure.AddInstruction(Instructions.LDSTR, "yy/MM/dd");
                                 break;

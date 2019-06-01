@@ -34,6 +34,9 @@ namespace NetRPG.Runtime.Functions
             { "%SCANRPL", new BIF.ScanReplace() },
 
             { "%TIMESTAMP", new BIF.Timestamp() },
+            { "%DATE", new BIF.Timestamp() },
+            { "%TIME", new BIF.Timestamp() },
+            
             { "%SECONDS", new BIF.Seconds() },
             { "%MINUTES", new BIF.Minutes() },
             { "%HOURS", new BIF.Hours() },
