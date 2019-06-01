@@ -14,6 +14,8 @@ namespace NetRPG.Runtime.Typing
         protected dynamic InitValue = null;
         protected Dictionary<string, int> Subfields;
 
+        protected string DataArea = null;
+
         public int GetDimentions() => this.Dimentions;
 
         public void SetArray(int Count)
@@ -23,6 +25,10 @@ namespace NetRPG.Runtime.Typing
 
             this.DoInitialValue();
         }
+
+        public void SetDataAreaName(string DAName) => this.DataArea = DAName;
+
+        public string GetDataArea() => this.DataArea;
 
         public string GetName() => this.Name;
 

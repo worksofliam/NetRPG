@@ -165,6 +165,9 @@ namespace NetRPG.Language
                         case "TEMPLATE":
                             dataSet._Template = true;
                             break;
+                        case "DTAARA":
+                            dataSet._DataArea = dataSet._Name;
+                            break;
                         case "CONST":
                         case "VALUE":
                             dataSet._IsConstOrValue = true;
@@ -403,6 +406,17 @@ namespace NetRPG.Language
                 case "RETURN":
                     ParseExpression(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.RETURN);
+                    break;
+
+                case "IN": //No support for *LOCK
+                    //We load the variable twice so we can store it later
+                    ParseAssignment(tokens.Skip(1).ToList());
+                    ParseAssignment(tokens.Skip(1).ToList());
+                    CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
+                    CurrentProcudure.AddInstruction(Instructions.CALL, "IN");
+
+                    //Then store result of in function
+                    CurrentProcudure.AddInstruction(Instructions.STORE);
                     break;
 
                 case "OPEN":

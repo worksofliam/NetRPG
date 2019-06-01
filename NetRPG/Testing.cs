@@ -87,6 +87,10 @@ namespace NetRPG
             { "op_dow2.rpgle", 11},
             { "op_dsply.rpgle", 1 },
 
+            { "op_in1.rpgle", "Hello world    " },
+            { "op_in2.rpgle", 2342359 },
+            { "op_in3.rpgle", 12345.67 }, 
+
             { "op_file_open.rpgle", 1 },
             { "op_file_read.rpgle", "My first p" },
             { "op_file_read2.rpgle", "My second "},

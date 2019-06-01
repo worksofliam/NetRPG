@@ -27,6 +27,8 @@ namespace NetRPG.Runtime
 
         public string _File;
 
+        public string _DataArea = null;
+
         public DataSet(string name)
         {
             _Name = name;
@@ -77,6 +79,8 @@ namespace NetRPG.Runtime
                     break;
             }
 
+            if (this._DataArea != null)
+                result.SetDataAreaName(this._DataArea);
             if (IsArray()) result.SetArray(this._Dimentions);
             if (this._Type == Types.Structure && _Subfields != null)
                 result.SetSubfields(_Subfields.ToArray()); //Must be run after array size has been set

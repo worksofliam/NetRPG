@@ -16,14 +16,14 @@ namespace NetRPG.Runtime.Typing
       private Boolean _EOF = false;
       public Table(string name, string file, bool userOpen) {
             this.Name = name;
-            _Path = Path.Combine(Environment.CurrentDirectory, "files", file + ".json");
+            _Path = Path.Combine(Environment.CurrentDirectory, "objects", file + ".json");
 
             if (!userOpen)
                 this.Open();
       }
       
       public static DataSet CreateStruct(string name, Boolean qualified = false) {
-            string content = File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "files", name + ".json"));
+            string content = File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "objects", name + ".json"));
 
             DataSet Structure = new DataSet(name);
             Structure._Type = Types.Structure;
