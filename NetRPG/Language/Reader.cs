@@ -219,6 +219,7 @@ namespace NetRPG.Language
 
                         break;
                     case "C":
+                        Error.ThrowCompileError("Constants not supported yet.", tokens[2].Line);
                         break;
                     case "DS":
                         dataSet._Type = Types.Structure;

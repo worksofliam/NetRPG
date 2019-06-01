@@ -32,6 +32,7 @@ namespace NetRPG.Runtime.Functions
             { "%TRIML", new BIF.TrimL() },
             { "%SCAN", new BIF.Scan() },
             { "%SCANRPL", new BIF.ScanReplace() },
+            { "%XLATE", new BIF.Xlate() },
 
             { "%TIMESTAMP", new BIF.Timestamp() },
             { "%DATE", new BIF.Timestamp() },
