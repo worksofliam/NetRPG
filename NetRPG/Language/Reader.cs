@@ -424,6 +424,10 @@ namespace NetRPG.Language
                     CurrentProcudure.AddInstruction(Instructions.RETURN);
                     break;
 
+                case "EVAL":
+                    HandleAssignment(tokens.Skip(1).ToArray());
+                    break;
+
                 case "IN": //No support for *LOCK
                     //We load the variable twice so we can store it later
                     ParseAssignment(tokens.Skip(1).ToList());

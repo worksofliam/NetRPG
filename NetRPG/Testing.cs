@@ -86,6 +86,7 @@ namespace NetRPG
             { "op_dow.rpgle", 11 },
             { "op_dow2.rpgle", 11},
             { "op_dsply.rpgle", 1 },
+            { "op_eval1.rpgle", 10 },
 
             { "op_in1.rpgle", "Hello world    " },
             { "op_in2.rpgle", 2342359 },
