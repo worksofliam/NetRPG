@@ -45,6 +45,8 @@ namespace NetRPG.Runtime
             int ip = 0;
 
             foreach (string Name in this.GetDataSetList()) {
+                if (Name.StartsWith("IN")) continue; //Don't print indicators yo
+
                 dataSet = this.GetDataSet(Name);
                 Console.Write("\t" + Name + " " + dataSet._Type + "(" + dataSet?._Length + ") ");
                 if (dataSet?._Dimentions > 0)
