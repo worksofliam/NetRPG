@@ -98,7 +98,11 @@ namespace NetRPG
             { "op_file_readp.rpgle", "My first p" },
             { "op_file_chain.rpgle", "My second "},
             { "op_file_chain2.rpgle", "My second My first p"},
-            { "op_file_chain3.rpgle", "bethMy second"}
+            { "op_file_chain3.rpgle", "bethMy second"},
+
+            { "ind1.rpgle", "1" },
+            { "ind2.rpgle", "1" },
+            { "ind3.rpgle", "1" }
         };
 
         public static void RunTests(string testsStarting = "")

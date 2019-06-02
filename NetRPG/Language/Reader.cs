@@ -65,6 +65,10 @@ namespace NetRPG.Language
             GlobalSubfields = new Dictionary<string, CompileTimeSubfield>();
 
             SubfieldLevel = -1;
+
+            _Module.AddDataSet(new DataSet("INLR"){_Type = Types.Ind, _InitialValue = "0"});
+            for (int i = 1; i <= 99; i++)
+                _Module.AddDataSet(new DataSet("IN" + i.ToString().PadLeft(2, '0')){_Type = Types.Ind, _InitialValue = "0"});
         }
 
         public void ReadStatements(Statement[] Statements)
@@ -881,7 +885,12 @@ namespace NetRPG.Language
                             {
                                 if (tokens[i + 1].Type == RPGLex.Type.WORD_LITERAL)
                                 {
-                                    token = new RPGToken(RPGLex.Type.SPECIAL, "*" + tokens[i + 1].Value, tokens[i].Line);
+                                    if (tokens[i + 1].Value.Length == 4 && tokens[i + 1].Value.ToUpper().StartsWith("IN")) {
+                                        //Is an indicator variable
+                                        token = new RPGToken(RPGLex.Type.WORD_LITERAL, tokens[i + 1].Value.ToUpper(), tokens[i].Line);
+                                    } else {
+                                        token = new RPGToken(RPGLex.Type.SPECIAL, "*" + tokens[i + 1].Value, tokens[i].Line);
+                                    }
                                     ChangeMade = true;
                                 }
                             }
