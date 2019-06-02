@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using NetRPG.Runtime;
 
+using System.Globalization;
+using System.Threading;
+
 namespace NetRPG.Language
 {
     class Labels
@@ -50,6 +53,8 @@ namespace NetRPG.Language
 
         private Dictionary<string, CompileTimeSubfield> GlobalSubfields;
 
+        private string DateFormat = "MM/dd/yy";
+
         public Reader()
         {
             _Module = new Module();
@@ -66,12 +71,19 @@ namespace NetRPG.Language
         {
             RPGToken[] tokens;
 
+            //TODO need to figure out how to put this into the DATFMT control opt
+            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-UK");
+
             foreach (Statement statement in Statements)
             {
                 CorrectTokens(statement._Tokens);
                 tokens = statement.GetTokens();
                 switch (tokens[0].Type)
                 {
+                    case RPGLex.Type.CTL:
+                        //Handle this here
+                        //TODO handle date format
+                        break;
                     case RPGLex.Type.DCL:
                         HandleDeclare(tokens);
                         break;
