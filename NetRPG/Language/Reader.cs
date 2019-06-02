@@ -428,6 +428,12 @@ namespace NetRPG.Language
                     HandleAssignment(tokens.Skip(1).ToArray());
                     break;
 
+                case "RESET":
+                    ParseAssignment(tokens.Skip(1).ToList());
+                    CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
+                    CurrentProcudure.AddInstruction(Instructions.CALL, "RESET");
+                    break;
+
                 case "IN": //No support for *LOCK
                     //We load the variable twice so we can store it later
                     ParseAssignment(tokens.Skip(1).ToList());
@@ -488,6 +494,10 @@ namespace NetRPG.Language
 
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "3");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "CHAIN");
+                    break;
+
+                default:
+                    Error.ThrowCompileError(tokens[0].Value + " operation does not exist.", tokens[0].Line);
                     break;
             }
         }

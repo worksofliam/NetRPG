@@ -88,6 +88,11 @@ namespace NetRPG
             { "op_dsply.rpgle", 1 },
             { "op_eval1.rpgle", 10 },
 
+            { "op_reset1.rpgle", "Hello world" },
+            { "op_reset2.rpgle", 134 },
+            { "op_reset3.rpgle", "Hello world134" },
+            { "op_reset4.rpgle", 134 },
+
             { "op_in1.rpgle", "Hello world    " },
             { "op_in2.rpgle", 2342359 },
             { "op_in3.rpgle", 12345.67 }, 

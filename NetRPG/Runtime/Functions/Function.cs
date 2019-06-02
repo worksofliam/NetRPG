@@ -11,6 +11,7 @@ namespace NetRPG.Runtime.Functions
         {
             { "DSPLY", new Operation.Dsply() },
             { "IN", new Operation.In() },
+            { "RESET", new Operation.Reset() },
 
             { "OPEN", new Operation.Open() },
             { "READ", new Operation.Read() },

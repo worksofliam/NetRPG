@@ -86,10 +86,10 @@ namespace NetRPG.Runtime.Typing
             return this.Value[index];
         }
 
-        public void DoInitialValue()
+        public void DoInitialValue(Boolean isReset = true)
         {
             dynamic initialValue = null;
-            if (this.InitValue != null)
+            if (this.InitValue != null && isReset)
             {
                 initialValue = this.InitValue;
             }
