@@ -94,6 +94,11 @@ namespace NetRPG
             { "op_reset4.rpgle", 134 },
             { "op_reset5.rpgle", "Hello     Hello     2121" },
 
+            { "op_clear1.rpgle", "           "},
+            { "op_clear2.rpgle", 0 },
+            { "op_clear3.rpgle", "           0" },
+            { "op_clear4.rpgle", 0 },
+
             { "op_in1.rpgle", "Hello world    " },
             { "op_in2.rpgle", 2342359 },
             { "op_in3.rpgle", 12345.67 }, 

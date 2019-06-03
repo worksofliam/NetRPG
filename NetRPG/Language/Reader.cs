@@ -434,6 +434,12 @@ namespace NetRPG.Language
                     CurrentProcudure.AddInstruction(Instructions.CALL, "RESET");
                     break;
 
+                case "CLEAR":
+                    ParseAssignment(tokens.Skip(1).ToList());
+                    CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
+                    CurrentProcudure.AddInstruction(Instructions.CALL, "CLEAR");
+                    break;
+
                 case "IN": //No support for *LOCK
                     //We load the variable twice so we can store it later
                     ParseAssignment(tokens.Skip(1).ToList());
