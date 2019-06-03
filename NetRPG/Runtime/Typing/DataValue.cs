@@ -89,6 +89,7 @@ namespace NetRPG.Runtime.Typing
         public void DoInitialValue(Boolean isReset = true)
         {
             dynamic initialValue = null;
+            object[] subfields = null;
             if (this.InitValue != null && isReset)
             {
                 initialValue = this.InitValue;
@@ -115,11 +116,23 @@ namespace NetRPG.Runtime.Typing
                     case Types.Int64:
                         initialValue = 0;
                         break;
+
+                    case Types.Structure:
+                        if (this.Subfields != null) {
+                            for (var i = 0; i < this.Value.Length; i++) {
+                                subfields = (this.Value[i] as object[]);
+                                foreach (int subf in this.Subfields.Values) {
+                                    (subfields[subf] as DataValue).DoInitialValue(isReset);
+                                }
+                            }
+                        }
+                        break;
                 }
             }
-
-            for (int x = 0; x < this.Dimentions; x++)
-                this.Value[x] = initialValue;
+            
+            if (this.Type != Types.Structure)
+                for (int x = 0; x < this.Dimentions; x++)
+                    this.Value[x] = initialValue;
         }
 
         public DataValue Clone()

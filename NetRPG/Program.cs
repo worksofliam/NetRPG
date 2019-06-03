@@ -11,7 +11,7 @@ namespace NetRPG
         static void Main(string[] args)
         {
             if (args.Length == 0) {
-                Testing.RunTests("op_reset");
+                Testing.RunTests();
             } else {
                 Application.Execute(args[0]);
             }
