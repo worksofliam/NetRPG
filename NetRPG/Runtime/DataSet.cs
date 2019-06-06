@@ -71,7 +71,7 @@ namespace NetRPG.Runtime
                     break;
 
                 case Types.File:
-                    result = new Table(this._Name, this._File, this._UserOpen);
+                    result = new Typing.Files.Table(this._Name, this._File, this._UserOpen);
                     break;
 
                 default:

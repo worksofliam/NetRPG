@@ -6,7 +6,7 @@ using System.Linq;
 using Newtonsoft.Json.Linq;
 using NetRPG.Language;
 
-namespace NetRPG.Runtime.Typing
+namespace NetRPG.Runtime.Typing.Files
 {
     class Table : FileT
     {
