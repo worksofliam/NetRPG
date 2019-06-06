@@ -22,7 +22,7 @@ namespace NetRPG.Runtime.Typing.Files
                 this.Open();
         }
 
-        public static new DataSet CreateStruct(string name, Boolean qualified = false) {
+        public static DataSet CreateStruct(string name, Boolean qualified = false) {
                 string content = File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "objects", name + ".json"));
 
                 DataSet Structure = new DataSet(name);

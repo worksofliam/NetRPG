@@ -220,7 +220,7 @@ namespace NetRPG.Language
                             dataSet._File = dataSet._Name;
 
                         dataSet._Name += "_table"; //We do this so the DS can use the name instead
-                        structure = Runtime.Typing.Table.CreateStruct(dataSet._File, dataSet._Qualified);
+                        structure = Runtime.Typing.Files.Table.CreateStruct(dataSet._File, dataSet._Qualified);
 
                         if (CurrentProcudure != null) {
                             CurrentProcudure.AddDataSet(structure);

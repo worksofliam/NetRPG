@@ -16,10 +16,6 @@ namespace NetRPG.Runtime.Typing
       private Boolean _EOF = false;
       public FileT(string name, string file, bool userOpen) {
       }
-      
-      public static DataSet CreateStruct(string name, Boolean qualified = false) {
-          return null;
-      }
 
       public Boolean isEOF() => this._EOF;
 
