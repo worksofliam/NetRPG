@@ -47,9 +47,7 @@ namespace NetRPG.Runtime.Typing.Files
                 return Structure;
         }
 
-        public Boolean isEOF() => this._EOF;
-
-        public void Open() {
+        public override void Open() {
             this._RowPointer = -1;
 
             string content = File.ReadAllText(this._Path);
@@ -83,7 +81,7 @@ namespace NetRPG.Runtime.Typing.Files
             }
         }
 
-        public void Read(DataValue Structure) {
+        public override void Read(DataValue Structure) {
             this._RowPointer += 1;
 
             if (this._RowPointer >= 0 && this._RowPointer < this._Data.Count()) {
@@ -98,7 +96,7 @@ namespace NetRPG.Runtime.Typing.Files
             }
         }
 
-        public void ReadPrevious(DataValue Structure) {
+        public override void ReadPrevious(DataValue Structure) {
             this._RowPointer -= 1;
 
             if (this._RowPointer >= 0 && this._RowPointer < this._Data.Count()) {
@@ -113,7 +111,7 @@ namespace NetRPG.Runtime.Typing.Files
             }
         }
 
-        public void Chain(DataValue Structure, dynamic[] keys) {
+        public override void Chain(DataValue Structure, dynamic[] keys) {
             this._EOF = true;
 
             this._RowPointer = 0;

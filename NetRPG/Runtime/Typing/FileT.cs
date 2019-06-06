@@ -10,9 +10,6 @@ namespace NetRPG.Runtime.Typing
 {
     class FileT : DataValue
     {
-      private string _Path;
-      private int _RowPointer = -1;
-      private List<Dictionary<string, dynamic>> _Data;
       private Boolean _EOF = false;
       public FileT(string name, string file, bool userOpen) {
       }
