@@ -53,6 +53,8 @@ namespace NetRPG.Language
 
         private Dictionary<string, CompileTimeSubfield> GlobalSubfields;
 
+        private Dictionary<string, string> RecordFormatDisplays;
+
         private string DateFormat = "MM/dd/yy";
 
         public Reader()
@@ -63,6 +65,7 @@ namespace NetRPG.Language
             Struct_Templates = new Dictionary<string, DataSet>();
             Current_Structs = new List<DataSet>();
             GlobalSubfields = new Dictionary<string, CompileTimeSubfield>();
+            RecordFormatDisplays = new Dictionary<string, string>();
 
             SubfieldLevel = -1;
 
@@ -144,7 +147,8 @@ namespace NetRPG.Language
         private void HandleDeclare(RPGToken[] tokens)
         {
             //TODO: Check if DataSet already exists?
-            DataSet dataSet = new DataSet(tokens[3].Value), structure;
+            DataSet dataSet = new DataSet(tokens[3].Value);
+            DataSet[] structures;
             LOCATION currentLocation;
             string length = "";
             Dictionary<string, string> config = new Dictionary<string, string>();
@@ -184,6 +188,9 @@ namespace NetRPG.Language
                         case "DTAARA":
                             dataSet._DataArea = dataSet._Name;
                             break;
+                        case "WORKSTN":
+                            dataSet._WorkStation = true;
+                            break;
                         case "CONST":
                         case "VALUE":
                             dataSet._IsConstOrValue = true;
@@ -219,20 +226,33 @@ namespace NetRPG.Language
                         if (dataSet._File == null)
                             dataSet._File = dataSet._Name;
 
-                        dataSet._Name += "_table"; //We do this so the DS can use the name instead
-                        structure = Runtime.Typing.Files.Table.CreateStruct(dataSet._File, dataSet._Qualified);
+                        //TODO, major clean up, remove code dupe
 
-                        if (CurrentProcudure != null) {
-                            CurrentProcudure.AddDataSet(structure);
-                            currentLocation = LOCATION.Local;
+                        dataSet._Name += "_table"; //We do this so the DS can use the name instead
+                        if (dataSet._WorkStation) {
+                            structures = Runtime.Typing.Files.Display.CreateStructs(dataSet._File, dataSet._Qualified);
                         } else {
-                            _Module.AddDataSet(structure);
-                            currentLocation = LOCATION.Global;
+                            structures = new [] {Runtime.Typing.Files.Table.CreateStruct(dataSet._File, dataSet._Qualified)};
                         }
 
-                        if (dataSet._Qualified == false) {
-                            foreach(DataSet subfield in structure._Subfields) {
-                                GlobalSubfields.Add(subfield._Name, new CompileTimeSubfield(currentLocation, structure._Name));
+                        foreach (DataSet structure in structures) {
+                            if (dataSet._WorkStation) {
+                                //this is used to map the record to a file when we are compiling the application
+                                RecordFormatDisplays.Add(structure._Name, dataSet._Name);
+                            }
+
+                            if (CurrentProcudure != null) {
+                                CurrentProcudure.AddDataSet(structure);
+                                currentLocation = LOCATION.Local;
+                            } else {
+                                _Module.AddDataSet(structure);
+                                currentLocation = LOCATION.Global;
+                            }
+
+                            if (dataSet._Qualified == false) {
+                                foreach(DataSet subfield in structure._Subfields) {
+                                    GlobalSubfields.Add(subfield._Name, new CompileTimeSubfield(currentLocation, structure._Name));
+                                }
                             }
                         }
 
@@ -500,6 +520,17 @@ namespace NetRPG.Language
 
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "3");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "CHAIN");
+                    break;
+
+                case "EXFMT":
+                    //EXFMT RCDFMT -> //EXFMT TABLE STRUCTURE
+                    ParseAssignment(tokens.Skip(1).ToList()); //Load the DS first
+
+                    //Then load the table
+                    tokens[2].Value += "_table";
+                    ParseAssignment(tokens.Skip(2).ToList());
+                    CurrentProcudure.AddInstruction(Instructions.LDINT, "2");
+                    CurrentProcudure.AddInstruction(Instructions.CALL, "EXFMT");
                     break;
 
                 default:

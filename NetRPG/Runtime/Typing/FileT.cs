@@ -31,5 +31,13 @@ namespace NetRPG.Runtime.Typing
       public virtual void Chain(DataValue Structure, dynamic[] keys) {
 
       }
+
+      public virtual void ExecuteFormat(DataValue Structure) {
+        
+      }
+
+      public virtual void Write(DataValue Structure) {
+        
+      }
     }
 }

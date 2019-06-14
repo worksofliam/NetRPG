@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 using System.IO;
 
 namespace NetRPG {
-    public class Application {
+    public class ApplicationRuntime {
         public static void Execute(string path) {
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             string NewLine = (isWindows ? Environment.NewLine : "");

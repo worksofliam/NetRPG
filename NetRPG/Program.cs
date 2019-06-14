@@ -13,8 +13,12 @@ namespace NetRPG
             if (args.Length == 0) {
                 Testing.RunTests();
             } else {
-                Application.Execute(args[0]);
+                ApplicationRuntime.Execute(args[0]);
             }
+
+            // DisplayParse parser = new DisplayParse();
+
+            // parser.ParseFile(Path.Combine("objects", "ex1.dspf"));
 
             //Console.ReadLine();
         }

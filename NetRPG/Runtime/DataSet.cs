@@ -29,6 +29,8 @@ namespace NetRPG.Runtime
 
         public string _DataArea = null;
 
+        public Boolean _WorkStation = false;
+
         public DataSet(string name)
         {
             _Name = name;
