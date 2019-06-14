@@ -98,18 +98,20 @@ namespace NetRPG.Language
                                 }
 
                                 CurrentField.dataType = new DataSet(CurrentField.Name);
-                                CurrentField.dataType._Precision = 0;
                                 CurrentField.dataType._Length = Convert.ToInt32(len);
+                                if (dec != "") CurrentField.dataType._Precision = Convert.ToInt32(dec);
                                 switch (type.ToUpper())
                                 {
                                     case "":
                                       //TODO use length and dec to determine type
                                       // if decimals is blank, then is a character field
+                                      if  (dec == "") 
+                                        CurrentField.dataType._Type = Types.Character;
                                       break;
+                                      
                                     case "D":
                                     case "S":
                                         CurrentField.dataType._Type = Types.FixedDecimal;
-                                        if (dec != "") CurrentField.dataType._Precision = Convert.ToInt32(dec);
                                         break;
                                     default:
                                         CurrentField.dataType._Type = Types.Character;

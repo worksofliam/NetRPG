@@ -11,16 +11,11 @@ namespace NetRPG
         static void Main(string[] args)
         {
             if (args.Length == 0) {
-                Testing.RunTests();
+                Testing.RunTests("dcl_file");
+                Console.ReadKey();
             } else {
                 ApplicationRuntime.Execute(args[0]);
             }
-
-            // DisplayParse parser = new DisplayParse();
-
-            // parser.ParseFile(Path.Combine("objects", "ex1.dspf"));
-
-            //Console.ReadLine();
         }
     }
 }
