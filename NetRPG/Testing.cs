@@ -117,7 +117,8 @@ namespace NetRPG
             { "ind3.rpgle", "1" },
 
             { "dcl_file_exfmt1.rpgle", "Hello     "},
-            { "dcl_file_exfmt2.rpgle", "Hello     "}
+            { "dcl_file_exfmt2.rpgle", "Hello     "},
+            { "dcl_file_exfmt3.rpgle", 10 },
         };
 
         public static void RunTests(string testsStarting = "")

@@ -88,6 +88,18 @@ namespace NetRPG.Runtime.Typing.Files
                         currentView = new Label (field.Value) { X = field.Position.X, Y = field.Position.Y };
                         break;
                         
+                    case FieldInfo.FieldType.Output:
+                        currentView = new Label (Structure.GetData(field.Name).Get().ToString()) { X = field.Position.X, Y = field.Position.Y };
+                        break;
+
+                    case FieldInfo.FieldType.Input:
+                        currentView = new TextField ("") {
+                            X = field.Position.X, Y = field.Position.Y,
+                            Width = field.dataType._Length,
+                            Height = 1
+                        };
+                        break;
+                        
                     case FieldInfo.FieldType.Both:
                         currentView = new TextField ("") {
                             X = field.Position.X, Y = field.Position.Y,
@@ -104,6 +116,10 @@ namespace NetRPG.Runtime.Typing.Files
                                 currentView.ColorScheme = new ColorScheme();
                                 currentView.ColorScheme.Normal = Application.Driver.MakeAttribute (TextToColor(field.Keywords[keyword]), Color.Black);
                                 currentView.ColorScheme.Focus = Application.Driver.MakeAttribute (TextToColor(field.Keywords[keyword]), Color.Black);
+                                break;
+                                
+                            case "SYSNAME":
+                                (currentView as Label).Text = Environment.MachineName.Substring(0, Math.Min(8, Environment.MachineName.Length));
                                 break;
                         }
                     } 
@@ -124,7 +140,7 @@ namespace NetRPG.Runtime.Typing.Files
                 case "YLW":
                     return Color.BrightYellow;
                 case "BLU":
-                    return Color.BrightBlue;
+                    return Color.Cyan;
                 case "RED":
                     return Color.BrightRed;
                 case "WHT":

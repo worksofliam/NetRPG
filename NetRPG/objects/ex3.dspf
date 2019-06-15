@@ -1,4 +1,8 @@
      A          R NEWFMT    
+     A            NAME          20   O  7 46
+     A            EMAIL         20   O  8 46
+     A            ID            10D  B  5 46
+     A                                      COLOR(WHT)
      A                                 20 25'F3=Exit'
      A                                      COLOR(BLU)
      A                                 20  9'Enter=Continue'
@@ -10,7 +14,3 @@
      A                                  8 20'Email:'
      A                                  2 33'User Entry'
      A                                      COLOR(WHT)
-     A            ID            10D  B  5 52
-     A                                      COLOR(WHT)
-     A            EMAIL         20   O  8 42
-     A            NAME          20   O  7 42

@@ -167,6 +167,8 @@ namespace NetRPG.Language
 
         private void HandleKeywords(string Keywords)
         {
+            if (Keywords == "") return;
+            
             if (Keywords.StartsWith("'") && Keywords.EndsWith("'"))
             {
                 CurrentField.Value = Keywords.Trim('\'');
@@ -180,9 +182,13 @@ namespace NetRPG.Language
                 value = value.Substring(0, value.Length - 1);
 
                 if (CurrentField != null)
-                  CurrentField.Keywords.Add(option, value);
+                    CurrentField.Keywords.Add(option, value);
                 else
-                  CurrentRecord.Keywords.Add(option, value);
+                    CurrentRecord.Keywords.Add(option, value);
+            } else {
+                foreach (string keyword in Keywords.Split(' ')) {
+                    CurrentField.Keywords.Add(keyword, "");
+                }
             }
         }
     }
