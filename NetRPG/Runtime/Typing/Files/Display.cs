@@ -17,7 +17,6 @@ namespace NetRPG.Runtime.Typing.Files
         private Dictionary<string, RecordInfo> RecordFormats;
         private Boolean _EOF = false;
 
-        private Window window;
         private Dictionary<string, View> localFields;
         public Display(string name, string file, bool userOpen) : base(name, file, userOpen) {
             this.Name = name;
@@ -59,36 +58,21 @@ namespace NetRPG.Runtime.Typing.Files
             parser.ParseFile(_Path);
             this.RecordFormats = parser.GetRecordFormats();
             localFields = new Dictionary<string, View>();
-
-            this.NewWindow();
         }
 
-        private void NewWindow() {
-            window = new DisplayWindow ("NetRPG") {
-                X = 0,
-                Y = 0,
-                Width = 80,
-                Height = 24
-            };
-            
-            window.ColorScheme = Colors.Base;
-        }
 
         public override void ExecuteFormat(DataValue Structure) {
             //Kick in gui.cs
             this.Write(Structure);
             foreach (View view in localFields.Values) {
-                window.Add(view);
+                WindowHandler.Add(view);
             }
 
-            WindowHandler.Add (window);
             WindowHandler.Run();
 
             foreach (string varName in Structure.GetSubfieldNames()) {
                 Structure.GetData(varName).Set((this.localFields[varName] as TextField).Text.ToString());
             }
-
-            this.NewWindow();
 
             localFields = new Dictionary<string, View>();
         }
