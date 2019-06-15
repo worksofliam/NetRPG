@@ -7,7 +7,6 @@ using NetRPG.Runtime.Functions;
 
 namespace NetRPG.Runtime
 {
-
     public class VM
     {
         private bool IsTestingEnv;
@@ -53,6 +52,7 @@ namespace NetRPG.Runtime
         private List<string> CallStack;
         public object Run()
         {
+            WindowHandler.Init();
             CallStack = new List<string>();
             try {
                 return Execute(_EntryProcedure);
@@ -67,6 +67,8 @@ namespace NetRPG.Runtime
                 Console.WriteLine(e.StackTrace);
                 Console.WriteLine("-- Error --");
                 return null;
+            } finally {
+                WindowHandler.End();
             }
         }
 

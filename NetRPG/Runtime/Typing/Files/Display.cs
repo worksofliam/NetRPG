@@ -60,14 +60,11 @@ namespace NetRPG.Runtime.Typing.Files
             this.RecordFormats = parser.GetRecordFormats();
             localFields = new Dictionary<string, View>();
 
-            Application.Init();
+            this.NewWindow();
+        }
 
-            Colors.Base.Normal = Application.Driver.MakeAttribute (Color.BrightGreen, Color.Black);
-            Colors.Base.Focus = Application.Driver.MakeAttribute (Color.BrightGreen, Color.Black);
-            Colors.Base.HotFocus = Application.Driver.MakeAttribute (Color.BrightGreen, Color.Black);
-            Colors.Base.HotNormal = Application.Driver.MakeAttribute (Color.BrightGreen, Color.Black);
-
-            window = new DisplayWindow ("") {
+        private void NewWindow() {
+            window = new DisplayWindow ("NetRPG") {
                 X = 0,
                 Y = 0,
                 Width = 80,
@@ -75,8 +72,6 @@ namespace NetRPG.Runtime.Typing.Files
             };
             
             window.ColorScheme = Colors.Base;
-
-            Application.Top.Add (window);
         }
 
         public override void ExecuteFormat(DataValue Structure) {
@@ -86,12 +81,14 @@ namespace NetRPG.Runtime.Typing.Files
                 window.Add(view);
             }
 
-            Application.Top.Add (window);
-            Application.Run ();
+            WindowHandler.Add (window);
+            WindowHandler.Run();
 
             foreach (string varName in Structure.GetSubfieldNames()) {
                 Structure.GetData(varName).Set((this.localFields[varName] as TextField).Text.ToString());
             }
+
+            this.NewWindow();
 
             localFields = new Dictionary<string, View>();
         }
