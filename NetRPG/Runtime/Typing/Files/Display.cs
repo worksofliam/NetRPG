@@ -108,10 +108,10 @@ namespace NetRPG.Runtime.Typing.Files
                         break;
                         
                     case FieldInfo.FieldType.Both:
-                        currentView = new TextField (field.Value) {
+                        currentView = new TextField ("") {
                             X = field.Position.X, Y = field.Position.Y,
                             Width = field.dataType._Length,
-                            Height = 1,
+                            Height = 1, Text = Structure.GetData(field.Name).Get()
                         };
                         break;
                 }
