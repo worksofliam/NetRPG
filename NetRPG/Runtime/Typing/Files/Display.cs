@@ -64,8 +64,8 @@ namespace NetRPG.Runtime.Typing.Files
 
             Colors.Base.Normal = Application.Driver.MakeAttribute (Color.BrightGreen, Color.Black);
             Colors.Base.Focus = Application.Driver.MakeAttribute (Color.BrightGreen, Color.Black);
-            Colors.Dialog.Focus = Application.Driver.MakeAttribute (Color.BrightGreen, Color.Black);
-            Colors.Dialog.HotFocus = Application.Driver.MakeAttribute (Color.BrightGreen, Color.Black);
+            Colors.Base.HotFocus = Application.Driver.MakeAttribute (Color.BrightGreen, Color.Black);
+            Colors.Base.HotNormal = Application.Driver.MakeAttribute (Color.BrightGreen, Color.Black);
 
             window = new DisplayWindow ("") {
                 X = 0,
@@ -111,14 +111,51 @@ namespace NetRPG.Runtime.Typing.Files
                         currentView = new TextField ("") {
                             X = field.Position.X, Y = field.Position.Y,
                             Width = field.dataType._Length,
-                            Height = 1, Text = Structure.GetData(field.Name).Get()
+                            Height = 1
                         };
                         break;
+                }
+
+                if (field.Keywords != null) {
+                    foreach (string keyword in field.Keywords.Keys) {
+                        switch (keyword) {
+                            case "COLOR":
+                                currentView.ColorScheme = new ColorScheme();
+                                currentView.ColorScheme.Normal = Application.Driver.MakeAttribute (TextToColor(field.Keywords[keyword]), Color.Black);
+                                currentView.ColorScheme.Focus = Application.Driver.MakeAttribute (TextToColor(field.Keywords[keyword]), Color.Black);
+                                break;
+                        }
+                    } 
                 }
 
                 localFields.Add(field.Name, currentView);
             }
 
+        }
+
+
+        public static Color TextToColor(string Colour)
+        {
+            switch (Colour.ToUpper())
+            {
+                case "GRN":
+                    return Color.BrightGreen;
+                case "YLW":
+                    return Color.BrightYellow;
+                case "BLU":
+                    return Color.BrightBlue;
+                case "RED":
+                    return Color.BrightRed;
+                case "WHT":
+                    return Color.White;
+                case "TRQ":
+                    return Color.BrighCyan;
+                case "PNK":
+                    return Color.BrightMagenta;
+
+                default:
+                    return Color.BrightGreen;
+            }
         }
     }
 }

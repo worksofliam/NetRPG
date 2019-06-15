@@ -213,7 +213,7 @@ namespace NetRPG.Language
         public FieldType fieldType;
         public Point Position;
 
-        public Dictionary<string, string> Keywords;
+        public Dictionary<string, string> Keywords = new Dictionary<string, string>();
 
         public enum FieldType
         {
@@ -223,31 +223,6 @@ namespace NetRPG.Language
             Const,
             Hidden
         }
-
-        public static Color TextToColor(string Colour)
-        {
-            switch (Colour.ToUpper())
-            {
-                case "GREEN":
-                    return Color.Lime;
-                case "YELLOW":
-                    return Color.Yellow;
-                case "BLUE":
-                    return Color.LightBlue;
-                case "RED":
-                    return Color.Red;
-                case "WHITE":
-                    return Color.White;
-                case "TURQUOISE":
-                    return Color.Turquoise;
-                case "PINK":
-                    return Color.Pink;
-
-                default:
-                    return Color.Green;
-            }
-        }
-
 
     }
 }
