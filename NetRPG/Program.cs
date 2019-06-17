@@ -11,8 +11,7 @@ namespace NetRPG
         static void Main(string[] args)
         {
             if (args.Length == 0) {
-                Testing.RunTests("dcl_file_exfmt4");
-                Console.ReadKey();
+                Testing.RunTests();
             } else {
                 ApplicationRuntime.Execute(args[0]);
             }

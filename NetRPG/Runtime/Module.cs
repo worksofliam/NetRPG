@@ -7,6 +7,7 @@ namespace NetRPG.Runtime
 {
     public class Module
     {
+        public bool _HasDisplay;
         private Dictionary<string, DataSet> GlobalDataSets;
         private List<Procedure> Procedures;
 
@@ -15,6 +16,7 @@ namespace NetRPG.Runtime
         {
             GlobalDataSets = new Dictionary<string, DataSet>();
             Procedures = new List<Procedure>();
+            _HasDisplay = false;
         }
 
         public string[] GetDataSetList() => GlobalDataSets.Keys.ToArray();
@@ -45,8 +47,6 @@ namespace NetRPG.Runtime
             int ip = 0;
 
             foreach (string Name in this.GetDataSetList()) {
-                if (Name.StartsWith("IN")) continue; //Don't print indicators yo
-
                 dataSet = this.GetDataSet(Name);
                 Console.Write("\t" + Name + " " + dataSet._Type + "(" + dataSet?._Length + ") ");
                 if (dataSet?._Dimentions > 0)

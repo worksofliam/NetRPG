@@ -69,9 +69,20 @@ namespace NetRPG.Language
 
             SubfieldLevel = -1;
 
-            _Module.AddDataSet(new DataSet("INLR"){_Type = Types.Ind, _InitialValue = "0"});
-            for (int i = 1; i <= 99; i++)
-                _Module.AddDataSet(new DataSet("IN" + i.ToString().PadLeft(2, '0')){_Type = Types.Ind, _InitialValue = "0"});
+            string indName;
+            DataSet inds = new DataSet("IND"){_Type = Types.Structure, _Qualified = false};
+            inds._Subfields = new List<DataSet>();
+            for (int i = 1; i <= 99; i++) {
+                indName = "IN" + i.ToString().PadLeft(2, '0');
+                inds._Subfields.Add(new DataSet(indName){_Type = Types.Ind, _InitialValue = "0"});
+                GlobalSubfields.Add(indName, new CompileTimeSubfield(LOCATION.Global, "IND"));
+            }
+
+            indName = "INLR";
+            inds._Subfields.Add(new DataSet(indName){_Type = Types.Ind, _InitialValue = "0"});
+            GlobalSubfields.Add(indName, new CompileTimeSubfield(LOCATION.Global, "IND"));
+
+            _Module.AddDataSet(inds);
         }
 
         public void ReadStatements(Statement[] Statements)
@@ -189,6 +200,7 @@ namespace NetRPG.Language
                             dataSet._DataArea = dataSet._Name;
                             break;
                         case "WORKSTN":
+                            _Module._HasDisplay = true;
                             dataSet._WorkStation = true;
                             break;
                         case "CONST":

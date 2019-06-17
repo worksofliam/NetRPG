@@ -62,6 +62,8 @@ namespace NetRPG.Runtime.Typing.Files
 
 
         public override void ExecuteFormat(DataValue Structure) {
+            RecordInfo recordFormat = RecordFormats[Structure.GetName().ToUpper()];
+            
             //Kick in gui.cs
             this.Write(Structure);
             foreach (View view in localFields.Values) {

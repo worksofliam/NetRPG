@@ -12,6 +12,7 @@ namespace NetRPG.Runtime
         private bool IsTestingEnv;
         private Dictionary<string, DataValue> GlobalVariables;
         private string _EntryProcedure;
+        private Boolean _DisplayRequired;
         private Dictionary<string, Procedure> _Procedures;
 
         public VM(bool testingVM = false)
@@ -28,6 +29,9 @@ namespace NetRPG.Runtime
             {
                 if (proc._ReturnType == Types.Void)
                     proc._ReturnType = Types.Pointer; //Any
+
+                if (module._HasDisplay)
+                    _DisplayRequired = true;
 
                 _Procedures.Add(proc.GetName(), proc);
                 if (proc.HasEntrypoint) _EntryProcedure = proc.GetName();
@@ -52,7 +56,8 @@ namespace NetRPG.Runtime
         private List<string> CallStack;
         public object Run()
         {
-            WindowHandler.Init();
+            if (_DisplayRequired)
+                WindowHandler.Init();
             CallStack = new List<string>();
             try {
                 return Execute(_EntryProcedure);
@@ -68,7 +73,8 @@ namespace NetRPG.Runtime
                 Console.WriteLine("-- Error --");
                 return null;
             } finally {
-                WindowHandler.End();
+                if (_DisplayRequired)
+                    WindowHandler.End();
             }
         }
 
