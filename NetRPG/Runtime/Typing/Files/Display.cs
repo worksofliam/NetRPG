@@ -71,7 +71,8 @@ namespace NetRPG.Runtime.Typing.Files
             WindowHandler.Run();
 
             foreach (string varName in Structure.GetSubfieldNames()) {
-                Structure.GetData(varName).Set((this.localFields[varName] as TextField).Text.ToString());
+                if (this.localFields[varName] is TextField)
+                    Structure.GetData(varName).Set((this.localFields[varName] as TextField).Text.ToString());
             }
 
             localFields = new Dictionary<string, View>();

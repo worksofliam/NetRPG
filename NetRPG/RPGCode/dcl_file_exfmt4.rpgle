@@ -2,7 +2,7 @@ Dcl-F ex4 WorkStn;
 
 exfmt OLDFMT;
 
-NAME = 'Barry';
+NAME = NAME2;
 EMAIL = 'barry@barry.com';
 exfmt NEWFMT;
 

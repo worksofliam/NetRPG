@@ -52,6 +52,8 @@ namespace NetRPG.Runtime.Typing
             this.Value[this.Subfields[subfield]] = value;
         }
 
+        public Types GetDataType() => this.Type;
+
         public dynamic Get()
         {
             if (Dimentions > 1) //If it's an array
