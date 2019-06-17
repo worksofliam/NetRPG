@@ -61,7 +61,7 @@ namespace NetRPG.Runtime.Typing.Files
         }
 
 
-        public override void ExecuteFormat(DataValue Structure) {
+        public override void ExecuteFormat(DataValue Structure, DataValue Indicators) {
             RecordInfo recordFormat = RecordFormats[Structure.GetName().ToUpper()];
             
             //Kick in gui.cs

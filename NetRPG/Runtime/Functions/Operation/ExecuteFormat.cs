@@ -10,10 +10,10 @@ namespace NetRPG.Runtime.Functions.Operation
     {
         public override object Execute(object[] Parameters)
         {
-            if (Parameters[0] is Structure && Parameters[1] is Display)
+            if (Parameters[0] is Structure && Parameters[1] is Display && Parameters[2] is Structure)
             {
                 Display display = Parameters[1] as Display;
-                display.ExecuteFormat(Parameters[0] as Structure);
+                display.ExecuteFormat(Parameters[0] as Structure, Parameters[2] as Structure);
             }
             else
             {

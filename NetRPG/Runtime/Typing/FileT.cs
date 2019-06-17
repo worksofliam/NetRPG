@@ -32,7 +32,7 @@ namespace NetRPG.Runtime.Typing
 
       }
 
-      public virtual void ExecuteFormat(DataValue Structure) {
+      public virtual void ExecuteFormat(DataValue Indicators, DataValue Structure) {
         
       }
 

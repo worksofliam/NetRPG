@@ -535,14 +535,18 @@ namespace NetRPG.Language
                     break;
 
                 case "EXFMT":
-                    //EXFMT RCDFMT -> //EXFMT TABLE STRUCTURE
+                    //EXFMT RCDFMT -> //EXFMT TABLE STRUCTURE IND
                     ParseAssignment(tokens.Skip(1).ToList()); //Load the DS first
 
                     //Then load the table
                     tokens[1].Value = RecordFormatDisplays[tokens[1].Value];
                     ParseAssignment(tokens.Skip(1).ToList());
                     
-                    CurrentProcudure.AddInstruction(Instructions.LDINT, "2");
+                    //We also need the indicators for execute format
+                    tokens[1].Value = "IND";
+                    ParseAssignment(tokens.Skip(1).ToList());
+                    
+                    CurrentProcudure.AddInstruction(Instructions.LDINT, "3");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "EXFMT");
                     break;
 
