@@ -29,10 +29,10 @@ namespace NetRPG.Runtime
         public static void Run() {
             Application.Top.Add(Window);
             Application.Run(Window);
+            Window.RemoveAll();
         }
 
         public static void End() {
-            Window.RemoveAll();
             Application.RequestStop();
         }
     }
