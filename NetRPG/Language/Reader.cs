@@ -550,6 +550,18 @@ namespace NetRPG.Language
                     CurrentProcudure.AddInstruction(Instructions.CALL, "EXFMT");
                     break;
 
+                case "WRITE":
+                    //EXFMT RCDFMT -> //EXFMT TABLE STRUCTURE
+                    ParseAssignment(tokens.Skip(1).ToList()); //Load the DS first
+
+                    //Then load the table
+                    tokens[1].Value = RecordFormatDisplays[tokens[1].Value];
+                    ParseAssignment(tokens.Skip(1).ToList());
+                    
+                    CurrentProcudure.AddInstruction(Instructions.LDINT, "2");
+                    CurrentProcudure.AddInstruction(Instructions.CALL, "WRITE");
+                    break;
+
                 default:
                     Error.ThrowCompileError(tokens[0].Value + " operation does not exist.", tokens[0].Line);
                     break;

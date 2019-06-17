@@ -19,6 +19,7 @@ namespace NetRPG.Runtime.Functions
             { "READP", new Operation.ReadPrevious() },
             { "CHAIN", new Operation.Chain() },
             { "EXFMT", new Operation.ExecuteFormat() },
+            { "WRITE", new Operation.Write() },
 
             { "%ABS", new BIF.Abs() },
             { "%CHAR", new BIF.Char() },
