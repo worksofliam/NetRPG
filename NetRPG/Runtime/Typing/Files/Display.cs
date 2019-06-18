@@ -58,6 +58,17 @@ namespace NetRPG.Runtime.Typing.Files
             parser.ParseFile(_Path);
             this.RecordFormats = parser.GetRecordFormats();
             localFields = new Dictionary<string, View>();
+
+            foreach (RecordInfo format in RecordFormats.Values) {
+                if (format.Keywords != null) {
+                    foreach (string keyword in format.Keywords.Keys) {
+                        if (keyword.StartsWith("CF") && keyword.Length == 4) {
+                            //Sets the function key up
+                            format.Function[DisplayParse.IntToKey(int.Parse(keyword.Substring(2, 2)))] = int.Parse(format.Keywords[keyword]);
+                        }
+                    }
+                }
+            }
         }
 
 
@@ -70,7 +81,13 @@ namespace NetRPG.Runtime.Typing.Files
                 WindowHandler.Add(view);
             }
 
-            WindowHandler.Run();
+            Key result = WindowHandler.Run();
+
+            if (recordFormat.Function.ContainsKey(result)) {
+                int indicator = recordFormat.Function[result];
+                for (int i = 1; i <= 99; i ++)
+                    Indicators.GetData("IN" + indicator.ToString().PadLeft(2, '0')).Set(i == indicator);
+            }
 
             foreach (string varName in Structure.GetSubfieldNames()) {
                 if (this.localFields[varName] is TextField)

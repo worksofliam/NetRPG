@@ -1,4 +1,5 @@
 using Terminal.Gui;
+using System.Linq;
 
 namespace NetRPG.Runtime
 {
@@ -26,10 +27,19 @@ namespace NetRPG.Runtime
             Window.Add(item);
         }
 
-        public static void Run() {
+        public static void SetKeys(Key[] keys) {
+            Window.EndWith = keys.ToList();
+        }
+
+        public static Key Run() {
+            Window.EndWith.Add(Key.Enter);
+
             Application.Top.Add(Window);
             Application.Run(Window);
             Window.RemoveAll();
+            Window.EndWith.Clear();
+
+            return Window.EndedWith;
         }
 
         public static void End() {

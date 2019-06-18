@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using NetRPG.Runtime;
+using Terminal.Gui;
 
 namespace NetRPG.Language
 {
@@ -22,10 +23,9 @@ namespace NetRPG.Language
         public void ParseFile(string Location)
         {
             ParseLines(File.ReadAllLines(Location));
-            Console.WriteLine("Hi");
         }
 
-        public void ParseLines(string[] Lines)
+        private void ParseLines(string[] Lines)
         {
             int textcounter = 0;
             char[] chars;
@@ -73,7 +73,7 @@ namespace NetRPG.Language
                                 }
 
                                 CurrentField = new FieldInfo();
-                                CurrentField.Position = new Point(Convert.ToInt32(x), Convert.ToInt32(y));
+                                CurrentField.Position = new System.Drawing.Point(Convert.ToInt32(x), Convert.ToInt32(y));
                             }
                             if (name != "")
                             {
@@ -191,6 +191,24 @@ namespace NetRPG.Language
                 }
             }
         }
+
+        public static Key IntToKey(int value) {
+            switch (value) {
+                case 1: return Key.F1;
+                case 2: return Key.F2;
+                case 3: return Key.F3;
+                case 4: return Key.F4;
+                case 5: return Key.F5;
+                case 6: return Key.F6;
+                case 7: return Key.F7;
+                case 8: return Key.F8;
+                case 9: return Key.F9;
+                case 10: return Key.F10;
+                case 12: return Key.Esc;
+            }
+
+            return Key.End;
+        }
     }
 
   
@@ -198,7 +216,7 @@ namespace NetRPG.Language
     {
         public string Name;
         public FieldInfo[] Fields;
-        public Boolean[] FunctionKeys;
+        public Dictionary<Key, int> Function;
 
 
         public Dictionary<string, string> Keywords;
@@ -207,7 +225,7 @@ namespace NetRPG.Language
         {
             Name = name;
             Fields = new FieldInfo[0];
-            FunctionKeys = new Boolean[24];
+            Function = new Dictionary<Key, int>();
         }
     }
 
@@ -217,7 +235,7 @@ namespace NetRPG.Language
         public string Value;
         public DataSet dataType;
         public FieldType fieldType;
-        public Point Position;
+        public System.Drawing.Point Position;
 
         public Dictionary<string, string> Keywords = new Dictionary<string, string>();
 
