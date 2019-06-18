@@ -1,6 +1,8 @@
 Dcl-F ex6 WorkStn;
 
-exfmt OLDFMT;
+Dow (NAME2 = *Blank);
+  exfmt OLDFMT;
+Enddo;
 
 NAME = NAME2;
 
