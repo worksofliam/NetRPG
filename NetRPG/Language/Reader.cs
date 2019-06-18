@@ -423,6 +423,16 @@ namespace NetRPG.Language
                     CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
                     Labels.Scope++;
                     break;
+                case "OTHER":
+                    forElse = Labels.getLastScope();
+                    CurrentProcudure.AddInstruction(Instructions.LABEL, forElse);
+
+                    Labels.Add(Labels.getScope());
+                    CurrentProcudure.AddInstruction(Instructions.LDSTR, "1"); //*on
+                    CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
+                    Labels.Scope++;
+                    break;
+
                 case "ENDSL":
                     CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getLastScope());
                     Labels.Scope++;
