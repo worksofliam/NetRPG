@@ -6,6 +6,7 @@ namespace NetRPG.Runtime
 
     public class WindowHandler {
         private static Typing.DisplayWindow Window;
+        private static Application.RunState State;
         public static void Init() {
             Application.Init();
             Colors.Base.Normal = Application.Driver.MakeAttribute (Color.BrightGreen, Color.Black);
@@ -21,6 +22,8 @@ namespace NetRPG.Runtime
                 
                 Window.ColorScheme = Colors.Base;
             }
+
+            State = Application.Begin(Application.Top);
         }
 
         public static void Add(View item) {
@@ -43,7 +46,7 @@ namespace NetRPG.Runtime
         }
 
         public static void End() {
-            Application.RequestStop();
+            Application.End(State);
         }
     }
 }
