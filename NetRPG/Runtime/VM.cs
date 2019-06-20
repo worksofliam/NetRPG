@@ -71,6 +71,8 @@ namespace NetRPG.Runtime
                 Console.WriteLine(".NET call stack:");
                 Console.WriteLine(e.StackTrace);
                 Console.WriteLine("-- Error --");
+                if (_DisplayRequired)
+                    Console.ReadLine();
                 return null;
             } finally {
                 if (_DisplayRequired)

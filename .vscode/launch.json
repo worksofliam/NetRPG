@@ -11,7 +11,7 @@
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/NetRPG/bin/Debug/netcoreapp2.0/NetRPG.dll",
-            "args": ["RPGCode/dcl_file_exfmt6.rpgle"],
+            "args": ["RPGCode/dcl_file_exfmt7.rpgle"],
             "cwd": "${workspaceFolder}/NetRPG",
             // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
             "console": "externalTerminal",
