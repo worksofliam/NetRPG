@@ -1,4 +1,4 @@
-Dcl-F ex7 WorkStn;
+Dcl-F ex8 WorkStn;
 Dcl-F cust;
 Dcl-s exit Ind;
 
@@ -11,7 +11,7 @@ dow (exit = *off);
     When *in03;
       exit = *on;
 
-    When *in03 = *off;
+    When *in10;
       DisplayCust(IID);
   Endsl;
 enddo;

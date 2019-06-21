@@ -65,7 +65,7 @@ namespace NetRPG.Runtime.Typing.Files
                     foreach (string keyword in format.Keywords.Keys) {
                         if (keyword.StartsWith("CF") && keyword.Length == 4) {
                             //Sets the function key up
-                            indicator = keyword.Substring(2, 2).Trim('0');
+                            indicator = keyword.Substring(2, 2).TrimStart('0');
                             format.Function[DisplayParse.IntToKey(int.Parse(indicator))] = int.Parse(format.Keywords[keyword]);
                         }
                     }
@@ -86,11 +86,13 @@ namespace NetRPG.Runtime.Typing.Files
             WindowHandler.SetKeys(recordFormat.Function.Keys.ToArray());
             Key result = WindowHandler.Run();
 
+            int indicator = 0;
             if (recordFormat.Function.ContainsKey(result)) {
-                int indicator = recordFormat.Function[result];
-                for (int i = 1; i <= 99; i ++)
-                    Indicators.GetData("IN" + i.ToString().PadLeft(2, '0')).Set(i == indicator);
+                indicator = recordFormat.Function[result];
             }
+
+            for (int i = 1; i <= 99; i ++)
+                Indicators.GetData("IN" + i.ToString().PadLeft(2, '0')).Set(i == indicator);
 
             foreach (string varName in Structure.GetSubfieldNames()) {
                 if (this.localFields[varName] is TextField)
