@@ -4,7 +4,6 @@ Dcl-s exit Ind;
 
 exit = *Off;
 dow (exit = *off);
-  IID = 0;
   write HEADER;
   exfmt SEARCH;
 
@@ -15,7 +14,7 @@ dow (exit = *off);
     When *in03 = *off;
       chain (IID) cust;
 
-      If %EOF(cust) <> *on;
+      If %eof(cust) = *off;
         ONAME = cname;
         OEMAIL = cemail;
 

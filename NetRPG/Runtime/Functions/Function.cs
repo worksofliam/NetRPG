@@ -21,6 +21,7 @@ namespace NetRPG.Runtime.Functions
             { "EXFMT", new Operation.ExecuteFormat() },
             { "WRITE", new Operation.Write() },
             { "%FOUND", new Operation.Found() },
+            { "%EOF", new Operation.EndOfFile() },
 
             { "%ABS", new BIF.Abs() },
             { "%CHAR", new BIF.Char() },

@@ -777,7 +777,7 @@ namespace NetRPG.Language
                                         CurrentProcudure.AddInstruction(Instructions.LDVARD, tokens[i + 1].Block[0].Value); //Load local
                                     }
                                     CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
-                                    CurrentProcudure.AddInstruction(Instructions.CALL, "%FOUND");
+                                    CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
                                     break;
 
                                 default:
