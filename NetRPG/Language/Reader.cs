@@ -764,9 +764,29 @@ namespace NetRPG.Language
                     case RPGLex.Type.BIF:
                         if (tokens[i + 1].Block != null)
                         {
-                            AppendCount = ParseExpression(tokens[i + 1].Block);
-                            CurrentProcudure.AddInstruction(Instructions.LDINT, AppendCount.ToString());
-                            CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
+                            switch (token.Value.ToUpper()) {
+                                case "%EOF":
+                                case "%FOUND":
+                                    tokens[i + 1].Block[0].Value += "_table";
+                                    if (_Module.GetDataSetList().Contains(tokens[i + 1].Block[0].Value))
+                                    {
+                                        CurrentProcudure.AddInstruction(Instructions.LDGBLD, tokens[i + 1].Block[0].Value); //Load global
+                                    }
+                                    else if (CurrentProcudure.GetDataSetList().Contains(tokens[i + 1].Block[0].Value))
+                                    {
+                                        CurrentProcudure.AddInstruction(Instructions.LDVARD, tokens[i + 1].Block[0].Value); //Load local
+                                    }
+                                    CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
+                                    CurrentProcudure.AddInstruction(Instructions.CALL, "%FOUND");
+                                    break;
+
+                                default:
+                                    AppendCount = ParseExpression(tokens[i + 1].Block);
+                                    CurrentProcudure.AddInstruction(Instructions.LDINT, AppendCount.ToString());
+                                    CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
+                                    break;
+                            }
+                            
                             i++;
                         }
                         else

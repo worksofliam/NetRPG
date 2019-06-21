@@ -15,10 +15,12 @@ dow (exit = *off);
     When *in03 = *off;
       chain (IID) cust;
 
-      ONAME = cname;
-      OEMAIL = cemail;
+      If %EOF(cust) <> *on;
+        ONAME = cname;
+        OEMAIL = cemail;
 
-      write HEADER;
-      exfmt CUSTDSP;
+        write HEADER;
+        exfmt CUSTDSP;
+      Endif;
   Endsl;
 enddo;

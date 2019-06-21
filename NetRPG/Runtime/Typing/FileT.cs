@@ -14,7 +14,7 @@ namespace NetRPG.Runtime.Typing
       public FileT(string name, string file, bool userOpen) {
       }
 
-      public Boolean isEOF() => this._EOF;
+      public virtual Boolean isEOF() => this._EOF;
 
       public virtual void Open() {
 

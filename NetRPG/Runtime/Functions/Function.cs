@@ -20,6 +20,7 @@ namespace NetRPG.Runtime.Functions
             { "CHAIN", new Operation.Chain() },
             { "EXFMT", new Operation.ExecuteFormat() },
             { "WRITE", new Operation.Write() },
+            { "%FOUND", new Operation.Found() },
 
             { "%ABS", new BIF.Abs() },
             { "%CHAR", new BIF.Char() },

@@ -14,6 +14,7 @@ namespace NetRPG.Runtime.Typing.Files
         private int _RowPointer = -1;
         private List<Dictionary<string, dynamic>> _Data;
         private Boolean _EOF = false;
+
         public Table(string name, string file, bool userOpen) : base(name, file, userOpen) {
             this.Name = name;
             _Path = Path.Combine(Environment.CurrentDirectory, "objects", file + ".json");
@@ -80,6 +81,8 @@ namespace NetRPG.Runtime.Typing.Files
                 this._Data.Add(row);
             }
         }
+
+        public override Boolean isEOF() => this._EOF;
 
         public override void Read(DataValue Structure) {
             this._RowPointer += 1;
