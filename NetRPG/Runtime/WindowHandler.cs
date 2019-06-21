@@ -37,7 +37,6 @@ namespace NetRPG.Runtime
         public static Key Run() {
             Window.EndWith.Add(Key.Enter);
 
-            Application.Top.Add(Window);
             Application.Run(Window);
             Window.RemoveAll();
             Window.EndWith.Clear();
