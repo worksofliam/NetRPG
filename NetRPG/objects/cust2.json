@@ -1,0 +1,32 @@
+{
+  "columns": {
+    "CID": {
+      "type": "int",
+      "length": 10
+    },
+    "CNAME": {
+      "type": "char",
+      "length": 25
+    },
+    "CEMAIL": {
+      "type": "char",
+      "length": 25
+    }
+  },
+  "rows": [{
+      "CID": 1,
+      "CNAME": "Liam barry",
+      "CEMAIL": "liam@worksofbarry.com"
+    },
+    {
+      "CID": 2,
+      "CNAME": "Alan Seiden",
+      "CEMAIL": "alan@worksofbarry.com"
+    },
+    {
+      "CID": 3,
+      "CNAME": "Connor Holyday",
+      "CEMAIL": "connor@worksofbarry.com"
+    }
+  ]
+}

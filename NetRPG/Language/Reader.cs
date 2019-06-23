@@ -264,7 +264,8 @@ namespace NetRPG.Language
 
                             if (dataSet._Qualified == false) {
                                 foreach(DataSet subfield in structure._Subfields) {
-                                    GlobalSubfields.Add(subfield._Name, new CompileTimeSubfield(currentLocation, structure._Name));
+                                    if (!GlobalSubfields.ContainsKey(subfield._Name))
+                                        GlobalSubfields.Add(subfield._Name, new CompileTimeSubfield(currentLocation, structure._Name));
                                 }
                             }
                         }

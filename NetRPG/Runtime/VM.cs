@@ -57,7 +57,9 @@ namespace NetRPG.Runtime
                     if (!(set as Structure).isQualified()) {
                         foreach (string column in (set as Structure).GetSubfieldNames()) {
                             if (SharedMemory.ContainsKey(column))
-                                (set as Structure).SetData(SharedMemory[global], column);
+                                (set as Structure).SetData(SharedMemory[column], column);
+                            else
+                                SharedMemory.Add(column, (set as Structure).GetData(column));
                         }
                     }
                 }
