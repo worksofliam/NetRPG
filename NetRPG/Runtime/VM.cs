@@ -41,15 +41,6 @@ namespace NetRPG.Runtime
             {
                 DataValue set = module.GetDataSet(global).ToDataValue();
                 GlobalVariables.Add(set.GetName(), set);
-
-                //If the DS is not qualfied, the subfields need to be access at a local level
-                if (set is Structure) {
-                    if (!(set as Structure).isQualified()) {
-                        foreach (string column in (set as Structure).GetSubfieldNames()) {
-                            GlobalVariables.Add(column, set.GetData(column));
-                        }
-                    }
-                }
             }
         }
 
