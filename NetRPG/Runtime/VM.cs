@@ -7,12 +7,12 @@ using NetRPG.Runtime.Functions;
 
 namespace NetRPG.Runtime
 {
-
     public class VM
     {
         private bool IsTestingEnv;
         private Dictionary<string, DataValue> GlobalVariables;
         private string _EntryProcedure;
+        private Boolean _DisplayRequired;
         private Dictionary<string, Procedure> _Procedures;
 
         public VM(bool testingVM = false)
@@ -30,20 +30,36 @@ namespace NetRPG.Runtime
                 if (proc._ReturnType == Types.Void)
                     proc._ReturnType = Types.Pointer; //Any
 
+                if (module._HasDisplay)
+                    _DisplayRequired = true;
+
                 _Procedures.Add(proc.GetName(), proc);
                 if (proc.HasEntrypoint) _EntryProcedure = proc.GetName();
             }
+
+            Dictionary<string, DataValue> SharedMemory = new Dictionary<string, DataValue>();
             
             foreach (String global in module.GetDataSetList())
             {
-                DataValue set = module.GetDataSet(global).ToDataValue();
+                //TODO: don't just compare names, also compare types for shared memory
+
+                DataValue set;
+                if (SharedMemory.ContainsKey(global)) {
+                    set = SharedMemory[global];
+                } else {
+                    set = module.GetDataSet(global).ToDataValue();
+                    SharedMemory.Add(global, set);
+                }
+
                 GlobalVariables.Add(set.GetName(), set);
 
-                //If the DS is not qualfied, the subfields need to be access at a local level
                 if (set is Structure) {
                     if (!(set as Structure).isQualified()) {
                         foreach (string column in (set as Structure).GetSubfieldNames()) {
-                            GlobalVariables.Add(column, set.GetData(column));
+                            if (SharedMemory.ContainsKey(column))
+                                (set as Structure).SetData(SharedMemory[column], column);
+                            else
+                                SharedMemory.Add(column, (set as Structure).GetData(column));
                         }
                     }
                 }
@@ -53,6 +69,8 @@ namespace NetRPG.Runtime
         private List<string> CallStack;
         public object Run()
         {
+            if (_DisplayRequired)
+                WindowHandler.Init();
             CallStack = new List<string>();
             try {
                 return Execute(_EntryProcedure);
@@ -66,7 +84,12 @@ namespace NetRPG.Runtime
                 Console.WriteLine(".NET call stack:");
                 Console.WriteLine(e.StackTrace);
                 Console.WriteLine("-- Error --");
+                if (_DisplayRequired)
+                    Console.ReadLine();
                 return null;
+            } finally {
+                if (_DisplayRequired)
+                    WindowHandler.End();
             }
         }
 
@@ -93,14 +116,6 @@ namespace NetRPG.Runtime
                 set = _Procedures[Name].GetDataSet(local).ToDataValue();
                 LocalVariables.Add(set.GetName(), set);
                 LocalVariables[set.GetName()].DoInitialValue();
-
-                if (set is Structure) {
-                    if (!(set as Structure).isQualified()) {
-                        foreach (string column in (set as Structure).GetSubfieldNames()) {
-                            LocalVariables.Add(column, set.GetData(column));
-                        }
-                    }
-                }
             }
 
             if (Parms != null)

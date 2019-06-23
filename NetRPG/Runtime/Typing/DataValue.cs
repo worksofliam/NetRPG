@@ -52,6 +52,8 @@ namespace NetRPG.Runtime.Typing
             this.Value[this.Subfields[subfield]] = value;
         }
 
+        public Types GetDataType() => this.Type;
+
         public dynamic Get()
         {
             if (Dimentions > 1) //If it's an array
@@ -73,6 +75,11 @@ namespace NetRPG.Runtime.Typing
         {
             DataValue[] temp = (DataValue[])this.Value[index];
             return temp[this.Subfields[subfield]];
+        }
+
+        public void SetData(DataValue set, string subfield, int index = 0) {
+            DataValue[] temp = (DataValue[])this.Value[index];
+            temp[this.Subfields[subfield]] = set;
         }
 
         public dynamic Get(string subfield, int index = 0)

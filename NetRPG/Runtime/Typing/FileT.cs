@@ -14,7 +14,7 @@ namespace NetRPG.Runtime.Typing
       public FileT(string name, string file, bool userOpen) {
       }
 
-      public Boolean isEOF() => this._EOF;
+      public virtual Boolean isEOF() => this._EOF;
 
       public virtual void Open() {
 
@@ -30,6 +30,14 @@ namespace NetRPG.Runtime.Typing
 
       public virtual void Chain(DataValue Structure, dynamic[] keys) {
 
+      }
+
+      public virtual void ExecuteFormat(DataValue Indicators, DataValue Structure) {
+        
+      }
+
+      public virtual void Write(DataValue Structure) {
+        
       }
     }
 }

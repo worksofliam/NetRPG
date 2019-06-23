@@ -1,0 +1,13 @@
+     A          R NEWFMT                    CF03(03)
+     A            NAME          20   O  7 46
+     A                                      COLOR(WHT)
+     A                                 20 25'F3=Exit'
+     A                                      COLOR(BLU)
+     A                                  2 62SYSNAME
+     A                                      COLOR(BLU)
+     A                                  7 21'Name:'
+     A                                  2 33'User Entry'
+     A                                      COLOR(WHT)
+     A          R OLDFMT
+     A                                  9 26'Name:'
+     A            NAME2      10      B  9 33COLOR(WHT)

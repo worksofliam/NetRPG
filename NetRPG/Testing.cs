@@ -114,7 +114,9 @@ namespace NetRPG
 
             { "ind1.rpgle", "1" },
             { "ind2.rpgle", "1" },
-            { "ind3.rpgle", "1" }
+            { "ind3.rpgle", "1" },
+
+            { "dcl_shared1.rpgle", "Hi        " }
         };
 
         public static void RunTests(string testsStarting = "")

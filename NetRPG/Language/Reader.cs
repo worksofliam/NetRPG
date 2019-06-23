@@ -53,6 +53,8 @@ namespace NetRPG.Language
 
         private Dictionary<string, CompileTimeSubfield> GlobalSubfields;
 
+        private Dictionary<string, string> RecordFormatDisplays;
+
         private string DateFormat = "MM/dd/yy";
 
         public Reader()
@@ -63,12 +65,24 @@ namespace NetRPG.Language
             Struct_Templates = new Dictionary<string, DataSet>();
             Current_Structs = new List<DataSet>();
             GlobalSubfields = new Dictionary<string, CompileTimeSubfield>();
+            RecordFormatDisplays = new Dictionary<string, string>();
 
             SubfieldLevel = -1;
 
-            _Module.AddDataSet(new DataSet("INLR"){_Type = Types.Ind, _InitialValue = "0"});
-            for (int i = 1; i <= 99; i++)
-                _Module.AddDataSet(new DataSet("IN" + i.ToString().PadLeft(2, '0')){_Type = Types.Ind, _InitialValue = "0"});
+            string indName;
+            DataSet inds = new DataSet("IND"){_Type = Types.Structure, _Qualified = false};
+            inds._Subfields = new List<DataSet>();
+            for (int i = 1; i <= 99; i++) {
+                indName = "IN" + i.ToString().PadLeft(2, '0');
+                inds._Subfields.Add(new DataSet(indName){_Type = Types.Ind, _InitialValue = "0"});
+                GlobalSubfields.Add(indName, new CompileTimeSubfield(LOCATION.Global, "IND"));
+            }
+
+            indName = "INLR";
+            inds._Subfields.Add(new DataSet(indName){_Type = Types.Ind, _InitialValue = "0"});
+            GlobalSubfields.Add(indName, new CompileTimeSubfield(LOCATION.Global, "IND"));
+
+            _Module.AddDataSet(inds);
         }
 
         public void ReadStatements(Statement[] Statements)
@@ -126,10 +140,11 @@ namespace NetRPG.Language
                             if (Current_Structs[SubfieldLevel]._Qualified == false)
                             {
                                 foreach (DataSet var in Current_Structs[SubfieldLevel]._Subfields) {
-                                    if (CurrentProcudure != null)
-                                        GlobalSubfields.Add(var._Name, new CompileTimeSubfield(LOCATION.Local, Current_Structs[SubfieldLevel]._Name));
-                                    else
-                                        GlobalSubfields.Add(var._Name, new CompileTimeSubfield(LOCATION.Global, Current_Structs[SubfieldLevel]._Name));
+                                    if (!GlobalSubfields.ContainsKey(var._Name))
+                                        if (CurrentProcudure != null)
+                                            GlobalSubfields.Add(var._Name, new CompileTimeSubfield(LOCATION.Local, Current_Structs[SubfieldLevel]._Name));
+                                        else
+                                            GlobalSubfields.Add(var._Name, new CompileTimeSubfield(LOCATION.Global, Current_Structs[SubfieldLevel]._Name));
                                 }
                             }
                         }
@@ -144,7 +159,8 @@ namespace NetRPG.Language
         private void HandleDeclare(RPGToken[] tokens)
         {
             //TODO: Check if DataSet already exists?
-            DataSet dataSet = new DataSet(tokens[3].Value), structure;
+            DataSet dataSet = new DataSet(tokens[3].Value);
+            DataSet[] structures;
             LOCATION currentLocation;
             string length = "";
             Dictionary<string, string> config = new Dictionary<string, string>();
@@ -184,6 +200,10 @@ namespace NetRPG.Language
                         case "DTAARA":
                             dataSet._DataArea = dataSet._Name;
                             break;
+                        case "WORKSTN":
+                            _Module._HasDisplay = true;
+                            dataSet._WorkStation = true;
+                            break;
                         case "CONST":
                         case "VALUE":
                             dataSet._IsConstOrValue = true;
@@ -219,20 +239,34 @@ namespace NetRPG.Language
                         if (dataSet._File == null)
                             dataSet._File = dataSet._Name;
 
-                        dataSet._Name += "_table"; //We do this so the DS can use the name instead
-                        structure = Runtime.Typing.Files.Table.CreateStruct(dataSet._File, dataSet._Qualified);
+                        //TODO, major clean up, remove code dupe
 
-                        if (CurrentProcudure != null) {
-                            CurrentProcudure.AddDataSet(structure);
-                            currentLocation = LOCATION.Local;
+                        dataSet._Name += "_table"; //We do this so the DS can use the name instead
+                        if (dataSet._WorkStation) {
+                            structures = Runtime.Typing.Files.Display.CreateStructs(dataSet._File, dataSet._Qualified);
                         } else {
-                            _Module.AddDataSet(structure);
-                            currentLocation = LOCATION.Global;
+                            structures = new [] {Runtime.Typing.Files.Table.CreateStruct(dataSet._File, dataSet._Qualified)};
                         }
 
-                        if (dataSet._Qualified == false) {
-                            foreach(DataSet subfield in structure._Subfields) {
-                                GlobalSubfields.Add(subfield._Name, new CompileTimeSubfield(currentLocation, structure._Name));
+                        foreach (DataSet structure in structures) {
+                            if (dataSet._WorkStation) {
+                                //this is used to map the record to a file when we are compiling the application
+                                RecordFormatDisplays.Add(structure._Name, dataSet._Name);
+                            }
+
+                            if (CurrentProcudure != null) {
+                                CurrentProcudure.AddDataSet(structure);
+                                currentLocation = LOCATION.Local;
+                            } else {
+                                _Module.AddDataSet(structure);
+                                currentLocation = LOCATION.Global;
+                            }
+
+                            if (dataSet._Qualified == false) {
+                                foreach(DataSet subfield in structure._Subfields) {
+                                    if (!GlobalSubfields.ContainsKey(subfield._Name))
+                                        GlobalSubfields.Add(subfield._Name, new CompileTimeSubfield(currentLocation, structure._Name));
+                                }
                             }
                         }
 
@@ -391,6 +425,16 @@ namespace NetRPG.Language
                     CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
                     Labels.Scope++;
                     break;
+                case "OTHER":
+                    forElse = Labels.getLastScope();
+                    CurrentProcudure.AddInstruction(Instructions.LABEL, forElse);
+
+                    Labels.Add(Labels.getScope());
+                    CurrentProcudure.AddInstruction(Instructions.LDSTR, "1"); //*on
+                    CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
+                    Labels.Scope++;
+                    break;
+
                 case "ENDSL":
                     CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getLastScope());
                     Labels.Scope++;
@@ -500,6 +544,34 @@ namespace NetRPG.Language
 
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "3");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "CHAIN");
+                    break;
+
+                case "EXFMT":
+                    //EXFMT RCDFMT -> //EXFMT TABLE STRUCTURE IND
+                    ParseAssignment(tokens.Skip(1).ToList()); //Load the DS first
+
+                    //Then load the table
+                    tokens[1].Value = RecordFormatDisplays[tokens[1].Value];
+                    ParseAssignment(tokens.Skip(1).ToList());
+                    
+                    //We also need the indicators for execute format
+                    tokens[1].Value = "IND";
+                    ParseAssignment(tokens.Skip(1).ToList());
+                    
+                    CurrentProcudure.AddInstruction(Instructions.LDINT, "3");
+                    CurrentProcudure.AddInstruction(Instructions.CALL, "EXFMT");
+                    break;
+
+                case "WRITE":
+                    //EXFMT RCDFMT -> //EXFMT TABLE STRUCTURE
+                    ParseAssignment(tokens.Skip(1).ToList()); //Load the DS first
+
+                    //Then load the table
+                    tokens[1].Value = RecordFormatDisplays[tokens[1].Value];
+                    ParseAssignment(tokens.Skip(1).ToList());
+                    
+                    CurrentProcudure.AddInstruction(Instructions.LDINT, "2");
+                    CurrentProcudure.AddInstruction(Instructions.CALL, "WRITE");
                     break;
 
                 default:
@@ -694,9 +766,29 @@ namespace NetRPG.Language
                     case RPGLex.Type.BIF:
                         if (tokens[i + 1].Block != null)
                         {
-                            AppendCount = ParseExpression(tokens[i + 1].Block);
-                            CurrentProcudure.AddInstruction(Instructions.LDINT, AppendCount.ToString());
-                            CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
+                            switch (token.Value.ToUpper()) {
+                                case "%EOF":
+                                case "%FOUND":
+                                    tokens[i + 1].Block[0].Value += "_table";
+                                    if (_Module.GetDataSetList().Contains(tokens[i + 1].Block[0].Value))
+                                    {
+                                        CurrentProcudure.AddInstruction(Instructions.LDGBLD, tokens[i + 1].Block[0].Value); //Load global
+                                    }
+                                    else if (CurrentProcudure.GetDataSetList().Contains(tokens[i + 1].Block[0].Value))
+                                    {
+                                        CurrentProcudure.AddInstruction(Instructions.LDVARD, tokens[i + 1].Block[0].Value); //Load local
+                                    }
+                                    CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
+                                    CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
+                                    break;
+
+                                default:
+                                    AppendCount = ParseExpression(tokens[i + 1].Block);
+                                    CurrentProcudure.AddInstruction(Instructions.LDINT, AppendCount.ToString());
+                                    CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
+                                    break;
+                            }
+                            
                             i++;
                         }
                         else

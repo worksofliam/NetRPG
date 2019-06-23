@@ -1,0 +1,13 @@
+     A          R HDRFTR
+     A                                      COLOR(WHT)
+     A                                 20 25'F3=Exit'
+     A                                      COLOR(BLU)
+     A                                 20  9'Enter=Continue'
+     A                                      COLOR(BLU)
+     A                                  2 62SYSNAME
+     A                                      COLOR(BLU)
+     A                                  2 33'User Entry'
+     A                                      COLOR(WHT)
+     A          R INPUT    
+     A                                  9 26'Name:'
+     A            NAME       10      B  9 33

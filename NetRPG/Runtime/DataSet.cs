@@ -29,6 +29,8 @@ namespace NetRPG.Runtime
 
         public string _DataArea = null;
 
+        public Boolean _WorkStation = false;
+
         public DataSet(string name)
         {
             _Name = name;
@@ -71,7 +73,11 @@ namespace NetRPG.Runtime
                     break;
 
                 case Types.File:
-                    result = new Typing.Files.Table(this._Name, this._File, this._UserOpen);
+                    if (this._WorkStation) {
+                        result = new Typing.Files.Display(this._Name, this._File, this._UserOpen);
+                    } else {
+                        result = new Typing.Files.Table(this._Name, this._File, this._UserOpen);
+                    }
                     break;
 
                 default:

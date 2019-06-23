@@ -1,0 +1,22 @@
+     A          R HEADER    
+     A                                  2 33'User Search'
+     A                                      COLOR(WHT)
+     A                                  2 62SYSNAME
+     A                                      COLOR(BLU)
+     A          R SEARCH                    CF03(03)
+     A                                 20 25'F3=Exit'
+     A                                      COLOR(BLU)
+     A                                 20  9'Enter=Continue'
+     A                                      COLOR(BLU)
+     A            IID           10D  B 10 45
+     A                                      COLOR(WHT)
+     A                                 10 23'ID:'
+     A          R CUSTDSP      
+     A                                      CF12(12)
+     A                                  6 23'Name:'
+     A            ONAME         25   O  6 31
+     A                                      COLOR(WHT)
+     A                                  7 22'Email:'
+     A            OEMAIL        25   O  7 31
+     A                                 20  9'Enter=Continue'
+     A                                      COLOR(BLU)
