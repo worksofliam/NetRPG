@@ -36,11 +36,29 @@ namespace NetRPG.Runtime
                 _Procedures.Add(proc.GetName(), proc);
                 if (proc.HasEntrypoint) _EntryProcedure = proc.GetName();
             }
+
+            Dictionary<string, DataValue> SharedMemory = new Dictionary<string, DataValue>();
             
             foreach (String global in module.GetDataSetList())
             {
-                DataValue set = module.GetDataSet(global).ToDataValue();
+                DataValue set;
+                if (SharedMemory.ContainsKey(global)) {
+                    set = SharedMemory[global];
+                } else {
+                    set = module.GetDataSet(global).ToDataValue();
+                    SharedMemory.Add(global, set);
+                }
+
                 GlobalVariables.Add(set.GetName(), set);
+
+                if (set is Structure) {
+                    if (!(set as Structure).isQualified()) {
+                        foreach (string column in (set as Structure).GetSubfieldNames()) {
+                            if (SharedMemory.ContainsKey(column))
+                                (set as Structure).SetData(SharedMemory[global], column);
+                        }
+                    }
+                }
             }
         }
 

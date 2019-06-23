@@ -77,6 +77,11 @@ namespace NetRPG.Runtime.Typing
             return temp[this.Subfields[subfield]];
         }
 
+        public void SetData(DataValue set, string subfield, int index = 0) {
+            DataValue[] temp = (DataValue[])this.Value[index];
+            temp[this.Subfields[subfield]] = set;
+        }
+
         public dynamic Get(string subfield, int index = 0)
         {
             DataValue[] temp = (DataValue[])this.Value[index];

@@ -140,10 +140,11 @@ namespace NetRPG.Language
                             if (Current_Structs[SubfieldLevel]._Qualified == false)
                             {
                                 foreach (DataSet var in Current_Structs[SubfieldLevel]._Subfields) {
-                                    if (CurrentProcudure != null)
-                                        GlobalSubfields.Add(var._Name, new CompileTimeSubfield(LOCATION.Local, Current_Structs[SubfieldLevel]._Name));
-                                    else
-                                        GlobalSubfields.Add(var._Name, new CompileTimeSubfield(LOCATION.Global, Current_Structs[SubfieldLevel]._Name));
+                                    if (!GlobalSubfields.ContainsKey(var._Name))
+                                        if (CurrentProcudure != null)
+                                            GlobalSubfields.Add(var._Name, new CompileTimeSubfield(LOCATION.Local, Current_Structs[SubfieldLevel]._Name));
+                                        else
+                                            GlobalSubfields.Add(var._Name, new CompileTimeSubfield(LOCATION.Global, Current_Structs[SubfieldLevel]._Name));
                                 }
                             }
                         }
