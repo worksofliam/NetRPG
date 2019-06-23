@@ -103,14 +103,6 @@ namespace NetRPG.Runtime
                 set = _Procedures[Name].GetDataSet(local).ToDataValue();
                 LocalVariables.Add(set.GetName(), set);
                 LocalVariables[set.GetName()].DoInitialValue();
-
-                if (set is Structure) {
-                    if (!(set as Structure).isQualified()) {
-                        foreach (string column in (set as Structure).GetSubfieldNames()) {
-                            LocalVariables.Add(column, set.GetData(column));
-                        }
-                    }
-                }
             }
 
             if (Parms != null)
