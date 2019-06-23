@@ -41,6 +41,8 @@ namespace NetRPG.Runtime
             
             foreach (String global in module.GetDataSetList())
             {
+                //TODO: don't just compare names, also compare types for shared memory
+
                 DataValue set;
                 if (SharedMemory.ContainsKey(global)) {
                     set = SharedMemory[global];
