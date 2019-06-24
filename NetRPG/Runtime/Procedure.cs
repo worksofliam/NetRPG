@@ -50,6 +50,7 @@ namespace NetRPG.Runtime
                 return null;
             }
         }
+        public bool ContainsDataSet(string Name) => _DataSets.ContainsKey(Name);
 
         public void AddParameter(string value, bool byValue = false) => _Parameters.Add(value, byValue);
         public string[] GetParameterNames() => _Parameters.Keys.ToArray();

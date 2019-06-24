@@ -83,6 +83,8 @@ namespace NetRPG
             { "op_else.rpgle", 2 },
             { "op_elseif.rpgle", 2 },
             { "op_select.rpgle", 3 },
+            { "op_other1.rpgle", 3 },
+            { "op_other2.rpgle", 3 },
             { "op_dow.rpgle", 11 },
             { "op_dow2.rpgle", 11},
             { "op_dsply.rpgle", 1 },

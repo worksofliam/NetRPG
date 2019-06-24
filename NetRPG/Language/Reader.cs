@@ -55,6 +55,8 @@ namespace NetRPG.Language
 
         private Dictionary<string, string> RecordFormatDisplays;
 
+        private int SelectCount;
+
         private string DateFormat = "MM/dd/yy";
 
         public Reader()
@@ -83,6 +85,8 @@ namespace NetRPG.Language
             GlobalSubfields.Add(indName, new CompileTimeSubfield(LOCATION.Global, "IND"));
 
             _Module.AddDataSet(inds);
+
+            SelectCount = 0;
         }
 
         public void ReadStatements(Statement[] Statements)
@@ -415,6 +419,10 @@ namespace NetRPG.Language
                 case "SELECT":
                     Labels.Add(Labels.getScope());
                     Labels.Scope++;
+
+                    this.SelectCount += 1;
+                    if (!CurrentProcudure.ContainsDataSet("SELECT" + this.SelectCount.ToString()))
+                        CurrentProcudure.AddDataSet(new DataSet("SELECT" + this.SelectCount.ToString()){_Type = Types.Ind, _InitialValue = "1"});
                     break;
                 case "WHEN":
                     forElse = Labels.getLastScope();
@@ -423,6 +431,11 @@ namespace NetRPG.Language
                     Labels.Add(Labels.getScope());
                     ParseExpression(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
+
+                    CurrentProcudure.AddInstruction(Instructions.LDVARD, "SELECT" + this.SelectCount.ToString());
+                    CurrentProcudure.AddInstruction(Instructions.LDSTR, "0"); //*off
+                    CurrentProcudure.AddInstruction(Instructions.STORE);
+
                     Labels.Scope++;
                     break;
                 case "OTHER":
@@ -430,7 +443,7 @@ namespace NetRPG.Language
                     CurrentProcudure.AddInstruction(Instructions.LABEL, forElse);
 
                     Labels.Add(Labels.getScope());
-                    CurrentProcudure.AddInstruction(Instructions.LDSTR, "1"); //*on
+                    CurrentProcudure.AddInstruction(Instructions.LDVARV, "SELECT" + this.SelectCount.ToString()); //*should be star on
                     CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
                     Labels.Scope++;
                     break;
@@ -438,6 +451,8 @@ namespace NetRPG.Language
                 case "ENDSL":
                     CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getLastScope());
                     Labels.Scope++;
+
+                    this.SelectCount -= 1;
                     break;
 
                 case "DOW":
