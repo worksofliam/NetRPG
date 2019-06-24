@@ -10,15 +10,17 @@ namespace NetRPG.Runtime.Functions.Operation
     {
         public override object Execute(object[] Parameters)
         {
-            if (Parameters[0] is Structure && Parameters[1] is Display)
+            if (Parameters[0] is Structure)
             {
-                Display display = Parameters[1] as Display;
-                display.Write(Parameters[0] as Structure);
+                if (Parameters[1] is Display || Parameters[1] is Table) {
+                    (Parameters[1] as FileT).Write(Parameters[0] as Structure);
+                } else {
+                    Error.ThrowRuntimeError("WRITE", "Display or table required.");
+                }
             }
             else
             {
-                //TODO: throw error: incorrect type
-                Error.ThrowRuntimeError("WRITE", "Record format is required.");
+                Error.ThrowRuntimeError("WRITE", "Structure required.");
             }
             return null;
         }

@@ -582,7 +582,12 @@ namespace NetRPG.Language
                     ParseAssignment(tokens.Skip(1).ToList()); //Load the DS first
 
                     //Then load the table
-                    tokens[1].Value = RecordFormatDisplays[tokens[1].Value];
+                    if (RecordFormatDisplays.ContainsKey(tokens[1].Value)) {
+                        tokens[1].Value = RecordFormatDisplays[tokens[1].Value];
+                    } else {
+                        tokens[1].Value += "_table";
+                    }
+
                     ParseAssignment(tokens.Skip(1).ToList());
                     
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "2");
