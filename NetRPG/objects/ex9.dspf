@@ -15,9 +15,8 @@
      A          R CUSTDSP      
      A                                      CF12(12)
      A                                  6 23'Name:'
-     A            CNAME         25   O  6 31
-     A                                      COLOR(WHT)
+     A            CNAME         25   O  6 31COLOR(WHT)
      A                                  7 22'Email:'
-     A            CEMAIL        25   O  7 31
+     A            CEMAIL        25   O  7 31COLOR(WHT)
      A                                 20  9'Enter=Continue'
      A                                      COLOR(BLU)
