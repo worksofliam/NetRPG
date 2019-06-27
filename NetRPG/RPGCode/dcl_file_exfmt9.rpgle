@@ -11,7 +11,7 @@ dow (exit = *off);
     When *in03;
       exit = *on;
 
-    When *in03 = *off;
+    Other;
       chain (IID) cust2;
 
       If %eof(cust2) = *off;
