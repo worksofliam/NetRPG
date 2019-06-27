@@ -15,8 +15,11 @@ dow (exit = *off);
       chain (IID) cust2;
 
       If %eof(cust2) = *off;
+        ERROR = *blank;
         write HEADER;
         exfmt CUSTDSP;
+      else;
+        ERROR = 'Cannot locate record.';
       Endif;
   Endsl;
 enddo;

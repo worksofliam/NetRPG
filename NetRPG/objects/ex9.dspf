@@ -7,11 +7,12 @@
                                             CF10(10)
      A                                 20 25'F3=Exit'
      A                                      COLOR(BLU)
-     A                                 20  9'F10=Search'
+     A                                 20  9'Enter=Search'
      A                                      COLOR(BLU)
      A            IID           10D  B 10 45
      A                                      COLOR(WHT)
      A                                 10 23'ID:'
+     A            ERROR         25   O 19  9COLOR(RED)
      A          R CUSTDSP      
      A                                      CF12(12)
      A                                  6 23'Name:'
