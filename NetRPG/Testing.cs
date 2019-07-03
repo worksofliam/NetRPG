@@ -114,7 +114,8 @@ namespace NetRPG
             { "op_file_chain2.rpgle", "My second My first p"},
             { "op_file_chain3.rpgle", "bethMy second"},
             { "op_file_write.rpgle", "My new pro" },
-            { "bif_eof.rpgle", 2 },
+            { "bif_eof1.rpgle", 2 },
+            { "bif_eof2.rpgle", "01" },
 
             { "ind1.rpgle", "1" },
             { "ind2.rpgle", "1" },
