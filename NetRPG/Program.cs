@@ -11,7 +11,7 @@ namespace NetRPG
         static void Main(string[] args)
         {
             if (args.Length == 0) {
-                Testing.RunTests("op_file");
+                Testing.RunTests("");
             } else {
                 ApplicationRuntime.Execute(args[0]);
             }

@@ -1,9 +1,11 @@
 Dcl-F example;
 
 dsply '';
+Read example;
+
 Dow %eof(example) <> *on;
-  Read example;
   Dsply prdesc;
+  Read example;
 Enddo;
 
 Return prid;
