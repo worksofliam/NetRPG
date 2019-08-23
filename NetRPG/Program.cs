@@ -13,7 +13,7 @@ namespace NetRPG
             if (args.Length == 0) {
                 Testing.RunTests("");
             } else {
-                ApplicationRuntime.Execute(args[0]);
+                ApplicationRuntime.Execute(args);
             }
         }
     }
