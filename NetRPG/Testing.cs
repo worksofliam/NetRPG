@@ -30,7 +30,7 @@ namespace NetRPG
             { "dcl_proc_7.rpgle", "World" },
             { "dcl_proc_8.rpgle", "Hello" },
             { "dcl_proc_9_value.rpgle", "hello     " }, 
-            { "dcl_proc_10_value.rpgle", "10        " }, 
+            { "dcl_proc_10_value.rpgle", "10" }, 
             { "dcl_inz.rpgle", "HelloWorld421234.5655" },
             { "dcl_likeds.rpgle", "     Hello" },
             { "assignment.rpgle", "Hello world    23421234.56" },

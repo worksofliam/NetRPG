@@ -857,7 +857,10 @@ namespace NetRPG.Language
                                     //TODO: determine if need to pass by value (because expressions in the param)
                                     Parameters = Statement.ParseParams(tokens[i + 1].Block);
                                     foreach (Statement parameter in Parameters)
-                                        ParseAssignment(parameter.GetTokens().ToList());
+                                        if (parameter.IsExpression)
+                                            ParseExpression(parameter.GetTokens().ToList());
+                                        else
+                                            ParseAssignment(parameter.GetTokens().ToList());
                                     AppendCount = Parameters.Length;
                                 }
                                 CurrentProcudure.AddInstruction(Instructions.LDINT, AppendCount.ToString());
