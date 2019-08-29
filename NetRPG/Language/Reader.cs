@@ -89,6 +89,7 @@ namespace NetRPG.Language
             SelectCount = 0;
         }
 
+        private bool isPR;
         public void ReadStatements(Statement[] Statements)
         {
             RPGToken[] tokens;
@@ -286,6 +287,7 @@ namespace NetRPG.Language
                         break;
 
                     case "PROC":
+                        isPR = false;
                         if (CurrentProcudure != null)
                             _Module.AddProcedure(CurrentProcudure);
 
@@ -293,6 +295,7 @@ namespace NetRPG.Language
                         dataSet = null;
                         break;
                     case "PI":
+                        isPR = false;
                         if (tokens.Count() >= 6)
                         {
                             length = tokens?[5].Block?[0].Value;
@@ -303,17 +306,31 @@ namespace NetRPG.Language
 
                         dataSet = null;
                         break;
+                    case "PR":
+                        //ADD REFERENCE TO FUNCTIONS LATER!!!!
+                        isPR = true;
+                        dataSet = null;
+                        break;
 
                     case "PARM":
+                        if (isPR) {
+                            dataSet = null;
+                            break;
+                        }
+
                         dataSet._Precision = 0;
                         if (tokens.Count() >= 6)
                         {
-                            length = tokens?[5].Block?[0].Value;
 
-                            if (tokens[5]?.Block.Count >= 3)
-                                dataSet._Precision = int.Parse(tokens[5]?.Block?[2].Value);
+                            if (tokens[5]?.Block != null) {
+                                length = tokens?[5].Block?[0].Value;
+                                if (tokens[5]?.Block.Count >= 3)
+                                    dataSet._Precision = int.Parse(tokens[5]?.Block?[2].Value);
 
-                            int.TryParse(tokens[5]?.Block?[0].Value, out dataSet._Length);
+                                int.TryParse(tokens[5]?.Block?[0].Value, out dataSet._Length);
+                            } else {
+                                length = "0";
+                            }
                         }
 
                         dataSet._Type = StringToType(tokens[4].Value, length);
@@ -368,6 +385,9 @@ namespace NetRPG.Language
                 case "ZONED":
                 case "PACKED":
                     return Types.FixedDecimal;
+
+                case "POINTER":
+                    return Types.Pointer;
 
                 case "LIKEDS":
                     return Types.Structure;
