@@ -7,6 +7,7 @@ namespace NetRPG.Runtime
 {
     public class Procedure
     {
+        public string _ParentModule;
         public string _Name;
         public Types _ReturnType;
         private List<Instruction> _Instructions;

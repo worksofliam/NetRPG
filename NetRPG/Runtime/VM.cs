@@ -7,11 +7,19 @@ using NetRPG.Runtime.Functions;
 
 namespace NetRPG.Runtime
 {
+    class RunTimeModule {
+
+        public Dictionary<string, DataValue> GlobalVariables;
+        public RunTimeModule() {
+            GlobalVariables = new Dictionary<string, DataValue>();
+        }
+    }
+
     public class VM
     {
         private bool IsTestingEnv;
-        private Dictionary<string, DataValue> GlobalVariables;
         private string _EntryProcedure;
+        private Dictionary<string, RunTimeModule> RunTimeModules;
         private Boolean _DisplayRequired;
         private Dictionary<string, Procedure> _Procedures;
 
@@ -20,13 +28,17 @@ namespace NetRPG.Runtime
             IsTestingEnv = testingVM;
             _EntryProcedure = "";
             _Procedures = new Dictionary<string, Procedure>();
-            GlobalVariables = new Dictionary<string, DataValue>();
+            RunTimeModules = new Dictionary<string, RunTimeModule>();
         }
 
         public void AddModule(Module module)
         {
+            string ModuleName = RunTimeModules.Count.ToString();
+            //Handle return types, displays and entry point
             foreach (Procedure proc in module.GetProcedures())
             {
+                proc._ParentModule = ModuleName;
+
                 if (proc._ReturnType == Types.Void)
                     proc._ReturnType = Types.Pointer; //Any
 
@@ -36,6 +48,10 @@ namespace NetRPG.Runtime
                 _Procedures.Add(proc.GetName(), proc);
                 if (proc.HasEntrypoint) _EntryProcedure = proc.GetName();
             }
+
+            //Handle global variables for module
+
+            RunTimeModules.Add(ModuleName, new RunTimeModule());
 
             Dictionary<string, DataValue> SharedMemory = new Dictionary<string, DataValue>();
             
@@ -51,7 +67,7 @@ namespace NetRPG.Runtime
                     SharedMemory.Add(global, set);
                 }
 
-                GlobalVariables.Add(set.GetName(), set);
+                RunTimeModules[ModuleName].GlobalVariables.Add(set.GetName(), set);
 
                 if (set is Structure) {
                     if (!(set as Structure).isQualified()) {
@@ -107,6 +123,8 @@ namespace NetRPG.Runtime
             Dictionary<string, int> Labels = new Dictionary<string, int>();
             Dictionary<string, DataValue> LocalVariables = new Dictionary<string, DataValue>();
             Instruction[] instructions = _Procedures[Name].GetInstructions();
+
+            string ModuleName = _Procedures[Name]._ParentModule;
             
             CallStack.Add(Name);
 
@@ -261,7 +279,7 @@ namespace NetRPG.Runtime
                         break;
 
                     case Instructions.LDGBLV:
-                        Stack.Add(GlobalVariables[instructions[ip]._Value].Get());
+                        Stack.Add(RunTimeModules[ModuleName].GlobalVariables[instructions[ip]._Value].Get());
                         break;
 
                     case Instructions.LDVARV:
@@ -284,7 +302,7 @@ namespace NetRPG.Runtime
                         break;
 
                     case Instructions.LDGBLD:
-                        Stack.Add(GlobalVariables[instructions[ip]._Value]);
+                        Stack.Add(RunTimeModules[ModuleName].GlobalVariables[instructions[ip]._Value]);
                         break;
 
                     case Instructions.LDVARD:
