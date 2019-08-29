@@ -121,7 +121,8 @@ namespace NetRPG
             { "ind2.rpgle", "1" },
             { "ind3.rpgle", "1" },
 
-            { "dcl_shared1.rpgle", "Hi        " }
+            { "dcl_shared1.rpgle", "Hi        " },
+            { "ile_module_a.rpgle,ile_module_b.rpgle", "You are Liam, you are 22 years old"}
         };
 
         public static void RunTests(string testsStarting = "")
@@ -142,40 +143,51 @@ namespace NetRPG
 
             dynamic result;
 
-            foreach (string file in TestCases.Keys)
+            foreach (string files in TestCases.Keys)
             {
-                if (testsStarting == "" || file.StartsWith(testsStarting))
+                if (testsStarting == "" || files.StartsWith(testsStarting))
                 {
-                    run++;
-
-                    Console.Write("Testing " + file.PadRight(35) + " ... ");
-                    SourcePath = Path.Combine(Environment.CurrentDirectory, "RPGCode", file);
-
-                    prep = new Preprocessor();
-                    prep.ReadFile(SourcePath);
-
-                    lexer = new RPGLex();
-                    lexer.Lex(String.Join(NewLine, prep.GetLines()));
-
-                    Statements = Statement.ParseDocument(lexer.GetTokens());
-
-                    reader = new Reader();
-                    reader.ReadStatements(Statements);
+                    result = null;
+                    lastError = null;
 
                     vm = new VM(true);
+                    run++;
 
-                    try
-                    {
-                        vm.AddModule(reader.GetModule());
-                        result = vm.Run();
-                    }
-                    catch (Exception e)
-                    {
-                        lastError = e;
-                        result = null;
+                    foreach (string file in files.Split(',')) {
+                        Console.Write("Testing " + file.PadRight(35) + " ... ");
+                        SourcePath = Path.Combine(Environment.CurrentDirectory, "RPGCode", file);
+
+                        prep = new Preprocessor();
+                        prep.ReadFile(SourcePath);
+
+                        lexer = new RPGLex();
+                        lexer.Lex(String.Join(NewLine, prep.GetLines()));
+
+                        Statements = Statement.ParseDocument(lexer.GetTokens());
+
+                        reader = new Reader();
+                        reader.ReadStatements(Statements);
+
+                        try {
+                            vm.AddModule(reader.GetModule());
+                        } catch (Exception e) {
+                            lastError = e;
+                        }
                     }
 
-                    if (result != null && result == TestCases[file])
+                    if (lastError == null) {
+                        try
+                        {
+                            result = vm.Run();
+                        }
+                        catch (Exception e)
+                        {
+                            lastError = e;
+                            result = null;
+                        }
+                    }
+
+                    if (result != null && result == TestCases[files])
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("successful.");
@@ -195,8 +207,8 @@ namespace NetRPG
                             Console.WriteLine(lastError.StackTrace);
                             Console.WriteLine();
                         }
-                        reader.GetModule().Print();
-                        Console.WriteLine("\tExpected: '" + Convert.ToString(TestCases[file]) + "'");
+
+                        Console.WriteLine("\tExpected: '" + Convert.ToString(TestCases[files]) + "'");
                         Console.WriteLine("\tReturned: '" + Convert.ToString(result) + "'");
                         Console.WriteLine();
 

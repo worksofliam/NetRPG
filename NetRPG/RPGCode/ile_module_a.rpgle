@@ -5,6 +5,4 @@ Dcl-S Age  Int(5);
 Name = 'Liam';
 Age = 22;
 
-PrintInfo(Name:Age);
-
-Return;
+Return PrintInfo(Name:Age);
