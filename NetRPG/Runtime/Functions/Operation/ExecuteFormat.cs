@@ -6,6 +6,7 @@ using NetRPG.Runtime.Typing.Files;
 
 namespace NetRPG.Runtime.Functions.Operation
 {
+    [RPGFunctionAlias("EXFMT")]
     class ExecuteFormat : Function
     {
         public override object Execute(object[] Parameters)

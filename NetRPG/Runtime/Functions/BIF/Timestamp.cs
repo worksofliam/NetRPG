@@ -4,6 +4,8 @@ using System.Text;
 
 namespace NetRPG.Runtime.Functions.BIF
 {
+    [RPGFunctionAlias("%TIMESTAMP")]
+    [RPGFunctionAlias("%TIME")]
     class Timestamp : Function
     {
         public override object Execute(object[] Parameters)
