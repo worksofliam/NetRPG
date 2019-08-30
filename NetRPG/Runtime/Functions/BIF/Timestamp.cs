@@ -4,7 +4,7 @@ using System.Text;
 
 namespace NetRPG.Runtime.Functions.BIF
 {
-    [RPGFunctionAlias("%TIMESTAMP")]
+    [RPGFunctionAlias("%DATE")]
     [RPGFunctionAlias("%TIME")]
     class Timestamp : Function
     {
