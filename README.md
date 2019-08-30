@@ -16,6 +16,8 @@ An RPGLE runtime for .NET Core. With this runtime you can run totally free-forma
 
 * **Display file support**: While not everything is supported, we have the base for display file support.
 
+![](https://i.imgur.com/69umPhA.png)
+
 ## :floppy_disk: Installation
 
 1. Clone repo
