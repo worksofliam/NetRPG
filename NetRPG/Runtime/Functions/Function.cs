@@ -9,53 +9,67 @@ namespace NetRPG.Runtime.Functions
         //TODO: only add items to this list if it's used
         private static Dictionary<string, Function> List = new Dictionary<string, Function>
         {
-            { "DSPLY", new Operation.Dsply() },
-            { "IN", new Operation.In() },
-            { "RESET", new Operation.Reset() },
-            { "CLEAR", new Operation.Clear() },
-
-            { "OPEN", new Operation.Open() },
-            { "READ", new Operation.Read() },
-            { "READP", new Operation.ReadPrevious() },
-            { "CHAIN", new Operation.Chain() },
-            { "EXFMT", new Operation.ExecuteFormat() },
-            { "WRITE", new Operation.Write() },
-            { "%FOUND", new Operation.Found() },
-            { "%EOF", new Operation.EndOfFile() },
-
-            { "%ABS", new BIF.Abs() },
-            { "%CHAR", new BIF.Char() },
-            { "%DEC", new BIF.Dec() },
-            { "%DECH", new BIF.Dec() },
-            { "%DECPOS", new BIF.DecPos() },
-            { "%EDITC", new BIF.EditC() },
-            { "%ELEM", new BIF.Elem() },
-            { "%FLOAT", new BIF.Float() },
-            { "%INT", new BIF.Int() },
-            { "%LEN", new BIF.Len() },
-            { "%LOOKUP", new BIF.Lookup() },
-            { "%TRIM", new BIF.Trim() },
-            { "%TRIMR", new BIF.TrimR() },
-            { "%TRIML", new BIF.TrimL() },
-            { "%SCAN", new BIF.Scan() },
-            { "%SCANRPL", new BIF.ScanReplace() },
-            { "%XLATE", new BIF.Xlate() },
-
-            { "%TIMESTAMP", new BIF.Timestamp() },
-            { "%DATE", new BIF.Timestamp() },
-            { "%TIME", new BIF.Timestamp() },
-            
-            { "%SECONDS", new BIF.Seconds() },
-            { "%MINUTES", new BIF.Minutes() },
-            { "%HOURS", new BIF.Hours() },
-            { "%DAYS", new BIF.Days() },
-            { "%MONTHS", new BIF.Months() },
-            { "%YEARS", new BIF.Years() },
-            { "%DIFF", new BIF.Diff() },
-            { "%SUBDT", new BIF.SubDateTime() },
-
-            { "PRINTF", new System.printf() }
         };
+
+        public static void AddFunctionReference(string Name, string Func) {
+            Function result = null;
+
+            switch (Func.ToUpper()) {
+                case "DSPLY": result = new Operation.Dsply(); break;
+                case "IN": result = new Operation.In(); break;
+                case "RESET": result = new Operation.Reset(); break;
+                case "CLEAR": result = new Operation.Clear(); break;
+
+                case "OPEN": result = new Operation.Open(); break;
+                case "READ": result = new Operation.Read(); break;
+                case "READP": result = new Operation.ReadPrevious(); break;
+                case "CHAIN": result = new Operation.Chain(); break;
+                case "EXFMT": result = new Operation.ExecuteFormat(); break;
+                case "WRITE": result = new Operation.Write(); break;
+                case "%FOUND": result = new Operation.Found(); break;
+                case "%EOF": result = new Operation.EndOfFile(); break;
+
+                case "%ABS": result = new BIF.Abs(); break;
+                case "%CHAR": result = new BIF.Char(); break;
+                case "%DEC": result = new BIF.Dec(); break;
+                case "%DECH": result = new BIF.Dec(); break;
+                case "%DECPOS": result = new BIF.DecPos(); break;
+                case "%EDITC": result = new BIF.EditC(); break;
+                case "%ELEM": result = new BIF.Elem(); break;
+                case "%FLOAT": result = new BIF.Float(); break;
+                case "%INT": result = new BIF.Int(); break;
+                case "%LEN": result = new BIF.Len(); break;
+                case "%LOOKUP": result = new BIF.Lookup(); break;
+                case "%TRIM": result = new BIF.Trim(); break;
+                case "%TRIMR": result = new BIF.TrimR(); break;
+                case "%TRIML": result = new BIF.TrimL(); break;
+                case "%SCAN": result = new BIF.Scan(); break;
+                case "%SCANRPL": result = new BIF.ScanReplace(); break;
+                case "%XLATE": result = new BIF.Xlate(); break;
+
+                case "%TIMESTAMP": result = new BIF.Timestamp(); break;
+                case "%DATE": result = new BIF.Timestamp(); break;
+                case "%TIME": result = new BIF.Timestamp(); break;
+                
+                case "%SECONDS": result = new BIF.Seconds(); break;
+                case "%MINUTES": result = new BIF.Minutes(); break;
+                case "%HOURS": result = new BIF.Hours(); break;
+                case "%DAYS": result = new BIF.Days(); break;
+                case "%MONTHS": result = new BIF.Months(); break;
+                case "%YEARS": result = new BIF.Years(); break;
+                case "%DIFF": result = new BIF.Diff(); break;
+                case "%SUBDT": result = new BIF.SubDateTime(); break;
+
+                case "PRINTF": result = new System.printf(); break;
+            }
+            
+            if (result == null) {
+                Error.ThrowCompileError("Function '" + Func + "' does not exist in system.");
+            } else {
+                if (!List.ContainsKey(Name.ToUpper()))
+                    List.Add(Name.ToUpper(), result);
+            }
+        }
 
         public static bool IsFunction(string Name)
         {

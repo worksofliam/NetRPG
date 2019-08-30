@@ -49,10 +49,15 @@ namespace NetRPG.Runtime
                 if (proc.HasEntrypoint) _EntryProcedure = proc.GetName();
             }
 
-            //Handle global variables for module
+            //Handle adding references to internal functions
+            foreach (string function in module.GetReferences()) {
+                Function.AddFunctionReference(function, module.GetReferenceFunc(function));
+            } 
 
+            //Handle global variables for module
             RunTimeModules.Add(ModuleName, new RunTimeModule());
 
+            //Handle shared memory between variables
             Dictionary<string, DataValue> SharedMemory = new Dictionary<string, DataValue>();
             
             foreach (String global in module.GetDataSetList())

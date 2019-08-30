@@ -485,6 +485,7 @@ namespace NetRPG.Language
                     Labels.Add(Labels.getScope());
                     Labels.Scope++;
                     break;
+
                 case "ENDDO":
                     end = Labels.getLastScope();
                     start = Labels.getLastScope();
@@ -497,6 +498,7 @@ namespace NetRPG.Language
                     ParseExpression(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "DSPLY");
+                    _Module.AddFunctionRef("DSPLY", "DSPLY");
                     break;
                 case "RETURN":
                     ParseExpression(tokens.Skip(1).ToList());
@@ -511,12 +513,14 @@ namespace NetRPG.Language
                     ParseAssignment(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "RESET");
+                    _Module.AddFunctionRef("RESET", "RESET");
                     break;
 
                 case "CLEAR":
                     ParseAssignment(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "CLEAR");
+                    _Module.AddFunctionRef("CLEAR", "CLEAR");
                     break;
 
                 case "IN": //No support for *LOCK
@@ -525,6 +529,7 @@ namespace NetRPG.Language
                     ParseAssignment(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "IN");
+                    _Module.AddFunctionRef("IN", "IN");
 
                     //Then store result of in function
                     CurrentProcudure.AddInstruction(Instructions.STORE);
@@ -534,6 +539,7 @@ namespace NetRPG.Language
                     ParseAssignment(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "OPEN");
+                    _Module.AddFunctionRef("OPEN", "OPEN");
                     break;
 
                 case "READ":
@@ -545,6 +551,7 @@ namespace NetRPG.Language
 
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "2");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "READ");
+                    _Module.AddFunctionRef("READ", "READ");
                     break;
 
                 case "READP":
@@ -556,6 +563,7 @@ namespace NetRPG.Language
 
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "2");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "READP");
+                    _Module.AddFunctionRef("READP", "READP");
                     break;
 
                 case "CHAIN": 
@@ -579,6 +587,7 @@ namespace NetRPG.Language
 
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "3");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "CHAIN");
+                    _Module.AddFunctionRef("CHAIN", "CHAIN");
                     break;
 
                 case "EXFMT":
@@ -595,6 +604,7 @@ namespace NetRPG.Language
                     
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "3");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "EXFMT");
+                    _Module.AddFunctionRef("EXFMT", "EXFMT");
                     break;
 
                 case "WRITE":
@@ -612,6 +622,7 @@ namespace NetRPG.Language
                     
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "2");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "WRITE");
+                    _Module.AddFunctionRef("WRITE", "WRITE");
                     break;
 
                 default:
@@ -673,6 +684,7 @@ namespace NetRPG.Language
                         {
                             ParseExpression(tokens[i + 1].Block);
                             CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
+                            _Module.AddFunctionRef(token.Value, token.Value);
                             i++;
                         }
                         else
@@ -828,6 +840,7 @@ namespace NetRPG.Language
                                     CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
                                     break;
                             }
+                            _Module.AddFunctionRef(token.Value, token.Value);
                             
                             i++;
                         }
