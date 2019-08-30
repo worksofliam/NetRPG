@@ -189,6 +189,9 @@ namespace NetRPG.Language
                         case "USROPN":
                             dataSet._UserOpen = true;
                             break;
+                        case "EXTPROC":
+                            dataSet._File = tokens[i + 1].Block?[0].Value;
+                            break;
                     }
                     i++;
                 }
@@ -307,8 +310,10 @@ namespace NetRPG.Language
                         dataSet = null;
                         break;
                     case "PR":
-                        //ADD REFERENCE TO FUNCTIONS LATER!!!!
                         isPR = true;
+                        
+                        _Module.AddFunctionRef(dataSet._Name, dataSet._File);
+
                         dataSet = null;
                         break;
 

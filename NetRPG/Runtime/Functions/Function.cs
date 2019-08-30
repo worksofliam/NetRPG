@@ -14,6 +14,8 @@ namespace NetRPG.Runtime.Functions
         public static void AddFunctionReference(string Name, string Func) {
             Function result = null;
 
+            Name = Name.ToUpper();
+
             switch (Func.ToUpper()) {
                 case "DSPLY": result = new Operation.Dsply(); break;
                 case "IN": result = new Operation.In(); break;
@@ -66,8 +68,8 @@ namespace NetRPG.Runtime.Functions
             if (result == null) {
                 Error.ThrowCompileError("Function '" + Func + "' does not exist in system.");
             } else {
-                if (!List.ContainsKey(Name.ToUpper()))
-                    List.Add(Name.ToUpper(), result);
+                if (!List.ContainsKey(Name))
+                    List.Add(Name, result);
             }
         }
 
