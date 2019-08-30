@@ -56,6 +56,7 @@ namespace NetRPG
             { "bif_scanrpl.rpgle", "Hello friends  " },
             { "bif_xlate1.rpgle", "HELLO WORLD" },
             { "bif_xlate2.rpgle", "hello WORLD" },
+            { "bif_subst.rpgle", "HelloWorldWordef" },
 
             { "time_dcl_timestamp.rpgle", 500 },
             { "time_bif_timestamp.rpgle", true },
