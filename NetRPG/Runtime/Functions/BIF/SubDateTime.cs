@@ -4,6 +4,7 @@ using System.Text;
 
 namespace NetRPG.Runtime.Functions.BIF
 {
+    [RPGFunctionAlias("%SUBDT")]
     class SubDateTime : Function
     {
         public override object Execute(object[] Parameters)
