@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Linq;
 
 namespace NetRPG.Runtime.Functions.BIF
 {
@@ -8,6 +9,9 @@ namespace NetRPG.Runtime.Functions.BIF
     [RPGFunctionAlias("%TIME")]
     class Timestamp : Function
     {
+        private static string[] TIMETypes = new[] {
+            "hh:mm tt"
+        };
         public override object Execute(object[] Parameters)
         {
             switch (Parameters.Length) {
@@ -24,7 +28,13 @@ namespace NetRPG.Runtime.Functions.BIF
 
                 case 2:
                     if (Parameters[0] is string && Parameters[1] is string) {
-                        return (DateTime.ParseExact(Parameters[0].ToString(), Parameters[1].ToString(), null) - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+                        double time = 0;
+                        if (TIMETypes.Contains(Parameters[1].ToString())) {
+                            time = (DateTime.ParseExact(Parameters[0].ToString(), Parameters[1].ToString(), null) - DateTime.Today).TotalSeconds;
+                        } else {
+                            time = (DateTime.ParseExact(Parameters[0].ToString(), Parameters[1].ToString(), null) - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+                        }
+                        return time;
                     } else {
                         Error.ThrowRuntimeError("%Timestamp", "Strings required");
                         return null;
