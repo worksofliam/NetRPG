@@ -10,8 +10,9 @@ namespace NetRPG.Runtime.Functions.System
     {
         public override object Execute(object[] Parameters)
         {
-            Console.Write(Parameters[0]);
-            return null;
+            string output = Parameters[0] as string;
+            Console.Write(output);
+            return output.Length;
         }
     }
 }

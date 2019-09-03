@@ -125,7 +125,8 @@ namespace NetRPG
             { "ind3.rpgle", "1" },
 
             { "dcl_shared1.rpgle", "Hi        " },
-            { "ile_module_a.rpgle,ile_module_b.rpgle", "You are Liam, you are 22 years old"}
+            { "ile_module_a.rpgle,ile_module_b.rpgle", "You are Liam, you are 22 years old"},
+            { "system_printf.rpgle", 12}
         };
 
         public static void RunTests(string testsStarting = "")
