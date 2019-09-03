@@ -29,4 +29,4 @@ Dsply 'Before: ' + data;
 PopDQ(lib:obj:len:data);
 Dsply 'After: ' + data;
 
-return;
+return data;
