@@ -34,6 +34,8 @@ namespace NetRPG
             { "dcl_inz.rpgle", "HelloWorld421234.5655" },
             { "dcl_likeds.rpgle", "     Hello" },
             { "assignment.rpgle", "Hello world    23421234.56" },
+            { "assignment2.rpgle", 12 },
+            { "assignment3.rpgle", 12 },
             { "addition.rpgle", "Hello world    23421234.56" },
             { "subtraction.rpgle", "5304.33" },
             { "division.rpgle", "44.1" },
@@ -215,6 +217,7 @@ namespace NetRPG
                         Console.WriteLine("\tExpected: '" + Convert.ToString(TestCases[files]) + "'");
                         Console.WriteLine("\tReturned: '" + Convert.ToString(result) + "'");
                         Console.WriteLine();
+                        vm.PrintModules();
 
                         lastError = null;
                         failed++;

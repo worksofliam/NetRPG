@@ -106,22 +106,26 @@ namespace NetRPG.Runtime
                 Console.WriteLine(e.StackTrace);
                 Console.WriteLine("-- Error --");
                 Console.WriteLine();
-                Console.WriteLine("--- Procedure instructions ---");
-                foreach (Procedure proc in _Procedures.Values) {
-                    Console.WriteLine();
-                    Console.WriteLine("\t - " + proc.GetName());
-                    Console.WriteLine();
-                    foreach (Instruction inst in proc.GetInstructions()) {
-                        Console.WriteLine("\t" + inst._Instruction.ToString().PadRight(10) + inst._Value);
-                    }
-                }
-                
+                PrintModules();
                 if (_DisplayRequired)
                     Console.ReadLine();
                 return null;
             } finally {
                 if (_DisplayRequired)
                     WindowHandler.End();
+            }
+        }
+
+        public void PrintModules() {
+            Console.WriteLine("--- Procedure instructions ---");
+            foreach (Procedure proc in _Procedures.Values) {
+                Console.WriteLine();
+                Console.WriteLine("\t - " + proc.GetName());
+                Console.WriteLine();
+                foreach (Instruction inst in proc.GetInstructions()) {
+                    Console.WriteLine("\t" + inst._Instruction.ToString().PadRight(10) + inst._Value);
+                }
+                Console.WriteLine();
             }
         }
 

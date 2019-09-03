@@ -649,9 +649,10 @@ namespace NetRPG.Language
 
             int assignIndex = -1;
 
+            //We do this incase we are assigning to a DS
             for (var i = 0; i < tokens.Count(); i++)
             {
-                if (tokens[i].Type == RPGLex.Type.EQUALS)
+                if (tokens[i].Type == RPGLex.Type.EQUALS || tokens[i].Type == RPGLex.Type.ASSIGNMENT)
                 {
                     assignIndex = i;
                     break;
@@ -666,9 +667,34 @@ namespace NetRPG.Language
             else
             {
                 //Usually an assignment
-                ParseAssignment(tokens.Take(assignIndex).ToList());
-                ParseExpression(tokens.Skip(assignIndex + 1).ToList());
-                CurrentProcudure.AddInstruction(Instructions.STORE);
+                ParseAssignment(tokens.Take(assignIndex).ToList()); //Load the assigning to variable
+
+                if (tokens[assignIndex].Type == RPGLex.Type.ASSIGNMENT) { //If it's a weird assignment, e.g. not EQUAL
+                    ParseExpression(tokens.Take(assignIndex).ToList()); //Load the assigning to variable for expression
+                }
+
+                ParseExpression(tokens.Skip(assignIndex + 1).ToList()); //Load the expression
+                if (tokens[assignIndex].Type == RPGLex.Type.ASSIGNMENT) { //If it's a weird assignment, e.g. not EQUAL
+                    switch (tokens[assignIndex].Value) {
+                        case "+=": 
+                            CurrentProcudure.AddInstruction(Instructions.ADD); //Store it
+                            break;
+                        case "-=": 
+                            CurrentProcudure.AddInstruction(Instructions.SUB); //Store it
+                            break;
+                        case "/=": 
+                            CurrentProcudure.AddInstruction(Instructions.DIV); //Store it
+                            break;
+                        case "*=": 
+                            CurrentProcudure.AddInstruction(Instructions.MUL); //Store it
+                            break;
+                        case "**=": 
+                            Error.ThrowCompileError("Power to assignment not yet implemented.", tokens[assignIndex].Line);
+                            break;
+                    }
+                }
+
+                CurrentProcudure.AddInstruction(Instructions.STORE); //Store it
             }
         }
 
