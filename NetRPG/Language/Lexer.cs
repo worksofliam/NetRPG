@@ -80,9 +80,12 @@ namespace NetRPG.Language
                                     c = Text.Substring(cIndex+1, 1).ToCharArray()[0];
                                     if (Char.IsDigit(c))
                                     {
-                                        token += Text.Substring(cIndex, Operator.Length);
-                                        cIndex += 1;
-                                        break;
+                                        c = Text.Substring(cIndex-1, 1).ToCharArray()[0];
+                                        if (!Char.IsDigit(c)) {
+                                            token += Text.Substring(cIndex, Operator.Length);
+                                            cIndex += 1;
+                                            break;
+                                        }
                                     }
                                 }
 
