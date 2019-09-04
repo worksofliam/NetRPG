@@ -189,6 +189,7 @@ namespace NetRPG.Language
                         case "USROPN":
                             dataSet._UserOpen = true;
                             break;
+                        case "EXTPGM":
                         case "EXTPROC":
                             dataSet._File = tokens[i + 1].Block?[0].Value;
                             break;
