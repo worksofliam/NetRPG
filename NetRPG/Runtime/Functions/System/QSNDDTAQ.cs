@@ -15,7 +15,7 @@ namespace NetRPG.Runtime.Functions.System
             int length = Convert.ToInt32((Parameters[2] as FixedDecimal).Get());
             string data = (Parameters[3] as Character).Get();
 
-            DataQueues.Push(lib.Trim() + obj.Trim(), data.Substring(0, Math.Min(length, data.Length)));
+            DataQueue.Push(lib.Trim() + obj.Trim(), data.Substring(0, Math.Min(length, data.Length)));
 
             return null;
         }

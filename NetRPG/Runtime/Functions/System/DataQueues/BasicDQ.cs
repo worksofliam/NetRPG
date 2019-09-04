@@ -5,23 +5,24 @@ using NetRPG.Runtime.Typing;
 using NetRPG.Runtime.Typing.Files;
 using System.Linq;
 
-namespace NetRPG.Runtime.Functions.System
+namespace NetRPG.Runtime.Functions.System.DataQueues
 {
-    class DataQueues
+    class BasicDQ : IDataQueue
     {
-        private static Dictionary<string, List<string>> DQs;
+        private Dictionary<string, List<string>> DQs;
 
-        public static void Push(string name, string item) {
-            if (DQs == null)
+        public BasicDQ() {
               DQs = new Dictionary<string, List<string>>();
+        }
 
+        public void Push(string name, string item) {
             if (!DQs.ContainsKey(name))
               DQs.Add(name, new List<string>());
 
             DQs[name].Add(item);
         }
 
-        public static string Pop(string name) {
+        public string Pop(string name) {
             if (DQs == null)
               Error.ThrowRuntimeError("No data queues exist.", "DataQueues#Pop");
 

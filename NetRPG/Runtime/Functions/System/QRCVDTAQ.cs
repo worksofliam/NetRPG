@@ -15,7 +15,7 @@ namespace NetRPG.Runtime.Functions.System
             FixedDecimal length = (Parameters[2] as FixedDecimal);
             Character data = (Parameters[3] as Character);
 
-            string output = DataQueues.Pop(lib.Trim() + obj.Trim());
+            string output = DataQueue.Pop(lib.Trim() + obj.Trim());
             length.Set(output.Length);
             data.Set(output);
 
