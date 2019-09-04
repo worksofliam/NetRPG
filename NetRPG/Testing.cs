@@ -34,6 +34,8 @@ namespace NetRPG
             { "dcl_inz.rpgle", "HelloWorld421234.5655" },
             { "dcl_likeds.rpgle", "     Hello" },
             { "assignment.rpgle", "Hello world    23421234.56" },
+            { "assignment2.rpgle", 12 },
+            { "assignment3.rpgle", 12 },
             { "addition.rpgle", "Hello world    23421234.56" },
             { "subtraction.rpgle", "5304.33" },
             { "division.rpgle", "44.1" },
@@ -57,6 +59,7 @@ namespace NetRPG
             { "bif_xlate1.rpgle", "HELLO WORLD" },
             { "bif_xlate2.rpgle", "hello WORLD" },
             { "bif_subst.rpgle", "HelloWorldWordef" },
+            { "bif_subst2.rpgle", "Wor" },
             { "bif_replace.rpgle", "Toronto, CanadaToronto, ONScarborough, Ontario, Canada" },
 
             { "time_dcl_timestamp.rpgle", 500 },
@@ -124,7 +127,8 @@ namespace NetRPG
             { "ind3.rpgle", "1" },
 
             { "dcl_shared1.rpgle", "Hi        " },
-            { "ile_module_a.rpgle,ile_module_b.rpgle", "You are Liam, you are 22 years old"}
+            { "ile_module_a.rpgle,ile_module_b.rpgle", "You are Liam, you are 22 years old"},
+            { "system_printf.rpgle", 12}
         };
 
         public static void RunTests(string testsStarting = "")
@@ -213,6 +217,7 @@ namespace NetRPG
                         Console.WriteLine("\tExpected: '" + Convert.ToString(TestCases[files]) + "'");
                         Console.WriteLine("\tReturned: '" + Convert.ToString(result) + "'");
                         Console.WriteLine();
+                        vm.PrintModules();
 
                         lastError = null;
                         failed++;
