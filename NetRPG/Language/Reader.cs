@@ -960,8 +960,11 @@ namespace NetRPG.Language
                                             CurrentProcudure.AddInstruction(Instructions.LDVARD, GlobalSubfields[token.Value].Structure); //Load local data
                                             break;
                                     }
+                                } else {
+                                    if (lastType == Types.Void)
+                                        Error.ThrowCompileError("Variable " + token.Value + " does not exist", token.Line);
                                 }
-                                CurrentProcudure.AddInstruction(Instructions.LDFLDV, token.Value); //Load field?
+                                CurrentProcudure.AddInstruction(Instructions.LDFLDV, token.Value);
                             }
                         }
                         break;
