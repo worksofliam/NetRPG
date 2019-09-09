@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-S MyTimeStamp Date;
 
 //Us date format....

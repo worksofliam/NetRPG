@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-s MyInt Int(3) Inz(0);
 
 MyInt = 1;

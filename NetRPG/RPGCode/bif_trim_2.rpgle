@@ -1,3 +1,4 @@
+**FREE
 
 Dcl-Ds MyDS Qualified Dim(2);
   Dcl-Subf Boom2   Char(10) Dim(3);

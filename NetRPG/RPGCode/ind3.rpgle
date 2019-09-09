@@ -1,3 +1,5 @@
+**FREE
+
 Dsply '';
 
 Dsply 'LR before = ' + *inlr;

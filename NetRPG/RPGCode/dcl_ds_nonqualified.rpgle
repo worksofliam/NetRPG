@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-Ds MyDS;
   Dcl-Subf Hello1 Char(5);
   Dcl-Subf Hello2 Packed(5:2);

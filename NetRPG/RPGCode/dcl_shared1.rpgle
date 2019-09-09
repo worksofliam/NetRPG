@@ -1,3 +1,5 @@
+**FREE
+
 dcl-ds ds1;
   dcl-subf myname char(10);
 end-ds;

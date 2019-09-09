@@ -1,3 +1,4 @@
+**FREE
 
 Dcl-S Output Char(15);
 Dcl-S hello Char(10) Inz('hello');

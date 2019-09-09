@@ -1,4 +1,6 @@
-﻿Dcl-S MyChar   Char(15);
+﻿**FREE
+
+Dcl-S MyChar   Char(15);
 Dcl-S MyInt    Int(5);
 Dcl-S MyPacked Packed(9:2);
 

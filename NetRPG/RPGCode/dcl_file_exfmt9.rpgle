@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-F ex9 WorkStn;
 Dcl-F cust2;
 Dcl-s exit Ind;

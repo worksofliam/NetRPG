@@ -1,4 +1,6 @@
-﻿Dcl-S MyFloat Float(4);
+﻿**FREE
+
+Dcl-S MyFloat Float(4);
 
 MyFloat = %Float(5);
 

@@ -1,4 +1,6 @@
-﻿Dcl-s MyInt Int(3) Inz(0);
+﻿**FREE
+
+Dcl-s MyInt Int(3) Inz(0);
 
 MyInt = 1;
 Dow (MyInt <= 10);

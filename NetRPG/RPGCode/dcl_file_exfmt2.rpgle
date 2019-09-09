@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-F ex2 WorkStn;
 
 NAME = 'Blah';

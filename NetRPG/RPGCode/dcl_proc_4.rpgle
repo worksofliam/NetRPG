@@ -1,4 +1,6 @@
-﻿Dcl-S Parm1 Char(5) Inz('Hello');
+﻿**FREE
+
+Dcl-S Parm1 Char(5) Inz('Hello');
 Dcl-S Parm2 Char(5) Inz('!');
 
 Return MyProc(Parm1:Parm2);

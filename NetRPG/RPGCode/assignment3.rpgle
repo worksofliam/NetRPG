@@ -1,3 +1,5 @@
+**FREE
+
 dcl-ds myds qualified;
   dcl-subf myint int(5);
 end-ds;

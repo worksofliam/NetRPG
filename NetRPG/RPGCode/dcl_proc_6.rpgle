@@ -1,4 +1,5 @@
-﻿
+﻿**FREE
+
 Dcl-S Result Char(6);
 Dcl-S TestVar Char(1);
 

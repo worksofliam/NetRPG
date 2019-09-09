@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-F ex1 WorkStn;
 
 NAME = 'World';

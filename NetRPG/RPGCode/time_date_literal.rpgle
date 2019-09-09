@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-S MyTime1 TimeStamp;
 Dcl-S MyTime2 TimeStamp;
 

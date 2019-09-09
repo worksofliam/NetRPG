@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-F ex7 WorkStn;
 Dcl-F cust;
 Dcl-s exit Ind;

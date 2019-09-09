@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-S MyTimeStamp Timestamp;
 
 MyTimeStamp = 500;

@@ -1,4 +1,5 @@
-﻿
+﻿**FREE
+
 Dcl-Ds MyDS Qualified;
   Dcl-Subf Boom    Char(10);
   Dcl-Subf Boom2   Char(10);
