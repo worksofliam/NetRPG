@@ -145,6 +145,9 @@ namespace NetRPG
             Reader reader;
             VM vm;
 
+            DateTime start, end;
+            TimeSpan diff;
+
             int run = 0, passed = 0, failed = 0;
             Exception lastError = null;
 
@@ -159,6 +162,8 @@ namespace NetRPG
 
                     vm = new VM(true);
                     run++;
+
+                    start = DateTime.Now;
 
                     foreach (string file in files.Split(',')) {
                         Console.Write("Testing " + file.PadRight(35) + " ... ");
@@ -193,11 +198,13 @@ namespace NetRPG
                             result = null;
                         }
                     }
+                    end = DateTime.Now;
+                    diff = (end - start);
 
                     if (result != null && result == TestCases[files])
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("successful.");
+                        Console.WriteLine("successful (" + diff.ToString(@"mm\:ss\:f\:ff") + ").");
                         Console.ForegroundColor = originalColor;
 
                         passed++;
