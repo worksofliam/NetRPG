@@ -140,7 +140,6 @@ namespace NetRPG
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             string NewLine = (isWindows ? Environment.NewLine : "");
             Preprocessor prep;
-            RPGLex lexer;
             Statement[] Statements;
             Reader reader;
             VM vm;
@@ -172,10 +171,7 @@ namespace NetRPG
                         prep = new Preprocessor();
                         prep.ReadFile(SourcePath);
 
-                        lexer = new RPGLex();
-                        lexer.Lex(String.Join(NewLine, prep.GetLines()));
-
-                        Statements = Statement.ParseDocument(lexer.GetTokens());
+                        Statements = Statement.ParseDocument(Preprocessor.GetTokens(prep.GetLines()));
 
                         reader = new Reader();
                         reader.ReadStatements(Statements);
