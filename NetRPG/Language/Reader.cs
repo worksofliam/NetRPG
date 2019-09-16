@@ -5,6 +5,7 @@ using NetRPG.Runtime;
 
 using System.Globalization;
 using System.Threading;
+using System.Text;
 
 namespace NetRPG.Language
 {
@@ -87,7 +88,13 @@ namespace NetRPG.Language
             _Module.AddDataSet(inds);
 
             SelectCount = 0;
+
+            Configurations = new Dictionary<string, string>();
+            Configurations.Add("DATFMT", "en-UK");
+            Configurations.Add("CCSID", "IBM285");
         }
+
+        private Dictionary<string, string> Configurations;
 
         private bool isPR;
         public void ReadStatements(Statement[] Statements)
@@ -95,7 +102,7 @@ namespace NetRPG.Language
             RPGToken[] tokens;
 
             //TODO need to figure out how to put this into the DATFMT control opt
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-UK");
+            Thread.CurrentThread.CurrentCulture = new CultureInfo(Configurations["DATFMT"]);
 
             foreach (Statement statement in Statements)
             {
@@ -1109,10 +1116,17 @@ namespace NetRPG.Language
                         case RPGLex.Type.WORD_LITERAL:
                                 if (i + 1 < tokens.Count)
                                 {
-
                                     if (tokens[i + 1].Type == RPGLex.Type.STRING_LITERAL)
                                     {
                                         switch (tokens[i].Value) {
+                                            case "x":
+                                                byte[] raw = new byte[tokens[i + 1].Value.ToUpper().Length / 2];
+                                                for (int x = 0; x < raw.Length; x++)
+                                                    raw[x] = Convert.ToByte(tokens[i + 1].Value.Substring(x * 2, 2), 16);
+
+                                                token = new RPGToken(RPGLex.Type.STRING_LITERAL, Encoding.ASCII.GetString(raw));
+                                                ChangeMade = true;
+                                                break;
                                             case "d":
                                                 //TODO HANDLE DATE FORMAT SOMEHOW!!
                                                 token = new RPGToken(RPGLex.Type.INT_LITERAL, (DateTime.Parse(tokens[i + 1].Value) - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds.ToString(), tokens[i].Line);

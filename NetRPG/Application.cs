@@ -14,7 +14,6 @@ namespace NetRPG {
 
             foreach (string path in paths) {
                 Preprocessor prep;
-                RPGLex lexer;
                 Statement[] Statements;
                 Reader reader;
                 

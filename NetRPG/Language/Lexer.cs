@@ -204,7 +204,7 @@ namespace NetRPG.Language
         public string Value;
         public int Line;
 
-        public RPGToken(RPGLex.Type type, string value, int line)
+        public RPGToken(RPGLex.Type type, string value = "", int line = 0)
         {
             Type = type;
             Value = value;
