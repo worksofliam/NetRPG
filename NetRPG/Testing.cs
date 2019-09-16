@@ -131,7 +131,8 @@ namespace NetRPG
             { "system_printf.rpgle", 12},
             { "system_dq.rpgle", "Hello world         "},
 
-            { "hex1.rpgle", "Hello world" }
+            { "hex1.rpgle", "Hello world£" },
+            { "hex2.rpgle", "Hello world$" }
         };
 
         public static void RunTests(string testsStarting = "")

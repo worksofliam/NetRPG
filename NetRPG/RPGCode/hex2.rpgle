@@ -1,6 +1,6 @@
 **FREE
 
-Ctl-Opt CCSID('IBM285');
+Ctl-Opt CCSID('IBM037');
 
 Dcl-S MyStr Char(12);
 

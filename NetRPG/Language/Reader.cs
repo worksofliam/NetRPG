@@ -89,6 +89,8 @@ namespace NetRPG.Language
 
             SelectCount = 0;
 
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
             Configurations = new Dictionary<string, string>();
             Configurations.Add("DATFMT", "en-UK");
             Configurations.Add("CCSID", "IBM285");
@@ -111,8 +113,7 @@ namespace NetRPG.Language
                 switch (tokens[0].Type)
                 {
                     case RPGLex.Type.CTL:
-                        //Handle this here
-                        //TODO handle date format
+                        HandleControlOptions(tokens);
                         break;
                     case RPGLex.Type.DCL:
                         HandleDeclare(tokens);
@@ -168,6 +169,26 @@ namespace NetRPG.Language
             }
         }
 
+        private void HandleControlOptions(RPGToken[] tokens) {
+            for (int i = 3; i < tokens.Length; i++)
+            {
+                if (i + 1 < tokens.Length && tokens[i + 1].Type == RPGLex.Type.BLOCK)
+                {
+                    switch (tokens[i].Value.ToUpper())
+                    {
+                        case "DATFMT":
+                            //TODO: Handle RPG DATFMT special values
+                            Configurations["DATFMT"] = tokens[i + 1].Block?[0].Value;
+                            break;
+                        case "CCSID": //TODO: handle CCSID numbers instead of .net encoding types
+                            Configurations["CCSID"] = tokens[i + 1].Block?[0].Value;
+                            break;
+                    }
+                    i++;
+                }
+            }
+        }
+
         private void HandleDeclare(RPGToken[] tokens)
         {
             //TODO: Check if DataSet already exists?
@@ -175,7 +196,6 @@ namespace NetRPG.Language
             DataSet[] structures;
             LOCATION currentLocation;
             string length = "";
-            Dictionary<string, string> config = new Dictionary<string, string>();
 
             for (int i = 3; i < tokens.Length; i++)
             {
@@ -1124,7 +1144,8 @@ namespace NetRPG.Language
                                                 for (int x = 0; x < raw.Length; x++)
                                                     raw[x] = Convert.ToByte(tokens[i + 1].Value.Substring(x * 2, 2), 16);
 
-                                                token = new RPGToken(RPGLex.Type.STRING_LITERAL, Encoding.ASCII.GetString(raw));
+                                                //Encoding enc = Encoding.GetEncoding(Configurations["CCSID"]);
+                                                token = new RPGToken(RPGLex.Type.STRING_LITERAL, Encoding.ASCII.GetString(Encoding.Convert(Encoding.GetEncoding(Configurations["CCSID"]), Encoding.ASCII, raw)));
                                                 ChangeMade = true;
                                                 break;
                                             case "d":
