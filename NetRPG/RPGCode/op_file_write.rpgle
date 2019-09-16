@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-F example;
 
 prid = 3;

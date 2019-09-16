@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-S number Int(5);
 
 number = 5;

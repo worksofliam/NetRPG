@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-F ex4 WorkStn;
 
 exfmt OLDFMT;

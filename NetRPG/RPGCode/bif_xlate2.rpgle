@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-S lo Char(26) Inz('abcdefghijklmnopqrstuvwxyz');
 Dcl-s hi Char(26) Inz('ABCDEFGHIJKLMNOPQRSTUVWXYZ');
 Dcl-s string Char(11);

@@ -21,10 +21,7 @@ namespace NetRPG {
                 prep = new Preprocessor();
                 prep.ReadFile(path);
 
-                lexer = new RPGLex();
-                lexer.Lex(String.Join(NewLine, prep.GetLines()));
-
-                Statements = Statement.ParseDocument(lexer.GetTokens());
+                Statements = Statement.ParseDocument(Preprocessor.GetTokens(prep.GetLines()));
 
                 reader = new Reader();
                 reader.ReadStatements(Statements);

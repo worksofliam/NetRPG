@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-Proc PrintInfo Export;
   Dcl-Pi PrintInfo Char(52);
     Dcl-Parm Name Char(10) Const;

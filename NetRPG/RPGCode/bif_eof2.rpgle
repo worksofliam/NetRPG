@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-F example;
 dcl-s str char(2);
 

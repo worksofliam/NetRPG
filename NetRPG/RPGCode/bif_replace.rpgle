@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-S resulta Char(20);
 Dcl-S resultb Char(20);
 Dcl-S resultc Char(30);

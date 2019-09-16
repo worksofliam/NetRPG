@@ -1,4 +1,6 @@
-﻿Dcl-S MyCharArr Char(10) Dim(10);
+﻿**FREE
+
+Dcl-S MyCharArr Char(10) Dim(10);
 
 MyCharArr(1) = 'Test';
 MyCharArr(2) = 'Test';

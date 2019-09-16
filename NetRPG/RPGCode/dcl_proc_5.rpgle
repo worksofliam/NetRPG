@@ -1,4 +1,5 @@
-﻿
+﻿**FREE
+
 Return MyProc();
 
 Dcl-Proc MyProc;

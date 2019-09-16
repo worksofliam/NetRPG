@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-Pr SendDQ ExtPgm('QSNDDTAQ');
   Dcl-Parm Library Char(10);
   Dcl-Parm Object  Char(10);

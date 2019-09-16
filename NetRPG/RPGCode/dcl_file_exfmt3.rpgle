@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-F ex3 WorkStn;
 
 NAME = 'Barry';

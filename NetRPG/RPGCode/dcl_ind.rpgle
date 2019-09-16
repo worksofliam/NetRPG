@@ -1,4 +1,6 @@
-﻿Dcl-S MyInd Ind;
+﻿**FREE
+
+Dcl-S MyInd Ind;
 Dcl-S MyChar Char(3);
 
 MyChar = '';

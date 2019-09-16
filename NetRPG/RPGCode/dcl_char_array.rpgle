@@ -1,4 +1,5 @@
-﻿
+﻿**FREE
+
 Dcl-S MyArray Int(10) Dim(4);
 
 MyArray(1) = 1;

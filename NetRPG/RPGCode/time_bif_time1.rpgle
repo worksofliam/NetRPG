@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-s MyTime1 Time;
 
 MyTime1 = %Time('01:23 PM':*USA);

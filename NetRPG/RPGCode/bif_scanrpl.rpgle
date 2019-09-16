@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-S String Char(15);
 
 String = 'Hello world';

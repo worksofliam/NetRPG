@@ -1,4 +1,6 @@
-﻿Dcl-S Result Int(3);
+﻿**FREE
+
+Dcl-S Result Int(3);
 
 Select;
   When (1 = 2);

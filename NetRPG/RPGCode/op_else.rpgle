@@ -1,4 +1,6 @@
-﻿Dcl-s Result Int(3) Inz(0);
+﻿**FREE
+
+Dcl-s Result Int(3) Inz(0);
 
 If (1 = 2)
   Result = 1;

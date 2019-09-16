@@ -1,3 +1,4 @@
+**FREE
 
 Dcl-Ds MyDS Qualified;
   Dcl-Subf Field1 Char(5);

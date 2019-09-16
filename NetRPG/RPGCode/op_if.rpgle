@@ -1,4 +1,6 @@
-﻿Dcl-s MyInd Ind;
+﻿**FREE
+
+Dcl-s MyInd Ind;
 Dcl-S MyInt Int(3) Inz(0);
 
 MyInd = (1 = 1);

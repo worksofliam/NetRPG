@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-S MyChar   Char(5)     Inz('Hello');
 Dcl-S MyInt    Int(5)      Inz(42);
 Dcl-S MyPacked Packed(9:2) Inz(1234.56);

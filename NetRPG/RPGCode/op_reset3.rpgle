@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-Ds MyStruct Qualified;
   Dcl-subf field1 Char(11) Inz('Hello world');
   Dcl-subf field2 Int(5)   Inz(134);

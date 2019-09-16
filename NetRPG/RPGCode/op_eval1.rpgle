@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-s MyInd Ind;
 Dcl-S MyInt Int(3) Inz(0);
 

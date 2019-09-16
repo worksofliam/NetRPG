@@ -1,4 +1,6 @@
-﻿Dcl-S MyGlobal Char(5);
+﻿**FREE
+
+Dcl-S MyGlobal Char(5);
 
 //MyGlobal = 'Hello';
 

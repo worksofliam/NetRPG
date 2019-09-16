@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-Ds MyDSArr Qualified Dim(2);
   Dcl-Subf Boom Char(10) Inz('Hello');
   Dcl-Subf Num  Int(3)   Inz(21);

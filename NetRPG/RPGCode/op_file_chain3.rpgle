@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-F example keyed;
 Dcl-F users keyed;
 
