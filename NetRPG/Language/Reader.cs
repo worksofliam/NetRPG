@@ -181,7 +181,11 @@ namespace NetRPG.Language
                             Configurations["DATFMT"] = tokens[i + 1].Block?[0].Value;
                             break;
                         case "CCSID": //TODO: handle CCSID numbers instead of .net encoding types
-                            Configurations["CCSID"] = tokens[i + 1].Block?[0].Value;
+                            if (tokens[i + 1].Block?[0].Type == RPGLex.Type.INT_LITERAL) {
+                                Configurations["CCSID"] = tokens[i + 1].Block?[0].Value;
+                            } else {
+                                Error.ThrowCompileError("CCSID provided must be of type integer.");
+                            }
                             break;
                     }
                     i++;
@@ -1140,12 +1144,8 @@ namespace NetRPG.Language
                                     {
                                         switch (tokens[i].Value) {
                                             case "x":
-                                                byte[] raw = new byte[tokens[i + 1].Value.ToUpper().Length / 2];
-                                                for (int x = 0; x < raw.Length; x++)
-                                                    raw[x] = Convert.ToByte(tokens[i + 1].Value.Substring(x * 2, 2), 16);
-
                                                 //Encoding enc = Encoding.GetEncoding(Configurations["CCSID"]);
-                                                token = new RPGToken(RPGLex.Type.STRING_LITERAL, Encoding.ASCII.GetString(Encoding.Convert(Encoding.GetEncoding(Configurations["CCSID"]), Encoding.ASCII, raw)));
+                                                token = new RPGToken(RPGLex.Type.STRING_LITERAL, EBCDIC.ConvertHex(EBCDIC.GetEncoding(int.Parse(Configurations["CCSID"])), tokens[i + 1].Value));
                                                 ChangeMade = true;
                                                 break;
                                             case "d":
