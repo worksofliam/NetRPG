@@ -13,7 +13,7 @@ namespace NetRPG.Language
             for (int x = 0; x < raw.Length; x++)
                 raw[x] = Convert.ToByte(hex.Substring(x * 2, 2), 16);
 
-            return Encoding.ASCII.GetString(Encoding.Convert(Encoding.GetEncoding(from), Encoding.ASCII, raw));
+            return Encoding.UTF32.GetString(Encoding.Convert(Encoding.GetEncoding(from), Encoding.UTF32, raw));
         }
 
         private static readonly Dictionary<int, string> EncodingMap = new Dictionary<int, string>() {
