@@ -9,11 +9,18 @@ using System.Text;
 
 namespace NetRPG.Language
 {
+    class LoopInfo {
+        public List<RPGToken> Assignee;
+        public List<RPGToken> Expr;
+        public bool isUpTo;
+    }
+
     class Labels
     {
         public enum LabelType {
             Normal, Iter, Leave
         }
+        private static List<LoopInfo> LoopInfos = new List<LoopInfo>();
         private static List<string> LeaveLabels = new List<string>();
         private static List<string> IterLabels = new List<string>();
         private static List<String> _Labels = new List<String>();
@@ -54,6 +61,16 @@ namespace NetRPG.Language
         
         public static String getLastLeaveScope() {
             return LeaveLabels[LeaveLabels.Count - 1];
+        }
+
+        public static void AddLoop(LoopInfo loop) {
+            LoopInfos.Add(loop);
+        }
+        public static LoopInfo GetLastLoop() {
+            LoopInfo Out = LoopInfos[LoopInfos.Count - 1];
+            LoopInfos.RemoveAt(LoopInfos.Count - 1);
+
+            return Out;
         }
 
     }
@@ -565,6 +582,114 @@ namespace NetRPG.Language
                     break;
 
                 case "ENDDO":
+                    end = Labels.getLastScope();
+                    start = Labels.getLastScope();
+                    CurrentProcudure.AddInstruction(Instructions.BR, start);
+                    CurrentProcudure.AddInstruction(Instructions.LABEL, end);
+                    Labels.Scope++;
+                    break;
+
+                case "FOR":
+                    //START FOR VALUE TO/DOWNTO VALUE
+                    int stage = 0;
+                    //0 = index expression
+                    //1 = starting expression (assignment)
+                    //2 = by expression
+                    //3 = to expression
+                    
+                    bool isUpTo = false;
+                    List<RPGToken> indexExp = new List<RPGToken>();
+                    List<RPGToken> startingExp = new List<RPGToken>();
+                    List<RPGToken> byExp = new List<RPGToken>();
+                    List<RPGToken> toExpr = new List<RPGToken>();
+
+                    for (var i = 1; i < tokens.Length; i++) {
+                        switch (tokens[i].Type) {
+                            case RPGLex.Type.EQUALS:
+                                stage = 1;
+                                break;
+
+                            default:
+                                switch (tokens[i].Value.ToUpper()) {
+                                    case "BY":
+                                        stage = 2;
+                                        break;
+                                    case "TO":
+                                        stage = 3;
+                                        isUpTo = true;
+                                        break;
+                                    case "DOWNTO":
+                                        stage = 3;
+                                        isUpTo = false;
+                                        break;
+                                    default:
+                                        switch (stage) {
+                                            case 0:
+                                                indexExp.Add(tokens[i]);
+                                                break;
+                                            case 1:
+                                                startingExp.Add(tokens[i]);
+                                                break;
+                                            case 2:
+                                                byExp.Add(tokens[i]);
+                                                break;
+                                            case 3:
+                                                toExpr.Add(tokens[i]);
+                                                break;
+                                        }
+                                        break;
+                                }
+                                break;
+                        }
+                    }
+                    
+                    if (startingExp.Count > 0) {
+                        ParseAssignment(indexExp); //Load the assigning to variable
+                        ParseExpression(startingExp); //Load the assigning to variable
+                        CurrentProcudure.AddInstruction(Instructions.STORE);
+                    }
+
+                    //And starting label
+                    CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getScope());
+                    Labels.Add(Labels.getScope(), Labels.LabelType.Iter);
+                    Labels.Scope++;
+
+                    //Create expression
+                    ParseExpression(indexExp);
+                    ParseExpression(toExpr);
+
+                    if (isUpTo) 
+                        CurrentProcudure.AddInstruction(Instructions.GREATER);
+                    else
+                        CurrentProcudure.AddInstruction(Instructions.LESSER);
+
+                    //ending loop label
+                    CurrentProcudure.AddInstruction(Instructions.BRTRUE, Labels.getScope());
+                    Labels.Add(Labels.getScope(), Labels.LabelType.Leave);
+                    Labels.Scope++;
+
+                    //If no BY is passed, default to 1
+                    if (byExp.Count == 0)
+                        byExp.Add(new RPGToken(RPGLex.Type.INT_LITERAL, "1"));
+                    
+                    Labels.AddLoop(new LoopInfo{Expr = byExp, Assignee = indexExp, isUpTo = isUpTo});
+                    break;
+
+                case "ENDFOR":
+                    LoopInfo curLoop = Labels.GetLastLoop();
+
+                    ParseAssignment(curLoop.Assignee); //Assigning to
+                    //New value
+                    ParseExpression(curLoop.Assignee);
+                    ParseExpression(curLoop.Expr);
+
+                    if (curLoop.isUpTo)
+                        CurrentProcudure.AddInstruction(Instructions.ADD);
+                    else
+                        CurrentProcudure.AddInstruction(Instructions.SUB);
+                    
+                    CurrentProcudure.AddInstruction(Instructions.STORE);
+
                     end = Labels.getLastScope();
                     start = Labels.getLastScope();
                     CurrentProcudure.AddInstruction(Instructions.BR, start);
