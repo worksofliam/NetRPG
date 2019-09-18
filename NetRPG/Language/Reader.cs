@@ -11,14 +11,24 @@ namespace NetRPG.Language
 {
     class Labels
     {
+        public enum LabelType {
+            Normal, Iter, Leave
+        }
+        private static List<string> LeaveLabels = new List<string>();
         private static List<string> IterLabels = new List<string>();
         private static List<String> _Labels = new List<String>();
         public static int Scope = 0;
-        public static void Add(string Label, bool IsIter = false)
+        public static void Add(string Label, LabelType type = LabelType.Normal)
         {
             _Labels.Add(Label);
-            if (IsIter)
-                IterLabels.Add(Label);
+            switch (type) {
+                case LabelType.Iter:
+                    IterLabels.Add(Label);
+                    break;
+                case LabelType.Leave:
+                    LeaveLabels.Add(Label);
+                    break;
+            }
         }
         public static String getScope()
         {
@@ -31,12 +41,19 @@ namespace NetRPG.Language
 
             if (IterLabels.Contains(Out))
                 IterLabels.Remove(Out);
+
+            if (LeaveLabels.Contains(Out))
+                LeaveLabels.Remove(Out);
             
             return Out;
         }
 
         public static String getLastIterScope() {
             return IterLabels[IterLabels.Count - 1];
+        }
+        
+        public static String getLastLeaveScope() {
+            return LeaveLabels[LeaveLabels.Count - 1];
         }
 
     }
@@ -525,19 +542,26 @@ namespace NetRPG.Language
                     break;
 
                 case "DOW":
+                    //beginning loop label
                     CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getScope());
-                    Labels.Add(Labels.getScope(), true);
+                    Labels.Add(Labels.getScope(), Labels.LabelType.Iter);
                     Labels.Scope++;
 
                     ParseExpression(tokens.Skip(1).ToList());
+                    //ending loop label
                     CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
-                    Labels.Add(Labels.getScope());
+                    Labels.Add(Labels.getScope(), Labels.LabelType.Leave);
                     Labels.Scope++;
                     break;
 
                 case "ITER":
                     start = Labels.getLastIterScope();
                     CurrentProcudure.AddInstruction(Instructions.BR, start);
+                    break;
+
+                case "LEAVE":
+                    end = Labels.getLastLeaveScope();
+                    CurrentProcudure.AddInstruction(Instructions.BR, end);
                     break;
 
                 case "ENDDO":
