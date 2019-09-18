@@ -11,11 +11,14 @@ namespace NetRPG.Language
 {
     class Labels
     {
+        private static List<string> IterLabels = new List<string>();
         private static List<String> _Labels = new List<String>();
         public static int Scope = 0;
-        public static void Add(string Label)
+        public static void Add(string Label, bool IsIter = false)
         {
             _Labels.Add(Label);
+            if (IsIter)
+                IterLabels.Add(Label);
         }
         public static String getScope()
         {
@@ -25,8 +28,17 @@ namespace NetRPG.Language
         {
             String Out = _Labels[_Labels.Count - 1];
             _Labels.RemoveAt(_Labels.Count - 1);
+
+            if (IterLabels.Contains(Out))
+                IterLabels.Remove(Out);
+            
             return Out;
         }
+
+        public static String getLastIterScope() {
+            return IterLabels[IterLabels.Count - 1];
+        }
+
     }
 
     public enum LOCATION {
@@ -514,13 +526,18 @@ namespace NetRPG.Language
 
                 case "DOW":
                     CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getScope());
-                    Labels.Add(Labels.getScope());
+                    Labels.Add(Labels.getScope(), true);
                     Labels.Scope++;
 
                     ParseExpression(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
                     Labels.Add(Labels.getScope());
                     Labels.Scope++;
+                    break;
+
+                case "ITER":
+                    start = Labels.getLastIterScope();
+                    CurrentProcudure.AddInstruction(Instructions.BR, start);
                     break;
 
                 case "ENDDO":
