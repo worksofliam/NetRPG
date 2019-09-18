@@ -187,7 +187,10 @@ namespace NetRPG.Language
                     CurrentRecord.Keywords.Add(option, value);
             } else {
                 foreach (string keyword in Keywords.Split(' ')) {
-                    CurrentField.Keywords.Add(keyword, "");
+                    if (CurrentField != null)
+                        CurrentField.Keywords.Add(keyword, "");
+                    else
+                        CurrentRecord.Keywords.Add(keyword, "");
                 }
             }
         }
