@@ -94,6 +94,7 @@ namespace NetRPG
             { "op_dow2.rpgle", 11},
             { "op_iter1.rpgle", 9 },
             { "op_leave1.rpgle", 5 },
+            { "op_leave2.rpgle", 5 },
             { "op_dsply.rpgle", 1 },
             { "op_eval1.rpgle", 10 },
             { "op_for1.rpgle", 11 },
