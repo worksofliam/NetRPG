@@ -19,6 +19,6 @@
      A            MENU          10   B 09 53CHECK(LC)
      A                                 10 17'Current library . . . . . . . . .'
      A            CURLIB        10   B 10 53CHECK(LC)
-     A  02        QSNERROR      80   O 24 01DSPATR(HI)
+     A* 02        QSNERROR      80   O 24 01DSPATR(HI)
      A            COPYRIGHT     40   O 24 40DSPATR(HI)
      A            UBUFFER      128   H
