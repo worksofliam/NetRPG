@@ -7,7 +7,7 @@ namespace NetRPG.Runtime
 {
     public class Module
     {
-        private Dictionary<string, string> FunctionReference;
+        private Dictionary<string, string> FunctionReference; //Used for internal functions
         public bool _HasDisplay;
         private Dictionary<string, DataSet> GlobalDataSets;
         private List<Procedure> Procedures;
