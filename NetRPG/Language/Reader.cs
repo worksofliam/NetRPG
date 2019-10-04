@@ -1000,6 +1000,13 @@ namespace NetRPG.Language
             for (int i = 0; i < tokens.Count; i++)
             {
                 token = tokens[i];
+
+                if (i + 1 < tokens.Count) {
+                    if (token.Type == tokens[i+1].Type) {
+                        Error.ThrowCompileError("Incorrect syntax inside of expression.", token.Line);
+                    }
+                }
+
                 switch (token.Type)
                 {
                     case RPGLex.Type.PARMS:

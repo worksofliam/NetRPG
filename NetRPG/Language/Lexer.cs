@@ -47,8 +47,11 @@ namespace NetRPG.Language
         private int cIndex = 0;
         private bool IsOperator = false;
         private int CurrentLine = 1;
-        public void Lex(string Text)
+        public void Lex(string Text, int lineNumber = 0)
         {
+            if (lineNumber > 0)
+                CurrentLine = lineNumber;
+                
             char c;
             TokenList.Block = new List<RPGToken>();
             while (cIndex < Text.Length)
