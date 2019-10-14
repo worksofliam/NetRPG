@@ -20,7 +20,7 @@ namespace NetRPG.Runtime.Typing.Files
         private Dictionary<string, View> localFields;
         public Display(string name, string file, bool userOpen) : base(name, file, userOpen) {
             this.Name = name;
-            _Path = Path.Combine(Environment.CurrentDirectory, "objects", file + ".dspf");
+            _Path = Path.Combine(Environment.CurrentDirectory, "RPGCode", file + ".dspf");
 
             if (!userOpen)
                 this.Open();
@@ -33,7 +33,7 @@ namespace NetRPG.Runtime.Typing.Files
             List<DataSet> subfields = null;
 
             DisplayParse parser = new DisplayParse();
-            parser.ParseFile(Path.Combine(Environment.CurrentDirectory, "objects", file + ".dspf"));
+            parser.ParseFile(Path.Combine(Environment.CurrentDirectory, "RPGCode", file + ".dspf"));
 
             foreach (RecordInfo format in parser.GetRecordFormats().Values) {
                 currentStruct = new DataSet(format.Name);

@@ -14,7 +14,7 @@ namespace NetRPG.Runtime.Functions.Operation
             {
                 string dataAreaName = (Parameters[0] as DataValue).GetDataArea();
                 if (dataAreaName != null) {
-                    return File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "objects", dataAreaName));
+                    return File.ReadAllText(Path.Combine(Environment.CurrentDirectory, "RPGCode", dataAreaName));
                 } else {
                     Error.ThrowRuntimeError("IN", "IN parameter requires DTAARA keyword.");
                 }
