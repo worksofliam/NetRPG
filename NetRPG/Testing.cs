@@ -175,7 +175,7 @@ namespace NetRPG
 
                     foreach (string file in files.Split(',')) {
                         Console.Write("Testing " + file.PadRight(35) + " ... ");
-                        SourcePath = Path.Combine(Environment.CurrentDirectory, "RPGCode", file);
+                        SourcePath = Path.Combine(Environment.CurrentDirectory, "objects", file);
 
                         prep = new Preprocessor();
                         prep.ReadFile(SourcePath);
