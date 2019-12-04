@@ -16,7 +16,7 @@ namespace NetRPG.Runtime
                 Window = new Typing.DisplayWindow ("NetRPG") {
                     X = 0,
                     Y = 0,
-                    Width = 82,
+                    Width = 83,
                     Height = 27
                 };
                 
