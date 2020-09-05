@@ -836,8 +836,14 @@ namespace NetRPG.Language
                                     //Always pass by ref, convert to value if needed at runtime
                                     //TODO: determine if need to pass by value (because expressions in the param)
                                     Parameters = Statement.ParseParams(tokens[i + 1].Block);
-                                    foreach (Statement parameter in Parameters)
-                                        ParseAssignment(parameter.GetTokens().ToList());
+                                    foreach (Statement parameter in Parameters) {
+                                        if (parameter._Tokens.Count == 1) {
+                                            //Usually indicates reference possibly?
+                                            ParseAssignment(parameter.GetTokens().ToList());
+                                        } else {
+                                            ParseExpression(parameter.GetTokens().ToList());
+                                        }
+                                    }
                                     AppendCount = Parameters.Length;
                                 }
                                 CurrentProcudure.AddInstruction(Instructions.LDINT, AppendCount.ToString());
