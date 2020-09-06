@@ -49,7 +49,10 @@ namespace NetRPG.Runtime
                     result = new Ind(this._Name, (string)this._InitialValue);
                     break;
 
-                case Types.Varying: //TEMPORARY
+                case Types.Varying:
+                    result = new VaryingCharacter(this._Name, this._Length, (string) this._InitialValue);
+                    break;
+
                 case Types.Character:
                     result = new Character(this._Name, this._Length, (string) this._InitialValue);
                     break;

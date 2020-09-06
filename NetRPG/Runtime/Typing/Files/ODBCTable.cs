@@ -56,7 +56,6 @@ namespace NetRPG.Runtime.Typing.Files
                 {
                     while (reader.Read())
                     {
-                        string word = reader.GetString(0);
                         // Word is from the database. Do something with it.
                         subfield = new DataSet(reader.GetString(0));
                         subfield._Type = Reader.StringToType(reader.GetString(4));
