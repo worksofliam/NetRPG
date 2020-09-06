@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-F department keyed;
 
 dcl-s output char(6) dim(2);

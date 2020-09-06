@@ -1,3 +1,5 @@
+**FREE
+
 Dcl-F department qualified;
 
 read department;

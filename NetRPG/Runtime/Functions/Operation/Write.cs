@@ -12,7 +12,7 @@ namespace NetRPG.Runtime.Functions.Operation
         {
             if (Parameters[0] is Structure)
             {
-                if (Parameters[1] is Display || Parameters[1] is Table) {
+                if (Parameters[1] is Display || Parameters[1] is ODBCTable) {
                     (Parameters[1] as FileT).Write(Parameters[0] as Structure);
                 } else {
                     Error.ThrowRuntimeError("WRITE", "Display or table required.");
