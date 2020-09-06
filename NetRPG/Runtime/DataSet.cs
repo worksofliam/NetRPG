@@ -49,6 +49,7 @@ namespace NetRPG.Runtime
                     result = new Ind(this._Name, (string)this._InitialValue);
                     break;
 
+                case Types.Varying: //TEMPORARY
                 case Types.Character:
                     result = new Character(this._Name, this._Length, (string) this._InitialValue);
                     break;
@@ -76,7 +77,7 @@ namespace NetRPG.Runtime
                     if (this._WorkStation) {
                         result = new Typing.Files.Display(this._Name, this._File, this._UserOpen);
                     } else {
-                        result = new Typing.Files.Table(this._Name, this._File, this._UserOpen);
+                        result = new Typing.Files.ODBCTable(this._Name, this._File, this._UserOpen);
                     }
                     break;
 

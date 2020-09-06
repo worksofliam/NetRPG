@@ -15,7 +15,7 @@ namespace NetRPG.Runtime.Typing.Files
         private List<Dictionary<string, dynamic>> _Data;
         private Boolean _EOF = false;
 
-        public Table(string name, string file, bool userOpen) : base(name, file, userOpen) {
+        public Table(string name, string file, bool userOpen) : base(name, userOpen) {
             this.Name = name;
             _Path = Path.Combine(Environment.CurrentDirectory, "objects", file + ".json");
 

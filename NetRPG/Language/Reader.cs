@@ -245,7 +245,7 @@ namespace NetRPG.Language
                         if (dataSet._WorkStation) {
                             structures = Runtime.Typing.Files.Display.CreateStructs(dataSet._File, dataSet._Qualified);
                         } else {
-                            structures = new [] {Runtime.Typing.Files.Table.CreateStruct(dataSet._File, dataSet._Qualified)};
+                            structures = new [] {Runtime.Typing.Files.ODBCTable.CreateStruct(dataSet._File, dataSet._Qualified)};
                         }
 
                         foreach (DataSet structure in structures) {

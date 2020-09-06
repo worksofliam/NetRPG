@@ -11,8 +11,8 @@ namespace NetRPG.Runtime.Typing
     class FileT : DataValue
     {
       private Boolean _EOF = false;
-      public FileT(string name, string file, bool userOpen) {
-      }
+      public FileT(string name, bool userOpen) {
+    }
 
       public virtual Boolean isEOF() => this._EOF;
 
