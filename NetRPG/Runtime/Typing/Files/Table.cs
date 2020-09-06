@@ -138,5 +138,15 @@ namespace NetRPG.Runtime.Typing.Files
 
             }
         }
+
+        public override void Write(DataValue Structure) {
+            Dictionary<string, dynamic> NewRow = new Dictionary<string, dynamic>();
+
+            foreach (string Subfield in Structure.GetSubfieldNames()) {
+                NewRow[Subfield] = Structure.Get(Subfield);
+            }
+
+            this._Data.Add(NewRow);
+        }
     }
 }

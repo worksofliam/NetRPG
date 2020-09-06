@@ -7,6 +7,7 @@ namespace NetRPG.Runtime
 {
     public class Module
     {
+        private Dictionary<string, string> FunctionReference; //Used for internal functions
         public bool _HasDisplay;
         private Dictionary<string, DataSet> GlobalDataSets;
         private List<Procedure> Procedures;
@@ -17,6 +18,7 @@ namespace NetRPG.Runtime
             GlobalDataSets = new Dictionary<string, DataSet>();
             Procedures = new List<Procedure>();
             _HasDisplay = false;
+            FunctionReference = new Dictionary<string, string>();
         }
 
         public string[] GetDataSetList() => GlobalDataSets.Keys.ToArray();
@@ -28,6 +30,16 @@ namespace NetRPG.Runtime
                 return null;
             }
         }
+
+        public void AddFunctionRef(string reference, string function) {
+            if (!FunctionReference.ContainsKey(reference)) {
+                FunctionReference.Add(reference, function);
+            }
+        }
+
+        public string[] GetReferences() => FunctionReference.Keys.ToArray();
+
+        public string GetReferenceFunc(string reference) => FunctionReference[reference];
 
         public Procedure[] GetProcedures() => Procedures.ToArray();
 

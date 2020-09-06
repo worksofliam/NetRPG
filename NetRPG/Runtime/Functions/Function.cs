@@ -1,75 +1,101 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Reflection;
 
 namespace NetRPG.Runtime.Functions
 {
     class Function
     {
+        private String[] FunctionAliases = { };
+
         //TODO: only add items to this list if it's used
         private static Dictionary<string, Function> List = new Dictionary<string, Function>
         {
-            { "DSPLY", new Operation.Dsply() },
-            { "IN", new Operation.In() },
-            { "RESET", new Operation.Reset() },
-            { "CLEAR", new Operation.Clear() },
-
-            { "OPEN", new Operation.Open() },
-            { "READ", new Operation.Read() },
-            { "READP", new Operation.ReadPrevious() },
-            { "CHAIN", new Operation.Chain() },
-            { "EXFMT", new Operation.ExecuteFormat() },
-            { "WRITE", new Operation.Write() },
-            { "%FOUND", new Operation.Found() },
-            { "%EOF", new Operation.EndOfFile() },
-
-            { "%ABS", new BIF.Abs() },
-            { "%CHAR", new BIF.Char() },
-            { "%DEC", new BIF.Dec() },
-            { "%DECH", new BIF.Dec() },
-            { "%DECPOS", new BIF.DecPos() },
-            { "%EDITC", new BIF.EditC() },
-            { "%ELEM", new BIF.Elem() },
-            { "%FLOAT", new BIF.Float() },
-            { "%INT", new BIF.Int() },
-            { "%LEN", new BIF.Len() },
-            { "%LOOKUP", new BIF.Lookup() },
-            { "%TRIM", new BIF.Trim() },
-            { "%TRIMR", new BIF.TrimR() },
-            { "%TRIML", new BIF.TrimL() },
-            { "%SCAN", new BIF.Scan() },
-            { "%SCANRPL", new BIF.ScanReplace() },
-            { "%XLATE", new BIF.Xlate() },
-
-            { "%TIMESTAMP", new BIF.Timestamp() },
-            { "%DATE", new BIF.Timestamp() },
-            { "%TIME", new BIF.Timestamp() },
-            
-            { "%SECONDS", new BIF.Seconds() },
-            { "%MINUTES", new BIF.Minutes() },
-            { "%HOURS", new BIF.Hours() },
-            { "%DAYS", new BIF.Days() },
-            { "%MONTHS", new BIF.Months() },
-            { "%YEARS", new BIF.Years() },
-            { "%DIFF", new BIF.Diff() },
-            { "%SUBDT", new BIF.SubDateTime() }
         };
 
-        public static bool IsFunction(string Name)
+        public static void AddFunctionReference(string functionIdentifier, string rpgFunctionName)
         {
-            return List.ContainsKey(Name.ToUpper());
+            Function result = null;
+
+            functionIdentifier = functionIdentifier.ToUpper();
+
+            result = CreateFunction(rpgFunctionName);
+
+            if (result == null)
+            {
+                Error.ThrowCompileError("Function '" + rpgFunctionName + "' does not exist in system.");
+            }
+            else
+            {
+                if (!List.ContainsKey(functionIdentifier))
+                    List.Add(functionIdentifier, result);
+            }
         }
 
-        public static Function GetFunction(string Name)
+        private static Function CreateFunction(string rpgFunctionName)
         {
-            Name = Name.ToUpper();
+            List<Type> types = new List<Type>();
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            foreach (Type type in assembly.GetTypes())
+            {
+                // Check if it's a class from the function namespace
+                if (type == null || type.Namespace == null || !type.Namespace.StartsWith("NetRPG.Runtime.Functions") || type.BaseType != typeof(Function))
+                {
+                    continue;
+                }
 
-            if (List.ContainsKey(Name))
-                return List[Name];
+                // If it's a build-in function, then add % as prefix to the classname
+                string prefix = type.Namespace.StartsWith("NetRPG.Runtime.Functions.BIF") ? "%" : "";
+
+                // Normalize RPG function and typename to find the correct function type
+                string normalizedFuncName = rpgFunctionName.ToUpper();
+                string normalizedTypeName = prefix + type.Name.ToUpper();
+
+                // Compare RPG function name with name of type and return instance of rpg function implementation if found
+                if (normalizedFuncName == normalizedTypeName)
+                {
+                    Function function = (Function)Activator.CreateInstance(type);
+                    return function;
+                }
+
+                // Check for alias
+                foreach (Attribute attribute in type.GetCustomAttributes())
+                {
+                    // If the current attribute is not a RPG function alias, then give next attribute
+                    if (attribute.GetType() != typeof(RPGFunctionAlias)) continue;
+
+                    RPGFunctionAlias rpgFunctionAlias = (RPGFunctionAlias)attribute;
+
+                    // Normalize RPG function alias name for comparisation
+                    string normalizedRPGFunctionAlias = rpgFunctionAlias.Alias.ToUpper();
+
+                    // Compare RPG function name with name of alias and return instance of rpg function implementation if found
+                    if (normalizedRPGFunctionAlias == normalizedFuncName)
+                    {
+                        Function function = (Function)Activator.CreateInstance(type);
+                        return function;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        public static bool IsFunction(string name)
+        {
+            return List.ContainsKey(name.ToUpper());
+        }
+
+        public static Function GetFunction(string name)
+        {
+            name = name.ToUpper();
+
+            if (List.ContainsKey(name))
+                return List[name];
             else
                 return null; //TODO: throw error
         }
-        
+
         public virtual object Execute(object[] Parameters)
         {
             return null;

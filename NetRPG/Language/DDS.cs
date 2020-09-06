@@ -47,6 +47,10 @@ namespace NetRPG.Language
                     x = buildString(chars, 41, 3).Trim();
                     keywords = Line.Substring(44).Trim();
 
+                    if (chars[6] == '*') {
+                        continue;
+                    }
+
                     switch (chars[16])
                     {
                         case 'R':
@@ -187,7 +191,10 @@ namespace NetRPG.Language
                     CurrentRecord.Keywords.Add(option, value);
             } else {
                 foreach (string keyword in Keywords.Split(' ')) {
-                    CurrentField.Keywords.Add(keyword, "");
+                    if (CurrentField != null)
+                        CurrentField.Keywords.Add(keyword, "");
+                    else
+                        CurrentRecord.Keywords.Add(keyword, "");
                 }
             }
         }

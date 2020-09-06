@@ -67,6 +67,11 @@ namespace NetRPG.Runtime
                 case Types.FixedDecimal: //Packed / Zoned
                     result = new FixedDecimal(this._Name, this._Type, this._Precision, Convert.ToDouble(this._InitialValue));
                     break;
+                
+                case Types.Float:
+                case Types.Double:
+                    result = new Float(this._Name, this._Type, Convert.ToDouble(this._InitialValue));
+                    break;
 
                 case Types.Timestamp:
                     result = new Timestamp(this._Name, Convert.ToInt32(this._InitialValue));

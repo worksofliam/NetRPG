@@ -7,11 +7,14 @@ namespace NetRPG.Runtime
 {
     public class Procedure
     {
+        public string _ParentModule;
         public string _Name;
         public Types _ReturnType;
         private List<Instruction> _Instructions;
         private Dictionary<string, bool> _Parameters; //Name, passByValue
         private Dictionary<string, DataSet> _DataSets;
+
+        private Dictionary<string, int> Labels;
 
         private bool _HasEntrypoint;
 
@@ -23,6 +26,8 @@ namespace NetRPG.Runtime
             _Parameters = new Dictionary<string, bool>();
             _DataSets = new Dictionary<string, DataSet>();
             _HasEntrypoint = false;
+
+            Labels = null;
         }
 
         public void AddDataSet(DataSet var)
@@ -38,7 +43,6 @@ namespace NetRPG.Runtime
                 _HasEntrypoint = true;
         }
 
-        //TODO: Get variables
         public Instruction[] GetInstructions() => _Instructions.ToArray();
         public string[] GetDataSetList() => _DataSets.Keys.ToArray();
         public DataSet GetDataSet(string Name)
@@ -50,6 +54,7 @@ namespace NetRPG.Runtime
                 return null;
             }
         }
+        public bool ContainsDataSet(string Name) => _DataSets.ContainsKey(Name);
 
         public void AddParameter(string value, bool byValue = false) => _Parameters.Add(value, byValue);
         public string[] GetParameterNames() => _Parameters.Keys.ToArray();
@@ -58,5 +63,20 @@ namespace NetRPG.Runtime
 
         public string GetName() => _Name;
         public bool HasEntrypoint => _HasEntrypoint;
+
+        public void CalculateLabels() {
+            Labels = new Dictionary<string, int>();
+
+            for(int i = 0; i < _Instructions.Count(); i++)
+                if (_Instructions[i]._Instruction == Instructions.LABEL)
+                    Labels.Add(_Instructions[i]._Value, i);
+        }
+
+        public int GetLabel(string Label) {
+            if (!Labels.ContainsKey(Label))
+                Error.ThrowRuntimeError("GetLabel", "Label '" + Label + " does not exist.");
+
+            return Labels[Label];
+        }
     }
 }

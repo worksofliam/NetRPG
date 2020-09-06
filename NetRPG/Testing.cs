@@ -34,6 +34,8 @@ namespace NetRPG
             { "dcl_inz.rpgle", "HelloWorld421234.5655" },
             { "dcl_likeds.rpgle", "     Hello" },
             { "assignment.rpgle", "Hello world    23421234.56" },
+            { "assignment2.rpgle", 12 },
+            { "assignment3.rpgle", 12 },
             { "addition.rpgle", "Hello world    23421234.56" },
             { "subtraction.rpgle", "5304.33" },
             { "division.rpgle", "44.1" },
@@ -56,6 +58,9 @@ namespace NetRPG
             { "bif_scanrpl.rpgle", "Hello friends  " },
             { "bif_xlate1.rpgle", "HELLO WORLD" },
             { "bif_xlate2.rpgle", "hello WORLD" },
+            { "bif_subst.rpgle", "HelloWorldWordef" },
+            { "bif_subst2.rpgle", "Wor" },
+            { "bif_replace.rpgle", "Toronto, CanadaToronto, ONScarborough, Ontario, Canada" },
 
             { "time_dcl_timestamp.rpgle", 500 },
             { "time_bif_timestamp.rpgle", true },
@@ -83,10 +88,18 @@ namespace NetRPG
             { "op_else.rpgle", 2 },
             { "op_elseif.rpgle", 2 },
             { "op_select.rpgle", 3 },
+            { "op_other1.rpgle", 3 },
+            { "op_other2.rpgle", 3 },
             { "op_dow.rpgle", 11 },
             { "op_dow2.rpgle", 11},
+            { "op_iter1.rpgle", 9 },
+            { "op_leave1.rpgle", 5 },
+            { "op_leave2.rpgle", 5 },
             { "op_dsply.rpgle", 1 },
             { "op_eval1.rpgle", 10 },
+            { "op_for1.rpgle", 11 },
+            { "op_for2.rpgle", 0 },
+            { "op_for3.rpgle", 5 },
 
             { "op_reset1.rpgle", "Hello world" },
             { "op_reset2.rpgle", 134 },
@@ -111,12 +124,21 @@ namespace NetRPG
             { "op_file_chain.rpgle", "My second "},
             { "op_file_chain2.rpgle", "My second My first p"},
             { "op_file_chain3.rpgle", "bethMy second"},
+            { "op_file_write.rpgle", "My new pro" },
+            { "bif_eof1.rpgle", 2 },
+            { "bif_eof2.rpgle", "01" },
 
             { "ind1.rpgle", "1" },
             { "ind2.rpgle", "1" },
             { "ind3.rpgle", "1" },
 
-            { "dcl_shared1.rpgle", "Hi        " }
+            { "dcl_shared1.rpgle", "Hi        " },
+            { "ile_module_a.rpgle,ile_module_b.rpgle", "You are Liam, you are 22 years old"},
+            { "system_printf.rpgle", 12},
+            { "system_dq.rpgle", "Hello world         "},
+
+            { "hex1.rpgle", "Hello world£" },
+            { "hex2.rpgle", "Hello world$" }
         };
 
         public static void RunTests(string testsStarting = "")
@@ -127,53 +149,67 @@ namespace NetRPG
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             string NewLine = (isWindows ? Environment.NewLine : "");
             Preprocessor prep;
-            RPGLex lexer;
             Statement[] Statements;
             Reader reader;
             VM vm;
+
+            DateTime start, end;
+            TimeSpan diff;
 
             int run = 0, passed = 0, failed = 0;
             Exception lastError = null;
 
             dynamic result;
 
-            foreach (string file in TestCases.Keys)
+            foreach (string files in TestCases.Keys)
             {
-                if (testsStarting == "" || file.StartsWith(testsStarting))
+                if (testsStarting == "" || files.StartsWith(testsStarting))
                 {
-                    run++;
-
-                    Console.Write("Testing " + file.PadRight(35) + " ... ");
-                    SourcePath = Path.Combine(Environment.CurrentDirectory, "RPGCode", file);
-
-                    prep = new Preprocessor();
-                    prep.ReadFile(SourcePath);
-
-                    lexer = new RPGLex();
-                    lexer.Lex(String.Join(NewLine, prep.GetLines()));
-
-                    Statements = Statement.ParseDocument(lexer.GetTokens());
-
-                    reader = new Reader();
-                    reader.ReadStatements(Statements);
+                    result = null;
+                    lastError = null;
 
                     vm = new VM(true);
+                    run++;
 
-                    try
-                    {
-                        vm.AddModule(reader.GetModule());
-                        result = vm.Run();
-                    }
-                    catch (Exception e)
-                    {
-                        lastError = e;
-                        result = null;
+                    start = DateTime.Now;
+
+                    foreach (string file in files.Split(',')) {
+                        Console.Write("Testing " + file.PadRight(35) + " ... ");
+                        SourcePath = Path.Combine(Environment.CurrentDirectory, "objects", file);
+
+                        prep = new Preprocessor();
+                        prep.ReadFile(SourcePath);
+
+                        Statements = Statement.ParseDocument(Preprocessor.GetTokens(prep.GetLines()));
+
+                        reader = new Reader();
+                        reader.ReadStatements(Statements);
+
+                        try {
+                            vm.AddModule(reader.GetModule());
+                        } catch (Exception e) {
+                            lastError = e;
+                        }
                     }
 
-                    if (result != null && result == TestCases[file])
+                    if (lastError == null) {
+                        try
+                        {
+                            result = vm.Run();
+                        }
+                        catch (Exception e)
+                        {
+                            lastError = e;
+                            result = null;
+                        }
+                    }
+                    end = DateTime.Now;
+                    diff = (end - start);
+
+                    if (result != null && result == TestCases[files])
                     {
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("successful.");
+                        Console.WriteLine("successful (" + diff.ToString(@"mm\:ss\:f\:ff") + ").");
                         Console.ForegroundColor = originalColor;
 
                         passed++;
@@ -190,10 +226,11 @@ namespace NetRPG
                             Console.WriteLine(lastError.StackTrace);
                             Console.WriteLine();
                         }
-                        reader.GetModule().Print();
-                        Console.WriteLine("\tExpected: '" + Convert.ToString(TestCases[file]) + "'");
+
+                        Console.WriteLine("\tExpected: '" + Convert.ToString(TestCases[files]) + "'");
                         Console.WriteLine("\tReturned: '" + Convert.ToString(result) + "'");
                         Console.WriteLine();
+                        vm.PrintModules();
 
                         lastError = null;
                         failed++;

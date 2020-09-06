@@ -7,30 +7,34 @@ using System.IO;
 
 namespace NetRPG {
     public class ApplicationRuntime {
-        public static void Execute(string path) {
+        public static void Execute(string[] paths) {
             bool isWindows = RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
             string NewLine = (isWindows ? Environment.NewLine : "");
-            Preprocessor prep;
-            RPGLex lexer;
-            Statement[] Statements;
-            Reader reader;
-            VM vm;
+            VM vm = new VM(false);
 
-            prep = new Preprocessor();
-            prep.ReadFile(path);
+            foreach (string path in paths) {
+                Preprocessor prep;
+                Statement[] Statements;
+                Reader reader;
+                
+                prep = new Preprocessor();
+                prep.ReadFile(path);
 
-            lexer = new RPGLex();
-            lexer.Lex(String.Join(NewLine, prep.GetLines()));
+                Statements = Statement.ParseDocument(Preprocessor.GetTokens(prep.GetLines()));
 
-            Statements = Statement.ParseDocument(lexer.GetTokens());
+                reader = new Reader();
+                reader.ReadStatements(Statements);
 
-            reader = new Reader();
-            reader.ReadStatements(Statements);
-
-            vm = new VM(true);
+                try {
+                    vm.AddModule(reader.GetModule());
+                } catch (Exception e) {
+                    Console.WriteLine("Failed to add module: " + path);
+                    Console.WriteLine(e.Message);
+                    Console.WriteLine(e.StackTrace);
+                } 
+            }
 
             try {
-                vm.AddModule(reader.GetModule());
                 vm.Run();
             } catch (Exception e) {
                 Console.WriteLine(e.Message);

@@ -1,0 +1,24 @@
+     A          R SIGNON
+     A                                      BLINK
+     A                                 01 23'             Sign On             '
+     A                                      COLOR(WHT)
+     A                                 02 48'System  . . . . . :'
+     A            SYSNAME        8   O 02 70
+     A                                 03 48'Subsystem . . . . :'
+     A            SBSNAME       10   O 03 70
+     A                                 04 48'Display . . . . . :'
+     A            DEVNAME       10   O 04 70
+     A                                 06 17'User  . . . . . . . . . . . . . .'
+     A            USERID        10   B 06 53
+     A  01                             07 17'Password  . . . . . . . . . . . .'
+     A  01        PASSWRD       10   I 07 53
+     A                                      DSPATR(ND)
+     A                                 08 17'Program/procedure . . . . . . . .'
+     A            PROGRAM       10   B 08 53CHECK(LC)
+     A                                 09 17'Menu  . . . . . . . . . . . . . .'
+     A            MENU          10   B 09 53CHECK(LC)
+     A                                 10 17'Current library . . . . . . . . .'
+     A            CURLIB        10   B 10 53CHECK(LC)
+     A* 02        QSNERROR      80   O 24 01DSPATR(HI)
+     A            COPYRIGHT     40   O 24 40DSPATR(HI)
+     A            UBUFFER      128   H

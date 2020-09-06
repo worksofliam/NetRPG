@@ -4,6 +4,7 @@ using System.Text;
 
 namespace NetRPG.Runtime.Functions.BIF
 {
+    [RPGFunctionAlias("%DECH")]
     class Dec : Function
     {
         public override object Execute(object[] Parameters)

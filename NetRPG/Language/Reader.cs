@@ -5,16 +5,37 @@ using NetRPG.Runtime;
 
 using System.Globalization;
 using System.Threading;
+using System.Text;
 
 namespace NetRPG.Language
 {
+    class LoopInfo {
+        public List<RPGToken> Assignee;
+        public List<RPGToken> Expr;
+        public bool isUpTo;
+    }
+
     class Labels
     {
+        public enum LabelType {
+            Normal, Iter, Leave
+        }
+        private static List<LoopInfo> LoopInfos = new List<LoopInfo>();
+        private static List<string> LeaveLabels = new List<string>();
+        private static List<string> IterLabels = new List<string>();
         private static List<String> _Labels = new List<String>();
         public static int Scope = 0;
-        public static void Add(string Label)
+        public static void Add(string Label, LabelType type = LabelType.Normal)
         {
             _Labels.Add(Label);
+            switch (type) {
+                case LabelType.Iter:
+                    IterLabels.Add(Label);
+                    break;
+                case LabelType.Leave:
+                    LeaveLabels.Add(Label);
+                    break;
+            }
         }
         public static String getScope()
         {
@@ -24,8 +45,34 @@ namespace NetRPG.Language
         {
             String Out = _Labels[_Labels.Count - 1];
             _Labels.RemoveAt(_Labels.Count - 1);
+
+            if (IterLabels.Contains(Out))
+                IterLabels.Remove(Out);
+
+            if (LeaveLabels.Contains(Out))
+                LeaveLabels.Remove(Out);
+            
             return Out;
         }
+
+        public static String getLastIterScope() {
+            return IterLabels[IterLabels.Count - 1];
+        }
+        
+        public static String getLastLeaveScope() {
+            return LeaveLabels[LeaveLabels.Count - 1];
+        }
+
+        public static void AddLoop(LoopInfo loop) {
+            LoopInfos.Add(loop);
+        }
+        public static LoopInfo GetLastLoop() {
+            LoopInfo Out = LoopInfos[LoopInfos.Count - 1];
+            LoopInfos.RemoveAt(LoopInfos.Count - 1);
+
+            return Out;
+        }
+
     }
 
     public enum LOCATION {
@@ -55,6 +102,8 @@ namespace NetRPG.Language
 
         private Dictionary<string, string> RecordFormatDisplays;
 
+        private int SelectCount;
+
         private string DateFormat = "MM/dd/yy";
 
         public Reader()
@@ -83,14 +132,25 @@ namespace NetRPG.Language
             GlobalSubfields.Add(indName, new CompileTimeSubfield(LOCATION.Global, "IND"));
 
             _Module.AddDataSet(inds);
+
+            SelectCount = 0;
+
+            Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+
+            Configurations = new Dictionary<string, string>();
+            Configurations.Add("DATFMT", "en-UK");
+            Configurations.Add("CCSID", "IBM285");
         }
 
+        private Dictionary<string, string> Configurations;
+
+        private bool isPR;
         public void ReadStatements(Statement[] Statements)
         {
             RPGToken[] tokens;
 
             //TODO need to figure out how to put this into the DATFMT control opt
-            Thread.CurrentThread.CurrentCulture = new CultureInfo("en-UK");
+            Thread.CurrentThread.CurrentCulture = new CultureInfo(Configurations["DATFMT"]);
 
             foreach (Statement statement in Statements)
             {
@@ -99,8 +159,7 @@ namespace NetRPG.Language
                 switch (tokens[0].Type)
                 {
                     case RPGLex.Type.CTL:
-                        //Handle this here
-                        //TODO handle date format
+                        HandleControlOptions(tokens);
                         break;
                     case RPGLex.Type.DCL:
                         HandleDeclare(tokens);
@@ -156,6 +215,30 @@ namespace NetRPG.Language
             }
         }
 
+        private void HandleControlOptions(RPGToken[] tokens) {
+            for (int i = 3; i < tokens.Length; i++)
+            {
+                if (i + 1 < tokens.Length && tokens[i + 1].Type == RPGLex.Type.BLOCK)
+                {
+                    switch (tokens[i].Value.ToUpper())
+                    {
+                        case "DATFMT":
+                            //TODO: Handle RPG DATFMT special values
+                            Configurations["DATFMT"] = tokens[i + 1].Block?[0].Value;
+                            break;
+                        case "CCSID": //TODO: handle CCSID numbers instead of .net encoding types
+                            if (tokens[i + 1].Block?[0].Type == RPGLex.Type.INT_LITERAL) {
+                                Configurations["CCSID"] = tokens[i + 1].Block?[0].Value;
+                            } else {
+                                Error.ThrowCompileError("CCSID provided must be of type integer.");
+                            }
+                            break;
+                    }
+                    i++;
+                }
+            }
+        }
+
         private void HandleDeclare(RPGToken[] tokens)
         {
             //TODO: Check if DataSet already exists?
@@ -163,7 +246,6 @@ namespace NetRPG.Language
             DataSet[] structures;
             LOCATION currentLocation;
             string length = "";
-            Dictionary<string, string> config = new Dictionary<string, string>();
 
             for (int i = 3; i < tokens.Length; i++)
             {
@@ -183,6 +265,10 @@ namespace NetRPG.Language
                             break;
                         case "USROPN":
                             dataSet._UserOpen = true;
+                            break;
+                        case "EXTPGM":
+                        case "EXTPROC":
+                            dataSet._File = tokens[i + 1].Block?[0].Value;
                             break;
                     }
                     i++;
@@ -282,6 +368,7 @@ namespace NetRPG.Language
                         break;
 
                     case "PROC":
+                        isPR = false;
                         if (CurrentProcudure != null)
                             _Module.AddProcedure(CurrentProcudure);
 
@@ -289,6 +376,7 @@ namespace NetRPG.Language
                         dataSet = null;
                         break;
                     case "PI":
+                        isPR = false;
                         if (tokens.Count() >= 6)
                         {
                             length = tokens?[5].Block?[0].Value;
@@ -299,17 +387,33 @@ namespace NetRPG.Language
 
                         dataSet = null;
                         break;
+                    case "PR":
+                        isPR = true;
+                        
+                        _Module.AddFunctionRef(dataSet._Name, dataSet._File);
+
+                        dataSet = null;
+                        break;
 
                     case "PARM":
+                        if (isPR) {
+                            dataSet = null;
+                            break;
+                        }
+
                         dataSet._Precision = 0;
                         if (tokens.Count() >= 6)
                         {
-                            length = tokens?[5].Block?[0].Value;
 
-                            if (tokens[5]?.Block.Count >= 3)
-                                dataSet._Precision = int.Parse(tokens[5]?.Block?[2].Value);
+                            if (tokens[5]?.Block != null) {
+                                length = tokens?[5].Block?[0].Value;
+                                if (tokens[5]?.Block.Count >= 3)
+                                    dataSet._Precision = int.Parse(tokens[5]?.Block?[2].Value);
 
-                            int.TryParse(tokens[5]?.Block?[0].Value, out dataSet._Length);
+                                int.TryParse(tokens[5]?.Block?[0].Value, out dataSet._Length);
+                            } else {
+                                length = "0";
+                            }
                         }
 
                         dataSet._Type = StringToType(tokens[4].Value, length);
@@ -365,6 +469,9 @@ namespace NetRPG.Language
                 case "PACKED":
                     return Types.FixedDecimal;
 
+                case "POINTER":
+                    return Types.Pointer;
+
                 case "LIKEDS":
                     return Types.Structure;
             }
@@ -415,6 +522,10 @@ namespace NetRPG.Language
                 case "SELECT":
                     Labels.Add(Labels.getScope());
                     Labels.Scope++;
+
+                    this.SelectCount += 1;
+                    if (!CurrentProcudure.ContainsDataSet("SELECT" + this.SelectCount.ToString()))
+                        CurrentProcudure.AddDataSet(new DataSet("SELECT" + this.SelectCount.ToString()){_Type = Types.Ind, _InitialValue = "1"});
                     break;
                 case "WHEN":
                     forElse = Labels.getLastScope();
@@ -423,6 +534,11 @@ namespace NetRPG.Language
                     Labels.Add(Labels.getScope());
                     ParseExpression(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
+
+                    CurrentProcudure.AddInstruction(Instructions.LDVARD, "SELECT" + this.SelectCount.ToString());
+                    CurrentProcudure.AddInstruction(Instructions.LDSTR, "0"); //*off
+                    CurrentProcudure.AddInstruction(Instructions.STORE);
+
                     Labels.Scope++;
                     break;
                 case "OTHER":
@@ -430,7 +546,7 @@ namespace NetRPG.Language
                     CurrentProcudure.AddInstruction(Instructions.LABEL, forElse);
 
                     Labels.Add(Labels.getScope());
-                    CurrentProcudure.AddInstruction(Instructions.LDSTR, "1"); //*on
+                    CurrentProcudure.AddInstruction(Instructions.LDVARV, "SELECT" + this.SelectCount.ToString()); //*should be star on
                     CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
                     Labels.Scope++;
                     break;
@@ -438,19 +554,142 @@ namespace NetRPG.Language
                 case "ENDSL":
                     CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getLastScope());
                     Labels.Scope++;
+
+                    this.SelectCount -= 1;
                     break;
 
                 case "DOW":
+                    //beginning loop label
                     CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getScope());
-                    Labels.Add(Labels.getScope());
+                    Labels.Add(Labels.getScope(), Labels.LabelType.Iter);
                     Labels.Scope++;
 
                     ParseExpression(tokens.Skip(1).ToList());
+                    //ending loop label
                     CurrentProcudure.AddInstruction(Instructions.BRFALSE, Labels.getScope());
-                    Labels.Add(Labels.getScope());
+                    Labels.Add(Labels.getScope(), Labels.LabelType.Leave);
                     Labels.Scope++;
                     break;
+
+                case "ITER":
+                    start = Labels.getLastIterScope();
+                    CurrentProcudure.AddInstruction(Instructions.BR, start);
+                    break;
+
+                case "LEAVE":
+                    end = Labels.getLastLeaveScope();
+                    CurrentProcudure.AddInstruction(Instructions.BR, end);
+                    break;
+
                 case "ENDDO":
+                    end = Labels.getLastScope();
+                    start = Labels.getLastScope();
+                    CurrentProcudure.AddInstruction(Instructions.BR, start);
+                    CurrentProcudure.AddInstruction(Instructions.LABEL, end);
+                    Labels.Scope++;
+                    break;
+
+                case "FOR":
+                    //START FOR VALUE TO/DOWNTO VALUE
+                    int stage = 0;
+                    //0 = index expression
+                    //1 = starting expression (assignment)
+                    //2 = by expression
+                    //3 = to expression
+                    
+                    bool isUpTo = false;
+                    List<RPGToken> indexExp = new List<RPGToken>();
+                    List<RPGToken> startingExp = new List<RPGToken>();
+                    List<RPGToken> byExp = new List<RPGToken>();
+                    List<RPGToken> toExpr = new List<RPGToken>();
+
+                    for (var i = 1; i < tokens.Length; i++) {
+                        switch (tokens[i].Type) {
+                            case RPGLex.Type.EQUALS:
+                                stage = 1;
+                                break;
+
+                            default:
+                                switch (tokens[i].Value.ToUpper()) {
+                                    case "BY":
+                                        stage = 2;
+                                        break;
+                                    case "TO":
+                                        stage = 3;
+                                        isUpTo = true;
+                                        break;
+                                    case "DOWNTO":
+                                        stage = 3;
+                                        isUpTo = false;
+                                        break;
+                                    default:
+                                        switch (stage) {
+                                            case 0:
+                                                indexExp.Add(tokens[i]);
+                                                break;
+                                            case 1:
+                                                startingExp.Add(tokens[i]);
+                                                break;
+                                            case 2:
+                                                byExp.Add(tokens[i]);
+                                                break;
+                                            case 3:
+                                                toExpr.Add(tokens[i]);
+                                                break;
+                                        }
+                                        break;
+                                }
+                                break;
+                        }
+                    }
+                    
+                    if (startingExp.Count > 0) {
+                        ParseAssignment(indexExp); //Load the assigning to variable
+                        ParseExpression(startingExp); //Load the assigning to variable
+                        CurrentProcudure.AddInstruction(Instructions.STORE);
+                    }
+
+                    //And starting label
+                    CurrentProcudure.AddInstruction(Instructions.LABEL, Labels.getScope());
+                    Labels.Add(Labels.getScope(), Labels.LabelType.Iter);
+                    Labels.Scope++;
+
+                    //Create expression
+                    ParseExpression(indexExp);
+                    ParseExpression(toExpr);
+
+                    if (isUpTo) 
+                        CurrentProcudure.AddInstruction(Instructions.GREATER);
+                    else
+                        CurrentProcudure.AddInstruction(Instructions.LESSER);
+
+                    //ending loop label
+                    CurrentProcudure.AddInstruction(Instructions.BRTRUE, Labels.getScope());
+                    Labels.Add(Labels.getScope(), Labels.LabelType.Leave);
+                    Labels.Scope++;
+
+                    //If no BY is passed, default to 1
+                    if (byExp.Count == 0)
+                        byExp.Add(new RPGToken(RPGLex.Type.INT_LITERAL, "1"));
+                    
+                    Labels.AddLoop(new LoopInfo{Expr = byExp, Assignee = indexExp, isUpTo = isUpTo});
+                    break;
+
+                case "ENDFOR":
+                    LoopInfo curLoop = Labels.GetLastLoop();
+
+                    ParseAssignment(curLoop.Assignee); //Assigning to
+                    //New value
+                    ParseExpression(curLoop.Assignee);
+                    ParseExpression(curLoop.Expr);
+
+                    if (curLoop.isUpTo)
+                        CurrentProcudure.AddInstruction(Instructions.ADD);
+                    else
+                        CurrentProcudure.AddInstruction(Instructions.SUB);
+                    
+                    CurrentProcudure.AddInstruction(Instructions.STORE);
+
                     end = Labels.getLastScope();
                     start = Labels.getLastScope();
                     CurrentProcudure.AddInstruction(Instructions.BR, start);
@@ -462,6 +701,7 @@ namespace NetRPG.Language
                     ParseExpression(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "DSPLY");
+                    _Module.AddFunctionRef("DSPLY", "DSPLY");
                     break;
                 case "RETURN":
                     ParseExpression(tokens.Skip(1).ToList());
@@ -476,12 +716,14 @@ namespace NetRPG.Language
                     ParseAssignment(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "RESET");
+                    _Module.AddFunctionRef("RESET", "RESET");
                     break;
 
                 case "CLEAR":
                     ParseAssignment(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "CLEAR");
+                    _Module.AddFunctionRef("CLEAR", "CLEAR");
                     break;
 
                 case "IN": //No support for *LOCK
@@ -490,6 +732,7 @@ namespace NetRPG.Language
                     ParseAssignment(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "IN");
+                    _Module.AddFunctionRef("IN", "IN");
 
                     //Then store result of in function
                     CurrentProcudure.AddInstruction(Instructions.STORE);
@@ -499,6 +742,7 @@ namespace NetRPG.Language
                     ParseAssignment(tokens.Skip(1).ToList());
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "OPEN");
+                    _Module.AddFunctionRef("OPEN", "OPEN");
                     break;
 
                 case "READ":
@@ -510,6 +754,7 @@ namespace NetRPG.Language
 
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "2");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "READ");
+                    _Module.AddFunctionRef("READ", "READ");
                     break;
 
                 case "READP":
@@ -521,6 +766,7 @@ namespace NetRPG.Language
 
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "2");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "READP");
+                    _Module.AddFunctionRef("READP", "READP");
                     break;
 
                 case "CHAIN": 
@@ -544,6 +790,7 @@ namespace NetRPG.Language
 
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "3");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "CHAIN");
+                    _Module.AddFunctionRef("CHAIN", "CHAIN");
                     break;
 
                 case "EXFMT":
@@ -560,6 +807,7 @@ namespace NetRPG.Language
                     
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "3");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "EXFMT");
+                    _Module.AddFunctionRef("EXFMT", "EXFMT");
                     break;
 
                 case "WRITE":
@@ -567,11 +815,17 @@ namespace NetRPG.Language
                     ParseAssignment(tokens.Skip(1).ToList()); //Load the DS first
 
                     //Then load the table
-                    tokens[1].Value = RecordFormatDisplays[tokens[1].Value];
+                    if (RecordFormatDisplays.ContainsKey(tokens[1].Value)) {
+                        tokens[1].Value = RecordFormatDisplays[tokens[1].Value];
+                    } else {
+                        tokens[1].Value += "_table";
+                    }
+
                     ParseAssignment(tokens.Skip(1).ToList());
                     
                     CurrentProcudure.AddInstruction(Instructions.LDINT, "2");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "WRITE");
+                    _Module.AddFunctionRef("WRITE", "WRITE");
                     break;
 
                 default:
@@ -593,9 +847,10 @@ namespace NetRPG.Language
 
             int assignIndex = -1;
 
+            //We do this incase we are assigning to a DS
             for (var i = 0; i < tokens.Count(); i++)
             {
-                if (tokens[i].Type == RPGLex.Type.EQUALS)
+                if (tokens[i].Type == RPGLex.Type.EQUALS || tokens[i].Type == RPGLex.Type.ASSIGNMENT)
                 {
                     assignIndex = i;
                     break;
@@ -610,9 +865,34 @@ namespace NetRPG.Language
             else
             {
                 //Usually an assignment
-                ParseAssignment(tokens.Take(assignIndex).ToList());
-                ParseExpression(tokens.Skip(assignIndex + 1).ToList());
-                CurrentProcudure.AddInstruction(Instructions.STORE);
+                ParseAssignment(tokens.Take(assignIndex).ToList()); //Load the assigning to variable
+
+                if (tokens[assignIndex].Type == RPGLex.Type.ASSIGNMENT) { //If it's a weird assignment, e.g. not EQUAL
+                    ParseExpression(tokens.Take(assignIndex).ToList()); //Load the assigning to variable for expression
+                }
+
+                ParseExpression(tokens.Skip(assignIndex + 1).ToList()); //Load the expression
+                if (tokens[assignIndex].Type == RPGLex.Type.ASSIGNMENT) { //If it's a weird assignment, e.g. not EQUAL
+                    switch (tokens[assignIndex].Value) {
+                        case "+=": 
+                            CurrentProcudure.AddInstruction(Instructions.ADD); //Store it
+                            break;
+                        case "-=": 
+                            CurrentProcudure.AddInstruction(Instructions.SUB); //Store it
+                            break;
+                        case "/=": 
+                            CurrentProcudure.AddInstruction(Instructions.DIV); //Store it
+                            break;
+                        case "*=": 
+                            CurrentProcudure.AddInstruction(Instructions.MUL); //Store it
+                            break;
+                        case "**=": 
+                            Error.ThrowCompileError("Power to assignment not yet implemented.", tokens[assignIndex].Line);
+                            break;
+                    }
+                }
+
+                CurrentProcudure.AddInstruction(Instructions.STORE); //Store it
             }
         }
 
@@ -633,6 +913,7 @@ namespace NetRPG.Language
                         {
                             ParseExpression(tokens[i + 1].Block);
                             CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
+                            _Module.AddFunctionRef(token.Value, token.Value);
                             i++;
                         }
                         else
@@ -719,6 +1000,13 @@ namespace NetRPG.Language
             for (int i = 0; i < tokens.Count; i++)
             {
                 token = tokens[i];
+
+                if (i + 1 < tokens.Count) {
+                    if (token.Type == tokens[i+1].Type) {
+                        Error.ThrowCompileError("Incorrect syntax inside of expression.", token.Line);
+                    }
+                }
+
                 switch (token.Type)
                 {
                     case RPGLex.Type.PARMS:
@@ -788,6 +1076,7 @@ namespace NetRPG.Language
                                     CurrentProcudure.AddInstruction(Instructions.CALL, token.Value);
                                     break;
                             }
+                            _Module.AddFunctionRef(token.Value, token.Value);
                             
                             i++;
                         }
@@ -836,14 +1125,11 @@ namespace NetRPG.Language
                                     //Always pass by ref, convert to value if needed at runtime
                                     //TODO: determine if need to pass by value (because expressions in the param)
                                     Parameters = Statement.ParseParams(tokens[i + 1].Block);
-                                    foreach (Statement parameter in Parameters) {
-                                        if (parameter._Tokens.Count == 1) {
-                                            //Usually indicates reference possibly?
-                                            ParseAssignment(parameter.GetTokens().ToList());
-                                        } else {
+                                    foreach (Statement parameter in Parameters)
+                                        if (parameter.IsExpression)
                                             ParseExpression(parameter.GetTokens().ToList());
-                                        }
-                                    }
+                                        else
+                                            ParseAssignment(parameter.GetTokens().ToList());
                                     AppendCount = Parameters.Length;
                                 }
                                 CurrentProcudure.AddInstruction(Instructions.LDINT, AppendCount.ToString());
@@ -878,8 +1164,11 @@ namespace NetRPG.Language
                                             CurrentProcudure.AddInstruction(Instructions.LDVARD, GlobalSubfields[token.Value].Structure); //Load local data
                                             break;
                                     }
+                                } else {
+                                    if (lastType == Types.Void)
+                                        Error.ThrowCompileError("Variable " + token.Value + " does not exist", token.Line);
                                 }
-                                CurrentProcudure.AddInstruction(Instructions.LDFLDV, token.Value); //Load field?
+                                CurrentProcudure.AddInstruction(Instructions.LDFLDV, token.Value);
                             }
                         }
                         break;
@@ -1024,10 +1313,14 @@ namespace NetRPG.Language
                         case RPGLex.Type.WORD_LITERAL:
                                 if (i + 1 < tokens.Count)
                                 {
-
                                     if (tokens[i + 1].Type == RPGLex.Type.STRING_LITERAL)
                                     {
                                         switch (tokens[i].Value) {
+                                            case "x":
+                                                //Encoding enc = Encoding.GetEncoding(Configurations["CCSID"]);
+                                                token = new RPGToken(RPGLex.Type.STRING_LITERAL, EBCDIC.ConvertHex(EBCDIC.GetEncoding(int.Parse(Configurations["CCSID"])), tokens[i + 1].Value));
+                                                ChangeMade = true;
+                                                break;
                                             case "d":
                                                 //TODO HANDLE DATE FORMAT SOMEHOW!!
                                                 token = new RPGToken(RPGLex.Type.INT_LITERAL, (DateTime.Parse(tokens[i + 1].Value) - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds.ToString(), tokens[i].Line);

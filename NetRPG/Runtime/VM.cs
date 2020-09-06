@@ -7,11 +7,19 @@ using NetRPG.Runtime.Functions;
 
 namespace NetRPG.Runtime
 {
+    class RunTimeModule {
+
+        public Dictionary<string, DataValue> GlobalVariables;
+        public RunTimeModule() {
+            GlobalVariables = new Dictionary<string, DataValue>();
+        }
+    }
+
     public class VM
     {
         private bool IsTestingEnv;
-        private Dictionary<string, DataValue> GlobalVariables;
         private string _EntryProcedure;
+        private Dictionary<string, RunTimeModule> RunTimeModules;
         private Boolean _DisplayRequired;
         private Dictionary<string, Procedure> _Procedures;
 
@@ -20,13 +28,17 @@ namespace NetRPG.Runtime
             IsTestingEnv = testingVM;
             _EntryProcedure = "";
             _Procedures = new Dictionary<string, Procedure>();
-            GlobalVariables = new Dictionary<string, DataValue>();
+            RunTimeModules = new Dictionary<string, RunTimeModule>();
         }
 
         public void AddModule(Module module)
         {
+            string ModuleName = RunTimeModules.Count.ToString();
+            //Handle return types, displays and entry point
             foreach (Procedure proc in module.GetProcedures())
             {
+                proc._ParentModule = ModuleName;
+
                 if (proc._ReturnType == Types.Void)
                     proc._ReturnType = Types.Pointer; //Any
 
@@ -35,8 +47,19 @@ namespace NetRPG.Runtime
 
                 _Procedures.Add(proc.GetName(), proc);
                 if (proc.HasEntrypoint) _EntryProcedure = proc.GetName();
+
+                proc.CalculateLabels();
             }
 
+            //Handle adding references to internal functions
+            foreach (string function in module.GetReferences()) {
+                Function.AddFunctionReference(function, module.GetReferenceFunc(function));
+            } 
+
+            //Handle global variables for module
+            RunTimeModules.Add(ModuleName, new RunTimeModule());
+
+            //Handle shared memory between variables
             Dictionary<string, DataValue> SharedMemory = new Dictionary<string, DataValue>();
             
             foreach (String global in module.GetDataSetList())
@@ -51,7 +74,7 @@ namespace NetRPG.Runtime
                     SharedMemory.Add(global, set);
                 }
 
-                GlobalVariables.Add(set.GetName(), set);
+                RunTimeModules[ModuleName].GlobalVariables.Add(set.GetName(), set);
 
                 if (set is Structure) {
                     if (!(set as Structure).isQualified()) {
@@ -84,12 +107,27 @@ namespace NetRPG.Runtime
                 Console.WriteLine(".NET call stack:");
                 Console.WriteLine(e.StackTrace);
                 Console.WriteLine("-- Error --");
+                Console.WriteLine();
+                PrintModules();
                 if (_DisplayRequired)
                     Console.ReadLine();
                 return null;
             } finally {
                 if (_DisplayRequired)
                     WindowHandler.End();
+            }
+        }
+
+        public void PrintModules() {
+            Console.WriteLine("--- Procedure instructions ---");
+            foreach (Procedure proc in _Procedures.Values) {
+                Console.WriteLine();
+                Console.WriteLine("\t - " + proc.GetName());
+                Console.WriteLine();
+                foreach (Instruction inst in proc.GetInstructions()) {
+                    Console.WriteLine("\t" + inst._Instruction.ToString().PadRight(10) + inst._Value);
+                }
+                Console.WriteLine();
             }
         }
 
@@ -106,28 +144,31 @@ namespace NetRPG.Runtime
 
             Dictionary<string, int> Labels = new Dictionary<string, int>();
             Dictionary<string, DataValue> LocalVariables = new Dictionary<string, DataValue>();
-            Instruction[] instructions = _Procedures[Name].GetInstructions();
+            Procedure currentProcedure = _Procedures[Name];
+            Instruction[] instructions = currentProcedure.GetInstructions();
+
+            string ModuleName = currentProcedure._ParentModule;
             
             CallStack.Add(Name);
 
             //Initialise local variables
-            foreach (string local in _Procedures[Name].GetDataSetList())
+            foreach (string local in currentProcedure.GetDataSetList())
             {
-                set = _Procedures[Name].GetDataSet(local).ToDataValue();
+                set = currentProcedure.GetDataSet(local).ToDataValue();
                 LocalVariables.Add(set.GetName(), set);
                 LocalVariables[set.GetName()].DoInitialValue();
             }
 
             if (Parms != null)
             {
-                string[] Parameters = _Procedures[Name].GetParameterNames();
+                string[] Parameters = currentProcedure.GetParameterNames();
                 for (int x = 0; x < Parameters.Length; x++)
                 {
                     if (x < Parms.Length)
                     {
                         if (Parms[x] is DataValue)
                         {
-                            if (_Procedures[Name].ParameterIsValue(Parameters[x]))
+                            if (currentProcedure.ParameterIsValue(Parameters[x]))
                             {
                                 LocalVariables[Parameters[x]].SetEntire((Parms[x] as DataValue).GetEntire());
                             }
@@ -145,11 +186,6 @@ namespace NetRPG.Runtime
                     }
                 }
             }
-
-            //TODO: Do this only once and not everytime a procedure is called.
-            for(int i = 0; i < instructions.Count(); i++)
-                if (instructions[i]._Instruction == Instructions.LABEL)
-                    Labels.Add(instructions[i]._Value, i);
 
             for (int ip = 0; ip < instructions.Count(); ip++)
             {
@@ -174,21 +210,21 @@ namespace NetRPG.Runtime
                         break;
                         
                     case Instructions.BR:
-                        ip = Labels[instructions[ip]._Value];
+                        ip = currentProcedure.GetLabel(instructions[ip]._Value);
                         break;
 
                     case Instructions.BRFALSE:
                         Values[0] = Stack[Stack.Count - 1];
                         Stack.RemoveRange(Stack.Count - 1, 1);
                         if ((bool) Operate(Instructions.EQUAL, Values[0], false))
-                            ip = Labels[instructions[ip]._Value];
+                            ip = currentProcedure.GetLabel(instructions[ip]._Value);
                         break;
 
                     case Instructions.BRTRUE:
                         Values[0] = Stack[Stack.Count - 1];
                         Stack.RemoveRange(Stack.Count - 1, 1);
                         if ((bool)Operate(Instructions.EQUAL, Values[0], true))
-                            ip = Labels[instructions[ip]._Value];
+                            ip = currentProcedure.GetLabel(instructions[ip]._Value);
                         break;
 
                     case Instructions.CALL:
@@ -261,7 +297,7 @@ namespace NetRPG.Runtime
                         break;
 
                     case Instructions.LDGBLV:
-                        Stack.Add(GlobalVariables[instructions[ip]._Value].Get());
+                        Stack.Add(RunTimeModules[ModuleName].GlobalVariables[instructions[ip]._Value].Get());
                         break;
 
                     case Instructions.LDVARV:
@@ -284,7 +320,7 @@ namespace NetRPG.Runtime
                         break;
 
                     case Instructions.LDGBLD:
-                        Stack.Add(GlobalVariables[instructions[ip]._Value]);
+                        Stack.Add(RunTimeModules[ModuleName].GlobalVariables[instructions[ip]._Value]);
                         break;
 
                     case Instructions.LDVARD:
@@ -346,7 +382,7 @@ namespace NetRPG.Runtime
 
                     case Instructions.RETURN:
                         CallStack.RemoveAt(CallStack.Count-1);
-                        if (_Procedures[Name]._ReturnType == Types.Void)
+                        if (currentProcedure._ReturnType == Types.Void)
                             return null;
                         else
                         {

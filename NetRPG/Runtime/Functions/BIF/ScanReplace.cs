@@ -4,6 +4,7 @@ using System.Text;
 
 namespace NetRPG.Runtime.Functions.BIF
 {
+    [RPGFunctionAlias("%SCANRPL")]
     class ScanReplace : Function
     {
         public override object Execute(object[] Parameters)
