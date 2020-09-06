@@ -1,7 +1,5 @@
-**FREE
+Dcl-F department keyed;
 
-Dcl-F example keyed;
+chain ('D01') department;
 
-chain (2) example;
-
-Return prdesc;
+Return %TrimR(DEPTNAME);

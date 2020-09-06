@@ -18,7 +18,7 @@ namespace NetRPG.Runtime.Typing.Files
         private Boolean _EOF = false;
 
         private Dictionary<string, View> localFields;
-        public Display(string name, string file, bool userOpen) : base(name, file, userOpen) {
+        public Display(string name, string file, bool userOpen) : base(name, userOpen) {
             this.Name = name;
             _Path = Path.Combine(Environment.CurrentDirectory, "objects", file + ".dspf");
 

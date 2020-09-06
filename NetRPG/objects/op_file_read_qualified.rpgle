@@ -1,8 +1,6 @@
-**FREE
+Dcl-F department qualified;
 
-Dcl-F example qualified;
+read department;
+read department;
 
-read example;
-read example;
-
-Return example.prdesc;
+Return department.DEPTNO;

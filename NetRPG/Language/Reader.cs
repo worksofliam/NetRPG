@@ -331,7 +331,7 @@ namespace NetRPG.Language
                         if (dataSet._WorkStation) {
                             structures = Runtime.Typing.Files.Display.CreateStructs(dataSet._File, dataSet._Qualified);
                         } else {
-                            structures = new [] {Runtime.Typing.Files.Table.CreateStruct(dataSet._File, dataSet._Qualified)};
+                            structures = new [] {Runtime.Typing.Files.ODBCTable.CreateStruct(dataSet._File, dataSet._Qualified)};
                         }
 
                         foreach (DataSet structure in structures) {
@@ -445,6 +445,7 @@ namespace NetRPG.Language
                 case "IND": return Types.Ind;
                 case "CHAR": return Types.Character;
                 case "VARCHAR": return Types.Varying;
+                case "SMALLINT": return Types.Int8; //Database type
                 case "INT":
                     switch (length)
                     {
