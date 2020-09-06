@@ -13,8 +13,7 @@ namespace NetRPG.Runtime.Typing.Files
         private string _File;
         private static OdbcConnection Connection;
         private Boolean _EOF = false;
-
-        private OdbcDataReader _Statement;
+        private int _RowPointer = -1;
 
         public static void TestConnection() {
             if (ODBCTable.Connection == null) {
@@ -72,85 +71,99 @@ namespace NetRPG.Runtime.Typing.Files
         }
 
         public override void Open() {
-            OdbcCommand command = new OdbcCommand(
-                "select * from " + this._File,
-                ODBCTable.Connection
-            );
+            //Open will basically do nothing..?
 
-            this._Statement = command.ExecuteReader(System.Data.CommandBehavior.SequentialAccess);
-        }
-
-        public void Close() {
-            this._Statement.Close();
+            this._RowPointer = -1;
         }
 
         public override Boolean isEOF() => this._EOF;
 
-        public override void Read(DataValue Structure) {
-            string currentName;
-            if (this._Statement.Read()) {
-                this._EOF = false;
+        private OdbcDataReader readCurrent() {
+            OdbcCommand command = new OdbcCommand(
+                "select * from " + this._File + " limit 1 offset ?",
+                ODBCTable.Connection
+            );
+            command.Parameters.AddWithValue("@var1", this._RowPointer);
 
-                for (int i = 0; i < this._Statement.FieldCount; i++) {
-                    currentName = this._Statement.GetName(i);
-                    if (this._Statement.IsDBNull(i)) {
-                        Structure.GetData(currentName).DoInitialValue();
-                    } else {
-                        Structure.GetData(currentName).Set(this._Statement.GetValue(i));
-                    }
+            return command.ExecuteReader(System.Data.CommandBehavior.SequentialAccess);
+        }
+
+        private void toStruct(DataValue Structure, OdbcDataReader statement) {
+            string currentName;
+
+            for (int i = 0; i < statement.FieldCount; i++) {
+                currentName = statement.GetName(i);
+                if (statement.IsDBNull(i)) {
+                    Structure.GetData(currentName).DoInitialValue();
+                } else {
+                    Structure.GetData(currentName).Set(statement.GetValue(i));
                 }
+            }
+        }
+
+        public override void Read(DataValue Structure) {
+            this._RowPointer += 1;
+
+            OdbcDataReader statement = this.readCurrent();
+
+            if (statement.Read()) {
+                this._EOF = false;
+                this.toStruct(Structure, statement);
 
             } else {
                 this._EOF = true;
             }
+
+            statement.Close();
         }
 
         public override void ReadPrevious(DataValue Structure) {
-            //Not sure if ODBC supports read previous? Might have to implement something here....
-            // this._RowPointer -= 1;
+            this._RowPointer -= 1;
 
-            // if (this._RowPointer >= 0 && this._RowPointer < this._Data.Count()) {
-            //     this._EOF = false;
+            OdbcDataReader statement = this.readCurrent();
 
-            //     foreach (string varName in this._Data[this._RowPointer].Keys.ToArray()) {
-            //         Structure.GetData(varName).Set(this._Data[this._RowPointer][varName]);
-            //     }
+            if (statement.Read()) {
+                this._EOF = false;
+                this.toStruct(Structure, statement);
 
-            // } else {
-            //     this._EOF = true;
-            // }
+            } else {
+                this._EOF = true;
+            }
+
+            statement.Close();
         }
 
         public override void Chain(DataValue Structure, dynamic[] keys) {
-            this.Close();
-            this.Open();
             //Like above, ODBC isn'tclear if it supports read previous??
 
             this._EOF = true;
-
-            string currentName;
+            this._RowPointer = -1;
+            
             bool isValid = false;
+            OdbcDataReader statement;
+            
+            while (true) {
+                this._RowPointer += 1;
+                statement = this.readCurrent();
 
-            while (this._Statement.Read()) {
-                isValid = false;
-                for (int i = 0; i < keys.Length; i++)
-                    if (keys[i] == (this._Statement.GetValue(i) as dynamic))
-                        isValid = true;
+                if (statement.Read()) {
+                    isValid = false;
+                    for (int i = 0; i < keys.Length; i++)
+                        if (keys[i] == (statement.GetValue(i) as dynamic))
+                            isValid = true;
 
-                if (isValid) {
-                    for (int i = 0; i < this._Statement.FieldCount; i++) {
-                        currentName = this._Statement.GetName(i);
-                        if (this._Statement.IsDBNull(i)) {
-                            Structure.GetData(currentName).DoInitialValue();
-                        } else {
-                            Structure.GetData(currentName).Set(this._Statement.GetValue(i));
-                        }
+                    if (isValid) {
+                        this.toStruct(Structure, statement);
+
+                        this._EOF = false;
+                        break;
                     }
-
-                    this._EOF = false;
-                    return;
+                } else {
+                    break;
                 }
             }
+
+            statement.Close();
         }
     }
 }

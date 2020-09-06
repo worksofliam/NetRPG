@@ -10,9 +10,9 @@ namespace NetRPG.Runtime.Functions.Operation
     {
         public override object Execute(object[] Parameters)
         {
-            if (Parameters[0] is Table)
+            if (Parameters[0] is ODBCTable)
             {
-                Table table = Parameters[0] as Table;
+                ODBCTable table = Parameters[0] as ODBCTable;
                 table.Open();
             }
             else

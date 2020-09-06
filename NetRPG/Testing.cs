@@ -112,9 +112,9 @@ namespace NetRPG
             { "op_file_chain2.rpgle", "My second My first p"},
             { "op_file_chain3.rpgle", "bethMy second"},
             
-            { "op_file_read_real1.rpgle", "SPIFFY COMPUTER SERVICE DIV." },
-            { "op_file_read_real2.rpgle", 14 },
-            { "op_file_chain_real1.rpgle", "OPERATIONS" },
+            { "op_odbc_real_read1.rpgle", "SPIFFY COMPUTER SERVICE DIV." },
+            { "op_odbc_real_read2.rpgle", 14 },
+            { "op_odbc_real_chain.rpgle", "OPERATIONS" },
 
             { "ind1.rpgle", "1" },
             { "ind2.rpgle", "1" },
