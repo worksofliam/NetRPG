@@ -1,8 +1,8 @@
-Dcl-F example;
+Dcl-F department;
 
-read example;
-read example;
-readp example;
+read department;
+read department;
+readp department;
 
 
-Return prdesc;
+Return DEPTNO;

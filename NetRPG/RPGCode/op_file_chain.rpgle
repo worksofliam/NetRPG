@@ -1,5 +1,5 @@
-Dcl-F example keyed;
+Dcl-F department keyed;
 
-chain (2) example;
+chain ('D01') department;
 
-Return prdesc;
+Return %TrimR(DEPTNAME);

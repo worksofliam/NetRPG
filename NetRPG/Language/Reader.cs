@@ -341,6 +341,7 @@ namespace NetRPG.Language
                 case "IND": return Types.Ind;
                 case "CHAR": return Types.Character;
                 case "VARCHAR": return Types.Varying;
+                case "SMALLINT": return Types.Int8; //Database type
                 case "INT":
                     switch (length)
                     {

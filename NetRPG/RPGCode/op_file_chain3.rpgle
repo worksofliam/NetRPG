@@ -1,7 +1,7 @@
-Dcl-F example keyed;
-Dcl-F users keyed;
+Dcl-F department keyed;
+Dcl-F act keyed;
 
-chain (2) example;
-chain (2) users;
+chain ('B01') department;
+chain (60) act;
 
-Return %trim(uname) + %trim(prdesc);
+Return %trim(MGRNO) + %trim(ACTKWD);

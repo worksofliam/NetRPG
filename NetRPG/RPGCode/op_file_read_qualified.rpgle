@@ -1,6 +1,6 @@
-Dcl-F example qualified;
+Dcl-F department qualified;
 
-read example;
-read example;
+read department;
+read department;
 
-Return example.prdesc;
+Return department.DEPTNO;

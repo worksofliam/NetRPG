@@ -1,5 +1,5 @@
-Dcl-F example;
+Dcl-F department;
 
-read example;
+read department;
 
-Return prdesc;
+Return DEPTNO;

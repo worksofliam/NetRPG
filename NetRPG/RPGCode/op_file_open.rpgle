@@ -1,3 +1,3 @@
-Dcl-F example;
+Dcl-F department;
 
-Return 1;
+Return (%Trim(DEPTNAME) = '');
