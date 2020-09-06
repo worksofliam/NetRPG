@@ -89,7 +89,9 @@ namespace NetRPG.Runtime.Typing.Files
 
                 for (int i = 0; i < this._Statement.FieldCount; i++) {
                     currentName = this._Statement.GetName(i);
-                    if (!this._Statement.IsDBNull(i)) {
+                    if (this._Statement.IsDBNull(i)) {
+                        Structure.GetData(currentName).DoInitialValue();
+                    } else {
                         Structure.GetData(currentName).Set(this._Statement.GetValue(i));
                     }
                 }
