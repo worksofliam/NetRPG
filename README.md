@@ -23,7 +23,10 @@ An RPGLE runtime for .NET Core. With this runtime you can run totally free-forma
 1. Clone repo
 2. Open folder in vscode
 3. Execute `dotnet restore` to fetch the deps.
-3. Execute project to run unit tests.
+4. **To use RLA**: setup an `.env` or `env` property in your `launch.json` configuration
+   * This needs to include the ODBC connection string: `CONN_STRING="Driver=IBM i Access ODBC Driver;System=xxx;UID=xxx;Password=xxx;DBQ=,SAMPLE;Naming=1"`. While this uses the IBM i driver, you should also be able to use any database that works with ODBC.
+5. Execute project to run unit tests.
+   * The RLA tests are setup to work with the IBM i SAMPLE schema.
 
 ## :computer: Usage
 
