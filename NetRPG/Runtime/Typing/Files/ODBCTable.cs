@@ -80,6 +80,10 @@ namespace NetRPG.Runtime.Typing.Files
             this._Statement = command.ExecuteReader(System.Data.CommandBehavior.SequentialAccess);
         }
 
+        public void Close() {
+            this._Statement.Close();
+        }
+
         public override Boolean isEOF() => this._EOF;
 
         public override void Read(DataValue Structure) {
@@ -118,29 +122,35 @@ namespace NetRPG.Runtime.Typing.Files
         }
 
         public override void Chain(DataValue Structure, dynamic[] keys) {
+            this.Close();
+            this.Open();
             //Like above, ODBC isn'tclear if it supports read previous??
-            // this._EOF = true;
 
-            // this._RowPointer = 0;
+            this._EOF = true;
 
-            // while (this._RowPointer >= 0 && this._RowPointer < this._Data.Count()) {
+            string currentName;
+            bool isValid = false;
 
-            //     for (var i = 0; i < keys.Length; i++) {
-            //         if (keys[i] != this._Data[this._RowPointer].ElementAt(i).Value) {
-            //             continue;
-            //         }
+            while (this._Statement.Read()) {
+                isValid = false;
+                for (int i = 0; i < keys.Length; i++)
+                    if (keys[i] == (this._Statement.GetValue(i) as dynamic))
+                        isValid = true;
 
-            //         foreach (string varName in this._Data[this._RowPointer].Keys.ToArray()) {
-            //             Structure.GetData(varName).Set(this._Data[this._RowPointer][varName]);
-            //         }
+                if (isValid) {
+                    for (int i = 0; i < this._Statement.FieldCount; i++) {
+                        currentName = this._Statement.GetName(i);
+                        if (this._Statement.IsDBNull(i)) {
+                            Structure.GetData(currentName).DoInitialValue();
+                        } else {
+                            Structure.GetData(currentName).Set(this._Statement.GetValue(i));
+                        }
+                    }
 
-            //         this._EOF = false;
-            //         return;
-            //     }
-
-            //     this._RowPointer += 1;
-
-            // }
+                    this._EOF = false;
+                    return;
+                }
+            }
         }
     }
 }

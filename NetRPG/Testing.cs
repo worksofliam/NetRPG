@@ -114,6 +114,7 @@ namespace NetRPG
             
             { "op_file_read_real1.rpgle", "SPIFFY COMPUTER SERVICE DIV." },
             { "op_file_read_real2.rpgle", 14 },
+            { "op_file_chain_real1.rpgle", "OPERATIONS" },
 
             { "ind1.rpgle", "1" },
             { "ind2.rpgle", "1" },
