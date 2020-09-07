@@ -21,7 +21,11 @@ namespace NetRPG.Runtime.Typing
 
         public override void Set(object value, int index = 0)
         {
-            this.Value[index] = Convert.ToInt32(value);
+            if (value is DateTime) {
+                this.Value[index] = ((DateTime)value - new DateTime(1970, 1, 1, 0, 0, 0)).TotalSeconds;
+            } else {
+                this.Value[index] = Convert.ToInt32(value);
+            }
         }
     }
 }

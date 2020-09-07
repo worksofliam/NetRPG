@@ -59,7 +59,7 @@ namespace NetRPG.Runtime.Typing.Files
                         subfield = new DataSet(reader.GetString(0));
                         subfield._Type = Reader.StringToType(reader.GetString(4));
                         subfield._Length = reader.GetInt32(5);
-                        subfield._Precision = (reader.IsDBNull(6) ? 0 : reader.GetInt32(5));
+                        subfield._Precision = (reader.IsDBNull(6) ? 0 : reader.GetInt32(6));
                         subfields.Add(subfield);
                     }
                 }
@@ -141,6 +141,10 @@ namespace NetRPG.Runtime.Typing.Files
             
             bool isValid = false;
             OdbcDataReader statement;
+
+            for (int i = 0; i < keys.Length; i++)
+                if (keys[i] is string)
+                    keys[i] = keys[i].Trim();
             
             while (true) {
                 this._RowPointer += 1;

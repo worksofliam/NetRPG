@@ -1,7 +1,7 @@
 **FREE
 
 Dcl-F ex9 WorkStn;
-Dcl-F cust2;
+Dcl-F employee keyed;
 Dcl-s exit Ind;
 
 exit = *Off;
@@ -14,10 +14,13 @@ dow (exit = *off);
       exit = *on;
 
     Other;
-      chain (IID) cust2;
+      chain (IID) employee;
 
-      If %eof(cust2) = *off;
+      If %eof(employee) = *off;
         ERROR = *blank;
+        CNAME = FIRSTNME + ' ' + LASTNAME;
+        CEMAIL = FIRSTNME + '@me.com';
+
         write HEADER;
         exfmt CUSTDSP;
       else;

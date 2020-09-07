@@ -459,6 +459,7 @@ namespace NetRPG.Language
                 case "DATE":
                 case "TIME":
                     return Types.Timestamp;
+                case "DECIMAL": //Temporary. Decimal gets it's own type
                 case "FLOAT":
                     switch (length)
                     {

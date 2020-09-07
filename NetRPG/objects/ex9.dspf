@@ -8,7 +8,7 @@
      A                                      COLOR(BLU)
      A                                 20  9'Enter=Search'
      A                                      COLOR(BLU)
-     A            IID           10D  B 10 45
+     A            IID           10A  B 10 45
      A                                      COLOR(WHT)
      A                                 10 23'ID:'
      A            ERROR         25   O 19  9COLOR(RED)
