@@ -1,10 +1,10 @@
 **FREE
 
-Dcl-F department;
+Dcl-F example;
 
-read department;
-read department;
-readp department;
+read example;
+read example;
+readp example;
 
 
-Return DEPTNO;
+Return prdesc;

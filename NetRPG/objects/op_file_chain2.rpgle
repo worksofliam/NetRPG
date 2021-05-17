@@ -1,13 +1,13 @@
 **FREE
 
-Dcl-F department keyed;
+Dcl-F example keyed;
 
-dcl-s output char(6) dim(2);
+dcl-s output char(10) dim(2);
 
-chain ('B01') department;
-output(1) = MGRNO;
+chain (2) example;
+output(1) = prdesc;
 
-chain ('E21') department;
-output(2) = MGRNO;
+chain (1) example;
+output(2) = prdesc;
 
 Return output(1) + output(2);

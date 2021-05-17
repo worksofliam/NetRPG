@@ -85,7 +85,7 @@ namespace NetRPG.Runtime
                     if (this._WorkStation) {
                         result = new Typing.Files.Display(this._Name, this._File, this._UserOpen);
                     } else {
-                        result = new Typing.Files.ODBCTable(this._Name, this._File, this._UserOpen);
+                        result = new Typing.Files.JSONTable(this._Name, this._File, this._UserOpen);
                     }
                     break;
 

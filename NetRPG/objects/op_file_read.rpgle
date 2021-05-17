@@ -1,7 +1,7 @@
 **FREE
 
-Dcl-F department;
+Dcl-F example;
 
-read department;
+read example;
 
-Return DEPTNO;
+Return prdesc;

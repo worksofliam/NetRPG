@@ -11,9 +11,9 @@ namespace NetRPG.Runtime.Functions.Operation
         public override object Execute(object[] Parameters)
         {
 
-            if (Parameters[0] is Structure && Parameters[1] is ODBCTable)
+            if (Parameters[0] is Structure && Parameters[1] is JSONTable)
             {
-                ODBCTable table = Parameters[1] as ODBCTable;
+                JSONTable table = Parameters[1] as JSONTable;
                 table.Chain(Parameters[0] as Structure, Parameters[2] as dynamic[]);
             }
             else

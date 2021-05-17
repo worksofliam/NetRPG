@@ -1,5 +1,5 @@
 **FREE
 
-Dcl-F department;
+Dcl-F example;
 
-Return (DEPTNO = '');
+Return 1;
