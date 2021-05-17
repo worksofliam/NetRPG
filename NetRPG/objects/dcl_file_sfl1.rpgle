@@ -29,15 +29,13 @@ dow (*in03 = *off);
   *in85 = *on;
   write SFLDTA;
 
-  dsply %char(rrn);
-
   for index = 1 to max_per_page;
     if ((rrn+index) <= length);
       @XFILE = files(rrn+index);
       write SFLDTA;
     endif;
   endfor;
-  
+
   write HEADER_FMT;
   write FOOTER_FMT;
   exfmt SFLCTL;
@@ -45,7 +43,6 @@ dow (*in03 = *off);
   //Pagedown
   if (*in98);
     rrn = rrn + 5;
-    dsply %char(rrn);
   endif;
 
   //Pageup
