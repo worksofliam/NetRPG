@@ -18,6 +18,9 @@ namespace NetRPG.Language
         public DisplayParse()
         {
             Formats = new Dictionary<string, RecordInfo>();
+
+            CurrentRecord = new RecordInfo("GLOBAL");
+            CurrentRecord.Keywords = new Dictionary<string, string>();
         }
 
         public void ParseFile(string Location)
@@ -127,10 +130,10 @@ namespace NetRPG.Language
                             }
                             else
                             {
-                                HandleConditionals(conditionals);
                                 HandleKeywords(keywords);
                                 if (CurrentField != null)
                                 {
+                                    HandleConditionals(conditionals);
                                     if (CurrentField.Name == null)
                                     {
                                         textcounter++;

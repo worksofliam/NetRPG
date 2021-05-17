@@ -98,6 +98,9 @@ namespace NetRPG.Runtime
             try {
                 return Execute(_EntryProcedure);
             } catch (Exception e) {
+                if (_DisplayRequired)
+                    WindowHandler.End();
+
                 Console.WriteLine("-- Error --");
                 Console.WriteLine(e.Message);
                 Console.WriteLine("RPG call stack: ");
@@ -112,9 +115,6 @@ namespace NetRPG.Runtime
                 if (_DisplayRequired)
                     Console.ReadLine();
                 return null;
-            } finally {
-                if (_DisplayRequired)
-                    WindowHandler.End();
             }
         }
 

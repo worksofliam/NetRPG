@@ -1,0 +1,35 @@
+     A                                      CF03(03)
+     A                                      PAGEUP(99)
+     A                                      PAGEDOWN(98)
+     A          R SFLDTA                    SFL
+     A* DISPLAY DTA
+     A            @1SEL          2A  B  7  3
+     A            @XFILE        50A  O  7  7
+     A* COLOR
+     A          R SFLCTL                    SFLCTL(SFLDTA)
+     A                                      SFLPAG(5)
+     A                                      SFLSIZ(5)
+     A  85                                  SFLDSPCTL
+     A  95                                  SFLDSP
+     A N85                                  SFLCLR
+     A*
+     A                                  6  1'Sel'
+     A                                  6  6'Path'
+     A          R FOOTER_FMT
+     A                                 23  3'Pagedown & Pageup'
+     A                                      COLOR(BLU)
+     AA 05                             22  3'Bottom'
+     A                                      COLOR(RED)
+     A          R HEADER_FMT
+     A            SRC_MBR       10A  O  1  2
+     A                                  2 40'Status'
+     A                                      DSPATR(UL)
+     A                                      COLOR(WHT)
+     A                                  4  3'5=Diff A=Add R=Reset U=Undo'
+     A                                      COLOR(BLU)
+     A          R COMMITR                   WINDOW(*DFT 9 46)
+     A                                  1 18'Make commit'
+     A            CMTMSG       120A  B  3  3CNTFLD(40)
+     A                                      CHECK(LC)
+     A                                  8  3'Enter=Commit F12=Back'
+     A                                      COLOR(BLU)

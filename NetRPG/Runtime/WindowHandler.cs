@@ -45,6 +45,7 @@ namespace NetRPG.Runtime
         }
 
         public static void End() {
+            Application.RequestStop();
             Application.End(State);
         }
     }
