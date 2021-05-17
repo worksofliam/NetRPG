@@ -8,6 +8,8 @@
      A                                      COLOR(BLU)
      A                                  2 33'User Entry'
      A                                      COLOR(WHT)
+     AA 05                              8 26'HELLO WORLD'
+     A                                      COLOR(WHT)
      A          R INPUT    
      A                                  9 26'Name:'
      A            NAME       10      B  9 33

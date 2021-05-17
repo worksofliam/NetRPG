@@ -29,7 +29,7 @@ namespace NetRPG.Language
         {
             int textcounter = 0;
             char[] chars;
-            string name, len, type, dec, inout, x, y, keywords, Line = "";
+            string conditionals, name, len, type, dec, inout, x, y, keywords, Line = "";
 
             //https://www.ibm.com/support/knowledgecenter/ssw_ibm_i_73/rzakc/rzakcmstpsnent.htm
             // try
@@ -38,6 +38,7 @@ namespace NetRPG.Language
                 {
                     Line = TrueLine.PadRight(80);
                     chars = Line.ToCharArray();
+                    conditionals = buildString(chars, 6, 10).ToUpper();
                     name = buildString(chars, 18, 10).Trim();
                     len = buildString(chars, 29, 5).Trim();
                     type = chars[34].ToString().ToUpper();
@@ -121,10 +122,12 @@ namespace NetRPG.Language
                                         CurrentField.dataType._Type = Types.Character;
                                         break;
                                 }
+                                HandleConditionals(conditionals);
                                 HandleKeywords(keywords);
                             }
                             else
                             {
+                                HandleConditionals(conditionals);
                                 HandleKeywords(keywords);
                                 if (CurrentField != null)
                                 {
@@ -199,6 +202,32 @@ namespace NetRPG.Language
             }
         }
 
+        private void HandleConditionals(string Conditionals) {
+            if (Conditionals.Trim() == "") return;
+
+            //TODO: something with condition
+            string condition = Conditionals.Substring(0, 1); //A (and) or O (or)
+
+            string current = "";
+            bool negate = false;
+            int indicator = 0;
+
+            int cIndex = 1;
+
+            while (cIndex <= 7) {
+                current = Conditionals.Substring(cIndex, 3);
+
+                if (current.Trim() != "") {
+                    negate = (Conditionals.Substring(cIndex, 1) == "N");
+                    indicator = int.Parse(Conditionals.Substring(cIndex+1, 2));
+
+                    CurrentField.Conditionals.Add(new Conditional {indicator = indicator, negate = negate});
+                }
+                
+                cIndex += 3;
+            }
+        }
+
         public static Key IntToKey(int value) {
             switch (value) {
                 case 1: return Key.F1;
@@ -244,6 +273,8 @@ namespace NetRPG.Language
         public FieldType fieldType;
         public System.Drawing.Point Position;
 
+        public List<Conditional> Conditionals = new List<Conditional>();
+
         public Dictionary<string, string> Keywords = new Dictionary<string, string>();
 
         public enum FieldType
@@ -255,5 +286,10 @@ namespace NetRPG.Language
             Hidden
         }
 
+    }
+
+    public class Conditional {
+        public Boolean negate = false;
+        public int indicator;
     }
 }

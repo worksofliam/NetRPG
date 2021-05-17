@@ -12,8 +12,8 @@ namespace NetRPG.Runtime.Functions.Operation
         {
             if (Parameters[0] is Structure)
             {
-                if (Parameters[1] is Display || Parameters[1] is JSONTable) {
-                    (Parameters[1] as FileT).Write(Parameters[0] as Structure);
+                if ((Parameters[1] is Display || Parameters[1] is FileT) && Parameters[2] is Structure) {
+                    (Parameters[1] as FileT).Write(Parameters[0] as Structure, Parameters[2] as Structure);
                 } else {
                     Error.ThrowRuntimeError("WRITE", "Display or table required.");
                 }

@@ -5,7 +5,7 @@
    "version": "0.2.0",
    "configurations": [
         {
-            "name": ".NET Core Launch (console)",
+            "name": "Launch Unit Tests",
             "type": "coreclr",
             "request": "launch",
             "preLaunchTask": "build",
@@ -15,6 +15,27 @@
             "cwd": "${workspaceFolder}/NetRPG",
             // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
             "console": "internalConsole",
+            "stopAtEntry": false,
+            "internalConsoleOptions": "openOnSessionStart",
+            "logging": {
+                "moduleLoad": false,
+                "exceptions": true,
+                "programOutput": true,
+                "engineLogging": false
+            }
+        },
+
+        {
+            "name": "Launch Display",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            // If you have changed target frameworks, make sure to update the program path.
+            "program": "${workspaceFolder}/NetRPG/bin/Debug/netcoreapp3.1/NetRPG.dll",
+            "args": ["objects/dcl_file_exfmt10.rpgle"],
+            "cwd": "${workspaceFolder}/NetRPG",
+            // For more information about the 'console' field, see https://github.com/OmniSharp/omnisharp-vscode/blob/master/debugger-launchjson.md#console-terminal-window
+            "console": "externalTerminal",
             "stopAtEntry": false,
             "internalConsoleOptions": "openOnSessionStart",
             "logging": {

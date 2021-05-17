@@ -78,7 +78,7 @@ namespace NetRPG.Runtime.Typing.Files
             RecordInfo recordFormat = RecordFormats[Structure.GetName().ToUpper()];
             
             //Kick in gui.cs
-            this.Write(Structure);
+            this.Write(Structure, null);
             foreach (View view in localFields.Values) {
                 WindowHandler.Add(view);
             }
@@ -102,12 +102,23 @@ namespace NetRPG.Runtime.Typing.Files
             localFields = new Dictionary<string, View>();
         }
 
-        public override void Write(DataValue Structure) {
+        public override void Write(DataValue Structure, DataValue Indicators) {
 
             View currentView = null;
             RecordInfo recordFormat = RecordFormats[Structure.GetName().ToUpper()];
+            bool toShow = true;
 
             foreach (FieldInfo field in recordFormat.Fields) {
+                toShow = true;
+
+                if (field.Conditionals.Count > 0) {
+                    foreach (Conditional cond in field.Conditionals) {
+                        toShow = (Indicators.Get("IN" + cond.indicator.ToString().PadLeft(2, '0')) == (cond.negate ? "0" : "1"));
+                    }
+                }
+
+                if (!toShow) continue;
+
                 switch (field.fieldType) {
                     case FieldInfo.FieldType.Const:
                         currentView = new Label (field.Value) { X = field.Position.X, Y = field.Position.Y };

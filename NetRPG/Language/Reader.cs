@@ -796,7 +796,7 @@ namespace NetRPG.Language
                     break;
 
                 case "EXFMT":
-                    //EXFMT RCDFMT -> //EXFMT TABLE STRUCTURE IND
+                    //EXFMT RCDFMT -> //EXFMT STRUCTURE TABLE IND
                     ParseAssignment(tokens.Skip(1).ToList()); //Load the DS first
 
                     //Then load the table
@@ -813,7 +813,7 @@ namespace NetRPG.Language
                     break;
 
                 case "WRITE":
-                    //EXFMT RCDFMT -> //EXFMT TABLE STRUCTURE
+                    //WRITE RCDFMT -> //WRITE STRUCTURE TABLE IND
                     ParseAssignment(tokens.Skip(1).ToList()); //Load the DS first
 
                     //Then load the table
@@ -822,10 +822,12 @@ namespace NetRPG.Language
                     } else {
                         tokens[1].Value += "_table";
                     }
+                    ParseAssignment(tokens.Skip(1).ToList());
 
+                    tokens[1].Value = "IND";
                     ParseAssignment(tokens.Skip(1).ToList());
                     
-                    CurrentProcudure.AddInstruction(Instructions.LDINT, "2");
+                    CurrentProcudure.AddInstruction(Instructions.LDINT, "3");
                     CurrentProcudure.AddInstruction(Instructions.CALL, "WRITE");
                     _Module.AddFunctionRef("WRITE", "WRITE");
                     break;
