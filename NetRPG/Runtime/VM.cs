@@ -112,8 +112,6 @@ namespace NetRPG.Runtime
                 Console.WriteLine("-- Error --");
                 Console.WriteLine();
                 PrintModules();
-                if (_DisplayRequired)
-                    Console.ReadLine();
                 return null;
             }
         }

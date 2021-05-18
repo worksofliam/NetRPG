@@ -31,6 +31,7 @@ dow (*in03 = *off);
 
   for index = 1 to max_per_page;
     if ((rrn+index) <= length);
+      clear @1SEL;
       @XFILE = files(rrn+index);
       write SFLDTA;
     endif;
@@ -41,10 +42,17 @@ dow (*in03 = *off);
   exfmt SFLCTL;
 
   *in05 = *off;
+  *in06 = *off;
+
+  ReadC SFLDTA;
+  If %Found(SFLDTA);
+    TEXTA = @XFILE;
+    *in06 = *On;
+  Endif;
 
   //Pagedown
   if (*in98);
-    rrn = rrn += 5;
+    rrn += 5;
   endif;
 
   //Pageup

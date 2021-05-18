@@ -795,6 +795,18 @@ namespace NetRPG.Language
                     _Module.AddFunctionRef("CHAIN", "CHAIN");
                     break;
 
+                case "READC":
+                    ParseAssignment(tokens.Skip(1).ToList()); //Load the DS first
+
+                    //Then load the table
+                    tokens[1].Value = RecordFormatDisplays[tokens[1].Value];
+                    ParseAssignment(tokens.Skip(1).ToList());
+
+                    CurrentProcudure.AddInstruction(Instructions.LDINT, "2");
+                    CurrentProcudure.AddInstruction(Instructions.CALL, "READC");
+                    _Module.AddFunctionRef("READC", "READC");
+                    break;
+
                 case "EXFMT":
                     //EXFMT RCDFMT -> //EXFMT STRUCTURE TABLE IND
                     ParseAssignment(tokens.Skip(1).ToList()); //Load the DS first
@@ -1061,7 +1073,12 @@ namespace NetRPG.Language
                             switch (token.Value.ToUpper()) {
                                 case "%EOF":
                                 case "%FOUND":
-                                    tokens[i + 1].Block[0].Value += "_table";
+                                    if (RecordFormatDisplays.ContainsKey(tokens[i + 1].Block[0].Value)) {
+                                        tokens[i + 1].Block[0].Value = RecordFormatDisplays[tokens[i + 1].Block[0].Value];
+                                    } else {
+                                        tokens[i + 1].Block[0].Value += "_table";
+                                    }
+
                                     if (_Module.GetDataSetList().Contains(tokens[i + 1].Block[0].Value))
                                     {
                                         CurrentProcudure.AddInstruction(Instructions.LDGBLD, tokens[i + 1].Block[0].Value); //Load global

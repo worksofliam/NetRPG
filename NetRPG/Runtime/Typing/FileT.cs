@@ -28,6 +28,10 @@ namespace NetRPG.Runtime.Typing
 
       }
 
+      public virtual void ReadChanged(DataValue Structure) {
+
+      }
+
       public virtual void Chain(DataValue Structure, dynamic[] keys) {
 
       }

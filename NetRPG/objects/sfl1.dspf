@@ -20,6 +20,7 @@
      A                                      COLOR(BLU)
      AA 05                             22  3'Bottom'
      A                                      COLOR(RED)
+     AA 06        TEXTA         20   O 22  3COLOR(RED)
      A          R HEADER_FMT
      A            SRC_MBR       10A  O  1  2
      A                                  2 40'Status'

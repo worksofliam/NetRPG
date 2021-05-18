@@ -6,19 +6,19 @@ using NetRPG.Runtime.Typing.Files;
 
 namespace NetRPG.Runtime.Functions.Operation
 {
-    [RPGFunctionAlias("%EOF")]
-    class EndOfFile : Function
+    class ReadC : Function
     {
         public override object Execute(object[] Parameters)
         {
-            if (Parameters[0] is FileT)
+            if (Parameters[0] is Structure && Parameters[1] is Display)
             {
-                FileT rla = Parameters[0] as FileT;
-                return (rla.isEOF() ? "1" : "0");
+                Display display = Parameters[1] as Display;
+                display.ReadChanged(Parameters[0] as Structure);
             }
+            
             else
             {
-                Error.ThrowRuntimeError("%EOF", "Table or display is required.");
+                Error.ThrowRuntimeError("READ", "Display is required.");
             }
             return null;
         }
