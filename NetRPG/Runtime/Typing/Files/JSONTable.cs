@@ -35,11 +35,18 @@ namespace NetRPG.Runtime.Typing.Files
 
                 DataSet subfield;
                 JProperty DataProperty;
+                JObject columnData;
                 foreach (JToken obj in json["columns"].ToList<JToken>()) {
                     DataProperty = obj.ToObject<JProperty>();
+                    columnData = (json["columns"][DataProperty.Name] as JObject);
                     subfield = new DataSet(DataProperty.Name);
-                    subfield._Type = Reader.StringToType(json["columns"][DataProperty.Name]["type"].ToString(), json["columns"][DataProperty.Name]["length"].ToString());
-                    subfield._Length = (int)json["columns"][DataProperty.Name]["length"];
+                    subfield._Type = Reader.StringToType(columnData["type"].ToString(), columnData["length"].ToString());
+                    subfield._Length = (int)columnData["length"];
+
+                    if (columnData.ContainsKey("precision")) {
+                        subfield._Precision = (int)columnData["precision"];
+                    }
+
                     subfields.Add(subfield);
                 }
 
