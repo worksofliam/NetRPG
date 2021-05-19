@@ -17,18 +17,28 @@ namespace NetRPG.Runtime
 
     public class VM
     {
-        private bool IsTestingEnv;
+        private bool Debug;
         private string _EntryProcedure;
         private Dictionary<string, RunTimeModule> RunTimeModules;
         private Boolean _DisplayRequired;
         private Dictionary<string, Procedure> _Procedures;
 
-        public VM(bool testingVM = false)
+        private Dictionary<String, string[]> _Files;
+
+        public VM(bool debug = false)
         {
-            IsTestingEnv = testingVM;
+            Debug = debug;
             _EntryProcedure = "";
             _Procedures = new Dictionary<string, Procedure>();
             RunTimeModules = new Dictionary<string, RunTimeModule>();
+
+            if (debug) {
+                _Files = new Dictionary<string, string[]>();
+            }
+        }
+
+        public void AddDebugView(string path, string[] lines) {
+            if (Debug) _Files.Add(path, lines);
         }
 
         public void AddModule(Module module)
@@ -424,6 +434,11 @@ namespace NetRPG.Runtime
                     case Instructions.LABEL:
                         //Do nothing
                         break;
+
+                    case Instructions.BREAKPOINT:
+                        ShowDebug(instructions[ip]._Value);
+                        break;
+
                     default:
                         Console.WriteLine("Unused instruction: " + instructions[ip]._Instruction.ToString());
                         break;
@@ -433,6 +448,86 @@ namespace NetRPG.Runtime
             
             CallStack.RemoveAt(CallStack.Count-1);
             return null;
+
+            void ShowDebug(string sourceMap) {
+                string[] map = sourceMap.Split("-");
+                string file = map[0];
+                int line = int.Parse(map[1]);
+
+                string input = "!", output = "";
+
+                while (true) {
+                    Console.Clear();
+
+                    Console.WriteLine();
+                    Console.WriteLine(" @ " + file);
+                    Console.WriteLine();
+                    Console.WriteLine("----------------------------------------------");
+
+                    for (int i = line - 10; i < line + 10; i++) {
+                        if (i >= 0 && i < _Files[file].Length) {
+                            Console.ForegroundColor = ConsoleColor.Black;
+                            Console.Write(i.ToString().PadLeft(5) + "  ");
+
+                            Console.ForegroundColor = (line == i ? ConsoleColor.DarkGreen : ConsoleColor.Black);
+                            Console.Write(_Files[file][i]);
+                            Console.WriteLine();
+                        } else {
+                            Console.WriteLine();
+                        }
+                    }
+
+                    Console.ForegroundColor = ConsoleColor.Black;
+                    Console.WriteLine("----------------------------------------------");
+                    Console.WriteLine(" > " + output);
+                    Console.Write(" $ ");
+                    input = Console.ReadLine();
+
+                    DataValue view = null;
+
+                    if (input == "") {
+                        break;
+                    } else if (LocalVariables.ContainsKey(input)) {
+                        view = LocalVariables[input];
+                    } else if (RunTimeModules[ModuleName].GlobalVariables.ContainsKey(input)) {
+                        view = RunTimeModules[ModuleName].GlobalVariables[input];
+                    } else {
+                        view = null;
+                    }
+
+                    if (view != null) {
+                        output = "";
+                        Console.Clear();
+                        Console.WriteLine();
+
+                        if (view.GetDimentions() > 1) {
+                            for (int i = 0; i < view.GetDimentions(); i++) {
+                                    Console.WriteLine(input + "(" + i.ToString() + ") = " + view.Get(i).ToString());
+                            }
+
+                        } else {
+                            if (view.GetDataType() == Types.Structure) {
+
+                                foreach (string subfield in view.GetSubfieldNames()) {
+                                    Console.WriteLine(input + "." + subfield + " = " + view.GetData(subfield).Get().ToString());
+                                }
+
+                            } else {
+                                output = view.Get().ToString();
+                            }
+                        }
+
+                        if (output == "") {
+                            Console.WriteLine();
+                            Console.WriteLine("Press any key to continue.");
+                            Console.ReadKey();
+                        }
+
+                    } else {
+                        output = "";
+                    }
+                }
+            }
         }
 
         public static object Operate(Instructions op, dynamic a, dynamic b)
@@ -476,6 +571,8 @@ namespace NetRPG.Runtime
                     throw new Exception("unknown operator " + op);
             }
         }
+
+
     }
 
 

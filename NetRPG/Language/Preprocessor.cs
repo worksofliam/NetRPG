@@ -65,6 +65,16 @@ namespace NetRPG.Language
 
         public RPGLine[] GetLines() => _Output.ToArray();
 
+        public string[] GetLinesAsStrings() {
+            List<string> lines = new List<string>();
+
+            foreach (RPGLine rpgLine in _Output) {
+                lines.Add(rpgLine._Line);
+            }
+
+            return lines.ToArray();
+        }
+
         public static List<RPGToken> GetTokens(RPGLine[] Lines) {
             int line = 0;
             List<RPGToken> Tokens = new List<RPGToken>();

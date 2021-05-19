@@ -19,6 +19,8 @@ namespace NetRPG.Runtime
 
     public enum Instructions
     {
+        BREAKPOINT, //For debugmode
+
         NOP, //Do nothing
         PARMS, //Do nothing
 

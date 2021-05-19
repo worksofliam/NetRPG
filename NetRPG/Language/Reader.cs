@@ -92,6 +92,8 @@ namespace NetRPG.Language
 
     class Reader
     {
+        private Boolean _Debug;
+        private String _Source;
         private Dictionary<string, DataSet> Struct_Templates;
         private List<DataSet> Current_Structs;
 
@@ -106,8 +108,9 @@ namespace NetRPG.Language
 
         private string DateFormat = "MM/dd/yy";
 
-        public Reader()
+        public Reader(bool isDebug = false)
         {
+            _Debug = isDebug;
             _Module = new Module();
             CurrentProcudure = null;
 
@@ -145,6 +148,9 @@ namespace NetRPG.Language
         private Dictionary<string, string> Configurations;
 
         private bool isPR;
+
+        public void SetSourcePath(string path) => this._Source = path;
+
         public void ReadStatements(Statement[] Statements)
         {
             RPGToken[] tokens;
@@ -153,7 +159,7 @@ namespace NetRPG.Language
             Thread.CurrentThread.CurrentCulture = new CultureInfo(Configurations["DATFMT"]);
 
             foreach (Statement statement in Statements)
-            {
+            {   
                 CorrectTokens(statement._Tokens);
                 tokens = statement.GetTokens();
                 switch (tokens[0].Type)
@@ -165,10 +171,10 @@ namespace NetRPG.Language
                         HandleDeclare(tokens);
                         break;
                     case RPGLex.Type.OPERATION:
-                        HandleOperation(tokens);
+                        HandleOperation(tokens, statement.Line);
                         break;
                     case RPGLex.Type.WORD_LITERAL:
-                        HandleAssignment(tokens);
+                        HandleAssignment(tokens, statement.Line);
                         break;
                     case RPGLex.Type.ENDDCL:
                         HandleEnd(tokens);
@@ -482,7 +488,7 @@ namespace NetRPG.Language
             return Types.Void;
         }
 
-        private void HandleOperation(RPGToken[] tokens)
+        private void HandleOperation(RPGToken[] tokens, int internalLine)
         {
             string forElse, start, end;
             if (CurrentProcudure == null)
@@ -490,6 +496,9 @@ namespace NetRPG.Language
                 CurrentProcudure = new Procedure("entry");
                 CurrentProcudure.AddInstruction(Instructions.ENTRYPOINT);
             }
+
+            if (this._Debug) 
+                CurrentProcudure.AddInstruction(Instructions.BREAKPOINT, this._Source + "-" + internalLine.ToString());
 
             switch (tokens[0].Value.ToUpper())
             {
@@ -711,7 +720,7 @@ namespace NetRPG.Language
                     break;
 
                 case "EVAL":
-                    HandleAssignment(tokens.Skip(1).ToArray());
+                    HandleAssignment(tokens.Skip(1).ToArray(), internalLine);
                     break;
 
                 case "RESET":
@@ -850,7 +859,7 @@ namespace NetRPG.Language
             }
         }
 
-        private void HandleAssignment(RPGToken[] tokens)
+        private void HandleAssignment(RPGToken[] tokens, int internalLine)
         {
             if (CurrentProcudure == null)
             {
@@ -860,6 +869,9 @@ namespace NetRPG.Language
 
             if (tokens == null) return;
             if (tokens.Count() == 0) return;
+            
+            if (this._Debug) 
+                CurrentProcudure.AddInstruction(Instructions.BREAKPOINT, this._Source + "-" + internalLine.ToString());
 
             int assignIndex = -1;
 

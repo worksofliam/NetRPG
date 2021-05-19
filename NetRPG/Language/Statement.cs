@@ -8,6 +8,8 @@ namespace NetRPG.Language
     class Statement
     {
         public bool IsExpression = false;
+
+        public int Line;
         public List<RPGToken> _Tokens;
 
         public Statement(List<RPGToken> Tokens)
@@ -33,6 +35,11 @@ namespace NetRPG.Language
                 {
                     CurrentStatement.Add(token);
                 }
+            }
+
+            //Each statement has an internal line number
+            for (int i = 0; i < Statements.Count; i++) {
+                Statements[i].Line = i;
             }
 
             return Statements.ToArray();
