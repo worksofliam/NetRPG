@@ -38,7 +38,7 @@ namespace NetRPG.Runtime.Typing.Files
                 foreach (JToken obj in json["columns"].ToList<JToken>()) {
                     DataProperty = obj.ToObject<JProperty>();
                     subfield = new DataSet(DataProperty.Name);
-                    subfield._Type = Reader.StringToType(json["columns"][DataProperty.Name]["type"].ToString());
+                    subfield._Type = Reader.StringToType(json["columns"][DataProperty.Name]["type"].ToString(), json["columns"][DataProperty.Name]["length"].ToString());
                     subfield._Length = (int)json["columns"][DataProperty.Name]["length"];
                     subfields.Add(subfield);
                 }
@@ -76,6 +76,9 @@ namespace NetRPG.Runtime.Typing.Files
                         case JTokenType.String:
                             row[property.Name] = property.Value.ToString();
                             break;
+                        case JTokenType.Null:
+                            row[property.Name] = null;
+                            break;
                     }
                 }
                 this._Data.Add(row);
@@ -91,7 +94,11 @@ namespace NetRPG.Runtime.Typing.Files
                 this._EOF = false;
 
                 foreach (string varName in this._Data[this._RowPointer].Keys.ToArray()) {
-                    Structure.GetData(varName).Set(this._Data[this._RowPointer][varName]);
+                    if (this._Data[this._RowPointer][varName] == null) {
+                        Structure.GetData(varName).DoInitialValue();
+                    } else {
+                        Structure.GetData(varName).Set(this._Data[this._RowPointer][varName]);
+                    }
                 }
 
             } else {

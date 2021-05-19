@@ -1,0 +1,123 @@
+{
+  "columns": {
+    "deptno": {
+      "type": "char",
+      "length": "3"
+    },
+    "deptname": {
+      "type": "varchar",
+      "length": "36"
+    },
+    "mgrno": {
+      "type": "char",
+      "length": "6"
+    },
+    "admrdept": {
+      "type": "char",
+      "length": "3"
+    },
+    "location": {
+      "type": "char",
+      "length": "16"
+    }
+  },
+  "rows": [{
+      "deptno": "A00",
+      "deptname": "SPIFFY COMPUTER SERVICE DIV.",
+      "mgrno": "000010",
+      "admrdept": "A00",
+      "location": null
+    },
+    {
+      "deptno": "B01",
+      "deptname": "PLANNING",
+      "mgrno": "000020",
+      "admrdept": "A00",
+      "location": "Soton           "
+    },
+    {
+      "deptno": "C01",
+      "deptname": "INFORMATION CENTER",
+      "mgrno": "000030",
+      "admrdept": "A00",
+      "location": null
+    },
+    {
+      "deptno": "D01",
+      "deptname": "DEVELOPMENT CENTER",
+      "mgrno": null,
+      "admrdept": "A00",
+      "location": null
+    },
+    {
+      "deptno": "D11",
+      "deptname": "MANUFACTURING SYSTEMS",
+      "mgrno": "000060",
+      "admrdept": "D01",
+      "location": null
+    },
+    {
+      "deptno": "D21",
+      "deptname": "ADMINISTRATION SYSTEMS",
+      "mgrno": "000070",
+      "admrdept": "D01",
+      "location": null
+    },
+    {
+      "deptno": "E01",
+      "deptname": "SUPPORT SERVICES",
+      "mgrno": "000050",
+      "admrdept": "A00",
+      "location": null
+    },
+    {
+      "deptno": "E11",
+      "deptname": "OPERATIONS",
+      "mgrno": "000090",
+      "admrdept": "E01",
+      "location": null
+    },
+    {
+      "deptno": "E21",
+      "deptname": "SOFTWARE SUPPORT",
+      "mgrno": "000100",
+      "admrdept": "E01",
+      "location": null
+    },
+    {
+      "deptno": "F22",
+      "deptname": "BRANCH OFFICE F2",
+      "mgrno": null,
+      "admrdept": "E01",
+      "location": null
+    },
+    {
+      "deptno": "G22",
+      "deptname": "BRANCH OFFICE G2",
+      "mgrno": null,
+      "admrdept": "E01",
+      "location": null
+    },
+    {
+      "deptno": "H22",
+      "deptname": "BRANCH OFFICE H2",
+      "mgrno": null,
+      "admrdept": "E01",
+      "location": null
+    },
+    {
+      "deptno": "I22",
+      "deptname": "BRANCH OFFICE I2",
+      "mgrno": null,
+      "admrdept": "E01",
+      "location": null
+    },
+    {
+      "deptno": "J22",
+      "deptname": "BRANCH OFFICE J2",
+      "mgrno": null,
+      "admrdept": "E01",
+      "location": null
+    }
+  ]
+}

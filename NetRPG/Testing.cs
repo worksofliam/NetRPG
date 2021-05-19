@@ -12,6 +12,7 @@ namespace NetRPG
         private static Dictionary<string, dynamic> TestCases = new Dictionary<string, dynamic>()
         {
             { "dcl_char.rpgle", "Hello world    " },
+            { "dcl_varchar.rpgle", "Hello world" },
             { "dcl_int.rpgle", 200 },
             { "dcl_fixed.rpgle", 24691.35 },
             { "dcl_ind.rpgle", "101" },
