@@ -621,34 +621,51 @@ namespace NetRPG.Language
                                 break;
 
                             default:
-                                switch (tokens[i].Value.ToUpper()) {
-                                    case "BY":
-                                        stage = 2;
-                                        break;
-                                    case "TO":
-                                        stage = 3;
-                                        isUpTo = true;
-                                        break;
-                                    case "DOWNTO":
-                                        stage = 3;
-                                        isUpTo = false;
-                                        break;
-                                    default:
-                                        switch (stage) {
-                                            case 0:
-                                                indexExp.Add(tokens[i]);
-                                                break;
-                                            case 1:
-                                                startingExp.Add(tokens[i]);
-                                                break;
-                                            case 2:
-                                                byExp.Add(tokens[i]);
-                                                break;
-                                            case 3:
-                                                toExpr.Add(tokens[i]);
-                                                break;
-                                        }
-                                        break;
+                                if (tokens[i].Type == RPGLex.Type.BLOCK) {
+                                    switch (stage) {
+                                        case 0:
+                                            indexExp.Add(tokens[i]);
+                                            break;
+                                        case 1:
+                                            startingExp.Add(tokens[i]);
+                                            break;
+                                        case 2:
+                                            byExp.Add(tokens[i]);
+                                            break;
+                                        case 3:
+                                            toExpr.Add(tokens[i]);
+                                            break;
+                                    }
+                                } else {
+                                    switch (tokens[i].Value.ToUpper()) {
+                                        case "BY":
+                                            stage = 2;
+                                            break;
+                                        case "TO":
+                                            stage = 3;
+                                            isUpTo = true;
+                                            break;
+                                        case "DOWNTO":
+                                            stage = 3;
+                                            isUpTo = false;
+                                            break;
+                                        default:
+                                            switch (stage) {
+                                                case 0:
+                                                    indexExp.Add(tokens[i]);
+                                                    break;
+                                                case 1:
+                                                    startingExp.Add(tokens[i]);
+                                                    break;
+                                                case 2:
+                                                    byExp.Add(tokens[i]);
+                                                    break;
+                                                case 3:
+                                                    toExpr.Add(tokens[i]);
+                                                    break;
+                                            }
+                                            break;
+                                    }
                                 }
                                 break;
                         }

@@ -101,6 +101,7 @@ namespace NetRPG
             { "op_for1.rpgle", 11 },
             { "op_for2.rpgle", 0 },
             { "op_for3.rpgle", 5 },
+            { "op_for4.rpgle", 10 },
 
             { "op_reset1.rpgle", "Hello world" },
             { "op_reset2.rpgle", 134 },
