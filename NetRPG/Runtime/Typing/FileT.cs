@@ -36,6 +36,14 @@ namespace NetRPG.Runtime.Typing
 
       }
 
+      public virtual void SetLowerLimit(dynamic[] keys) {
+
+      }
+
+      public virtual void SetGreaterThan(dynamic[] keys) {
+
+      }
+
       public virtual void ExecuteFormat(DataValue Structure, DataValue Indicators) {
         
       }

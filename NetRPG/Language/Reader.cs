@@ -804,6 +804,28 @@ namespace NetRPG.Language
                     _Module.AddFunctionRef("CHAIN", "CHAIN");
                     break;
 
+                case "SETLL": 
+                    //CHAIN (keys) FILLE
+                    //CHAIN key FILE
+
+                    //Then load the table
+                    tokens[2].Value += "_table";
+                    ParseAssignment(tokens.Skip(2).ToList());
+
+                    if (tokens[1].Block != null) {
+                        CurrentProcudure.AddInstruction(Instructions.LDINT, ParseExpression(tokens[1].Block).ToString());
+                        CurrentProcudure.AddInstruction(Instructions.CRTARR);
+                    } else {
+                        ParseExpression(new List<RPGToken>() {tokens[1]});
+                        CurrentProcudure.AddInstruction(Instructions.LDINT, "1");
+                        CurrentProcudure.AddInstruction(Instructions.CRTARR);
+                    }
+
+                    CurrentProcudure.AddInstruction(Instructions.LDINT, "2");
+                    CurrentProcudure.AddInstruction(Instructions.CALL, "SETLL");
+                    _Module.AddFunctionRef("SETLL", "SETLL");
+                    break;
+
                 case "READC":
                     ParseAssignment(tokens.Skip(1).ToList()); //Load the DS first
 
@@ -1261,6 +1283,10 @@ namespace NetRPG.Language
                             case "*M":
                             case "*YEARS":
                             case "*Y":
+                            case "*HIVAL":
+                            case "*END":
+                            case "*LOVAL":
+                            case "*START":
                                 CurrentProcudure.AddInstruction(Instructions.LDSTR, token.Value.ToUpper());
                                 break;
                         }

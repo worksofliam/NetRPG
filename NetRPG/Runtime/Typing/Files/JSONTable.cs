@@ -152,5 +152,41 @@ namespace NetRPG.Runtime.Typing.Files
 
             }
         }
+
+        public override void SetLowerLimit(dynamic[] keys) {
+            this._EOF = true;
+
+            if (keys[0] is string) {
+                switch (keys[0]) {
+                    case "*START":
+                    case "*LOVAL":
+                        this._EOF = false;
+                        this._RowPointer = 0;
+                        return;
+                    case "*END":
+                    case "*HIVAL":
+                        this._EOF = true;
+                        this._RowPointer = _Data.Count;
+                        return;
+                }
+            }
+
+            this._RowPointer += 1;
+
+            while (this._RowPointer >= 0 && this._RowPointer < this._Data.Count()) {
+                for (var i = 0; i < keys.Length; i++) {
+                    if (keys[i] != this._Data[this._RowPointer].ElementAt(i).Value) {
+                        continue;
+                    }
+
+                    this._EOF = false;
+
+                    this._RowPointer -= 1;
+                    return;
+                }
+
+                this._RowPointer += 1;
+            }
+        }
     }
 }

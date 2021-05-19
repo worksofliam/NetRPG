@@ -127,6 +127,8 @@ namespace NetRPG
             { "op_file_chain.rpgle", "My second "},
             { "op_file_chain2.rpgle", "My second My first p"},
             { "op_file_chain3.rpgle", "bethMy second"},
+            { "op_file_setll1.rpgle", "101"},
+            { "op_file_setll2.rpgle", "1E010"},
 
             //ODBC tests...
             // { "op_file_open.rpgle", true },
